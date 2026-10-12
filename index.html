@@ -4,218 +4,150 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Plan Manager &amp; Website Preview</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap">
 <style>
-/* Left: admin editor (admin look — small Poppins, red buttons).
-   Right: the public website (site look — Outfit, blue). One data source feeds both. */
-:root{
-  --bg:#eef1f5; --panel:#fff; --ink:#1f2430; --ink-2:#4b5263; --muted:#8a90a0; --line:#e3e6ec;
-  --red:#e3212b; --red-2:#c41a23; --red-soft:#fdecec;
-  --blue:#1f5fe0; --blue-2:#1a4fbf; --violet:#7b5cf0; --blue-soft:#eef3ff; --chip:#eef1f7;
-  --t3:#16a34a; --t2:#f59e0b; --t1:#ef4444; --ok:#16803c; --ok-soft:#e3f5e9;
-  --fa:"Poppins","Segoe UI",system-ui,sans-serif; --fw:"Outfit","Segoe UI",system-ui,sans-serif;
-}
+:root{--bg:#eef1f5;--ink:#1f2430;--ink2:#4b5263;--muted:#8a90a0;--line:#e3e6ec;--red:#e3212b;--red2:#c41a23;--rs:#fdecec;--blue:#1f5fe0;--bs:#eef3ff;--chip:#eef1f7;--ok:#16803c;--fa:"Poppins","Segoe UI",system-ui,sans-serif;--fw:"Outfit","Segoe UI",system-ui,sans-serif}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:13px/1.45 var(--fa)}
-button,input,select,textarea{font:inherit;color:inherit}
-button{cursor:pointer}
-:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
-[hidden]{display:none!important}
-.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 16px;background:#fff;border-bottom:1px solid var(--line)}
-.top h1{font-size:15px;margin:0;font-weight:600}
-.top .sub{color:var(--muted);font-size:12px}
-.layout{display:grid;grid-template-columns:minmax(0,560px) minmax(0,1fr);gap:16px;padding:16px;max-width:1700px;margin:0 auto;align-items:start}
-@media (max-width:1150px){.layout{grid-template-columns:minmax(0,1fr)}}
-.pane-title{font:600 11px/1 var(--fa);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;display:flex;gap:8px;align-items:center}
-.pane-title .dot{width:8px;height:8px;border-radius:50%;background:var(--red)}
-.pane-title .dot.b{background:var(--blue)}
-
-/* ---------- ADMIN ---------- */
-.admin{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px;display:grid;gap:12px;min-width:0}
+button,input,select{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--blue);outline-offset:1px}[hidden]{display:none!important}
+.top{padding:12px 16px;background:#fff;border-bottom:1px solid var(--line);display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.top h1{font-size:15px;margin:0}.top span{color:var(--muted);font-size:12px}
+.layout{display:grid;grid-template-columns:minmax(0,580px) minmax(0,1fr);gap:16px;padding:16px;max-width:1700px;margin:0 auto;align-items:start}
+@media(max-width:1150px){.layout{grid-template-columns:minmax(0,1fr)}}
+.pt{font:600 11px var(--fa);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.admin{background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px;display:grid;gap:12px}
 .plist{display:flex;gap:6px;flex-wrap:wrap}
-.pbtn{border:1px solid var(--line);background:#fff;border-radius:6px;padding:6px 10px;font-size:12px;text-align:left;max-width:100%}
+.pbtn{border:1px solid var(--line);background:#fff;border-radius:6px;padding:6px 10px;font-size:12px;text-align:left}
 .pbtn small{display:block;color:var(--muted);font-size:10.5px}
-.pbtn.on{border-color:var(--red);background:var(--red-soft);color:var(--red)}
-.pbtn.new{border-style:dashed;color:var(--ink-2)}
+.pbtn.on{border-color:var(--red);background:var(--rs);color:var(--red)}.pbtn.new{border-style:dashed}
 .fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 12px}
-@media (max-width:520px){.fields{grid-template-columns:1fr}}
-.f{display:grid;gap:3px;min-width:0}
-.f.full{grid-column:1/-1}
-.f label{font-size:11px;color:var(--ink-2)}
-.f label em{font-style:normal;color:var(--muted)}
-.f input,.f select{border:1px solid var(--line);border-radius:4px;padding:7px 9px;background:#fff;min-width:0;width:100%}
-.f input:focus,.f select:focus{border-color:var(--blue);outline:none}
+@media(max-width:520px){.fields{grid-template-columns:1fr}}
+.f{display:grid;gap:3px;min-width:0}.f.full{grid-column:1/-1}
+.f label{font-size:11px;color:var(--ink2)}.f label em{font-style:normal;color:var(--muted)}.req{color:var(--red)}
+input,select{border:1px solid var(--line);border-radius:4px;padding:7px 9px;background:#fff;min-width:0}
+.f input,.f select{width:100%}input:focus,select:focus{border-color:var(--blue);outline:none}
+.bad{border-color:var(--red)!important;background:var(--rs)}
 .seg{display:flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
 .seg button{flex:1;border:0;background:#fff;padding:7px 6px;font-size:12px;border-right:1px solid var(--line)}
-.seg button:last-child{border-right:0}
-.seg button.on{background:var(--red-soft);color:var(--red);font-weight:600}
+.seg button:last-child{border:0}.seg button.on{background:var(--rs);color:var(--red);font-weight:600}
 .tiers{border:1px solid var(--line);border-radius:6px;padding:10px;display:grid;gap:8px;background:#fafbfc}
-.tiers h3{margin:0;font-size:12px;font-weight:600}
-.trow{display:grid;grid-template-columns:auto auto 64px auto minmax(0,auto);gap:6px;align-items:center;font-size:12px}
-.trow input{border:1px solid var(--line);border-radius:4px;padding:5px 7px;width:100%}
-.trow .sw{width:10px;height:10px;border-radius:3px}
+.tiers h3{margin:0;font-size:12px}.tiers h3 span{font-weight:400;color:var(--muted)}
+.srow{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:12px;margin-bottom:6px}
+.srow input{width:70px;padding:5px 7px}.srow .sw{width:10px;height:10px;border-radius:3px}
+.x{border:0;background:none;color:var(--muted);font-size:16px;line-height:1}
 .chips{display:flex;flex-wrap:wrap;gap:5px;padding:6px;border:1px dashed var(--line);border-radius:6px;min-height:30px}
-.chip{background:var(--chip);border-radius:999px;padding:2px 3px 2px 9px;font-size:11.5px;display:inline-flex;align-items:center;gap:3px}
+.chip{background:var(--chip);border-radius:999px;padding:2px 3px 2px 9px;font-size:11.5px;display:inline-flex;align-items:center;gap:5px}
+.chip b{background:#fff;border-radius:4px;padding:0 5px;font-size:10.5px;color:var(--ink2)}
 .chip button{border:0;background:none;width:17px;height:17px;border-radius:50%;color:var(--muted)}
-.cpick{display:flex;gap:6px;flex-wrap:wrap}
-.cpick input{flex:1;min-width:0;border:1px solid var(--line);border-radius:4px;padding:7px 9px}
-.cpick select{border:1px solid var(--line);border-radius:4px;padding:7px;background:#fff}
+.cpick{display:flex;gap:6px;flex-wrap:wrap}.cpick #cSel{flex:1;min-width:150px}
 .btn{border:0;border-radius:4px;padding:9px 16px;font-weight:600;background:var(--red);color:#fff;font-size:12.5px}
-.btn:hover{background:var(--red-2)}
-.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);font-weight:500}
+.btn:hover{background:var(--red2)}.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);font-weight:500}
 .actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.dirty{font-size:12px;color:var(--red);font-weight:600}
-.saved{font-size:12px;color:var(--ok);font-weight:600}
-details.ai{border:1px solid var(--line);border-radius:6px}
-details.ai summary{cursor:pointer;padding:8px 10px;font-weight:600;font-size:12px}
-details.ai .in{padding:0 10px 10px;font-size:12px}
-.ai-box p{margin:0 0 3px;font-weight:600}.ai-box ul{margin:0 0 8px;padding-left:18px}
-
-/* ---------- WEBSITE ---------- */
-.site{background:#f5f8fc;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-family:var(--fw);font-size:15px;min-width:0}
-.browser{display:flex;align-items:center;gap:8px;background:#e6e9ef;padding:8px 12px;font:12px var(--fa);color:var(--ink-2)}
-.browser i{width:10px;height:10px;border-radius:50%;background:#c9ced8;display:inline-block}
-.browser .url{flex:1;background:#fff;border-radius:6px;padding:4px 10px;color:var(--muted);min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.snav{background:#fff;display:flex;align-items:center;gap:22px;padding:14px 20px;border-bottom:1px solid var(--line);flex-wrap:wrap}
-.slogo{font-weight:800;font-size:24px;letter-spacing:.12em}
-.snav a{color:var(--ink-2);text-decoration:none;font-size:15px}
+.dirty{color:var(--red);font-weight:600}.saved{color:var(--ok);font-weight:600}
+details.ai{border:1px solid var(--line);border-radius:6px}details.ai summary{cursor:pointer;padding:8px 10px;font-weight:600}
+.ai-box{padding:0 10px 10px}.ai-box p{margin:0 0 3px;font-weight:600}.ai-box ul{margin:0 0 8px;padding-left:18px}
+.site{background:#f5f8fc;border:1px solid var(--line);border-radius:10px;overflow:hidden;font:15px var(--fw)}
+.browser{display:flex;align-items:center;gap:8px;background:#e6e9ef;padding:8px 12px;font:12px var(--fa)}
+.browser i{width:10px;height:10px;border-radius:50%;background:#c9ced8}
+.url{flex:1;background:#fff;border-radius:6px;padding:4px 10px;color:var(--muted);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.snav{background:#fff;display:flex;gap:22px;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.slogo{font-weight:800;font-size:24px;letter-spacing:.12em}.snav a{color:var(--ink2);text-decoration:none}
 .snav a.on{color:var(--ink);font-weight:600;border-bottom:2px solid var(--ink)}
 .sbody{padding:18px 20px 26px;display:grid;gap:16px}
-.stitle{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
-.stitle h2{margin:0;font-size:24px;font-weight:700}
-.stitle span{color:var(--muted)}
+.stitle{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}.stitle h2{margin:0;font-size:24px}.stitle span{color:var(--muted)}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
 .pc{position:relative;background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:40px 20px 18px;display:grid;gap:4px;text-align:left}
-.pc:hover{border-color:#bfd0f5}
-.pc.sel{border-color:var(--blue);box-shadow:0 0 0 3px #dbe6ff}
-.pc.flash{animation:flash 1.2s ease}
-@keyframes flash{0%{box-shadow:0 0 0 4px #fde68a}100%{box-shadow:0 0 0 0 transparent}}
-@media (prefers-reduced-motion:reduce){.pc.flash{animation:none}}
+.pc.sel{border-color:var(--blue);box-shadow:0 0 0 3px #dbe6ff}.pc.flash{animation:fl 1.2s}
+@keyframes fl{0%{box-shadow:0 0 0 4px #fde68a}100%{box-shadow:0 0 0 0 transparent}}
 .pill{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:var(--blue);color:#fff;font-weight:700;font-size:12px;padding:5px 12px;border-radius:7px;white-space:nowrap;max-width:90%;overflow:hidden;text-overflow:ellipsis}
-.pc .nm{font-size:13px;color:var(--muted)}
-.gb{font-size:24px;font-weight:700}
-.gb small{font-size:15px;font-weight:600;color:var(--ink-2);margin-left:2px}
-.days{color:var(--ink-2)}
-.price{font-size:22px;font-weight:700}
-.price small{font-size:16px;color:var(--ink-2);font-weight:600;margin-left:4px}
-.dp{display:inline-block;font-size:11px;font-weight:700;background:#fff7e6;color:#b45309;border-radius:6px;padding:2px 7px;margin-top:2px;justify-self:start}
-.vd{color:var(--blue);font-size:15px;margin-top:6px}
-
+.nm{font-size:13px;color:var(--muted)}.gb{font-size:24px;font-weight:700}.gb small{font-size:15px;color:var(--ink2)}
+.price{font-size:22px;font-weight:700}.price small{font-size:16px;color:var(--ink2);margin-left:4px}
+.dp{font-size:11px;font-weight:700;background:#fff7e6;color:#b45309;border-radius:6px;padding:2px 7px;justify-self:start}
+.vd{color:var(--blue);margin-top:6px}
 .detail{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:20px 22px;display:grid;gap:16px}
-.dhead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start}
-.dhead h3{margin:0;font-size:22px}
-.dhead .meta{color:var(--ink-2);margin-top:2px}
-.dhead .pr{font-size:28px;font-weight:700;text-align:right}
-.dhead .pr small{font-size:16px;color:var(--ink-2)}
+.dhead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.dhead h3{margin:0;font-size:22px}
+.meta{color:var(--ink2)}.pr{font-size:28px;font-weight:700;text-align:right}.pr small{font-size:16px;color:var(--ink2)}
 .buy{border:0;border-radius:10px;background:var(--blue);color:#fff;font-weight:700;padding:11px 22px;font-size:15px;margin-top:6px}
-.facts{display:flex;flex-wrap:wrap;gap:8px}
-.fact{background:var(--blue-soft);color:#2a3f8f;border-radius:8px;padding:6px 10px;font-size:13px}
-.fact b{font-weight:600}
-.info p{margin:0 0 4px;font-weight:700}
-.info ul{margin:0 0 12px;padding-left:20px}
-.info li{margin:3px 0}
-
-/* speed tiers visual */
+.facts{display:flex;flex-wrap:wrap;gap:8px}.fact{background:var(--bs);color:#2a3f8f;border-radius:8px;padding:6px 10px;font-size:13px}
+.info p{margin:0 0 4px;font-weight:700}.info ul{margin:0 0 12px;padding-left:20px}
 .speed{border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:10px}
-.speed h4{margin:0;font-size:15px}
-.speed .note{font-size:13px;color:var(--muted)}
+.speed h4{margin:0}.note{font-size:13px;color:var(--muted)}
 .sbar{display:flex;height:34px;border-radius:9px;overflow:hidden}
-.sbar div{display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;min-width:0;white-space:nowrap;overflow:hidden}
-.sticks{position:relative;height:18px;font-size:12px;color:var(--muted)}
-.sticks span{position:absolute;transform:translateX(-50%)}
-.slegend{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-@media (max-width:620px){.slegend{grid-template-columns:1fr}}
-.slegend div{border-radius:10px;padding:8px 10px;background:#f7f8fb;font-size:13px}
-.slegend b{display:block;font-size:17px}
-.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 14px;border-radius:8px;font-weight:500;z-index:9}
+.sbar div{display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;overflow:hidden;white-space:nowrap}
+.sticks{position:relative;height:18px;font-size:12px;color:var(--muted);margin:0 14px}.sticks span{position:absolute;transform:translateX(-50%)}
+.slegend{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.slegend div{border-radius:10px;padding:8px 10px;background:#f7f8fb;font-size:13px}.slegend b{display:block;font-size:17px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 14px;border-radius:8px;z-index:9}
 </style>
 </head>
 <body>
-<div class="top">
-  <h1>Plan manager → website</h1>
-  <span class="sub">Edit a plan on the left and click Save. The website on the right updates from the same data.</span>
-</div>
-
+<div class="top"><h1>Plan manager → website</h1><span>Edit a plan on the left and click Save. The website on the right updates from the same data.</span></div>
 <div class="layout">
-  <!-- =================== ADMIN =================== -->
-  <section aria-label="Admin plan editor">
-    <div class="pane-title"><span class="dot"></span>Admin · Update Plan</div>
-    <div class="admin">
-      <div class="plist" id="plist"></div>
-
-      <div class="fields">
-        <div class="f full"><label for="name">Plan name</label><input id="name"></div>
-        <div class="f"><label for="vendor">Supplier / vendor</label>
-          <select id="vendor"><option value="telco">Telco Vision (TEL VSN)</option><option value="rombty">Rombty</option></select></div>
-        <div class="f"><label for="apn">APN <em id="apnHint"></em></label><input id="apn"></div>
-        <div class="f"><label for="operator">Operator Name 1</label><input id="operator"></div>
-        <div class="f"><label for="region">Region</label>
-          <select id="region"><option>Asia-Pacific</option><option>Europe</option><option>Middle East</option><option>Africa</option><option>North America</option><option>South Latin America</option><option>Eurasia</option><option>Global</option></select></div>
-        <div class="f full"><label>Plan type</label>
-          <div class="seg" id="typeSeg"><button type="button" data-t="unlimited">Unlimited</button><button type="button" data-t="fixed">Fixed GB</button><button type="button" data-t="daypass">Day Pass</button></div></div>
-        <div class="f" id="gbWrap"><label for="gb" id="gbLabel">Data (GB)</label><input id="gb" type="number" min="0.1" step="0.1"></div>
-        <div class="f"><label for="days">Validity (days)</label><input id="days" type="number" min="1"></div>
-        <div class="f"><label for="price">Selling price (USD)</label><input id="price" type="number" min="0" step="0.01"></div>
-        <div class="f"><label for="vStart">Validity starts</label>
-          <select id="vStart"><option value="first">From first network connection</option><option value="install">From eSIM installation</option></select></div>
-        <div class="f"><label>Hotspot</label><div class="seg" id="hsSeg"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button></div></div>
-        <div class="f"><label>canTopUp</label><div class="seg" id="tuSeg"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button></div></div>
-      </div>
-
-      <div class="tiers" id="tiersBox">
-        <h3>Day Pass speed steps <span style="font-weight:400;color:var(--muted)">(share of the daily data used)</span></h3>
-        <div id="tierRows"></div>
-        <button type="button" class="btn ghost" id="tierReset" style="justify-self:start;padding:5px 10px">Reset to 60% · 80% · 100% → 3 · 2 · 1 Mbps</button>
-      </div>
-
-      <div class="f full"><label for="cInput">Map Country · supported countries</label>
-        <div class="cpick"><input id="cInput" list="cList" placeholder="Type a country + Enter, or paste a comma list"><datalist id="cList"></datalist>
-          <select id="cPreset" aria-label="Load a country set"><option value="">Load a set…</option></select></div>
-        <div class="chips" id="chips"></div></div>
-
-      <div class="actions">
-        <button type="button" class="btn" id="save">Save plan → website</button>
-        <button type="button" class="btn ghost" id="dup">Duplicate</button>
-        <button type="button" class="btn ghost" id="del">Delete</button>
-        <span id="dirty"></span>
-      </div>
-
-      <details class="ai"><summary>Additional Information (auto-generated)</summary><div class="in ai-box" id="aiAdmin"></div></details>
+<section aria-label="Admin plan editor">
+  <div class="pt">Admin · Update Plan</div>
+  <div class="admin">
+    <div class="plist" id="plist"></div>
+    <div class="fields">
+      <div class="f full"><label for="name">Plan name</label><input id="name"></div>
+      <div class="f"><label for="vendor">Supplier / vendor</label><select id="vendor"><option value="telco">Telco Vision (TEL VSN)</option><option value="rombty">Rombty</option></select></div>
+      <div class="f"><label for="apn">APN <em id="apnHint"></em></label><input id="apn"></div>
+      <div class="f"><label for="operator">Operator Name 1</label><input id="operator"></div>
+      <div class="f"><label for="breakout">Internet breakout <span class="req">*</span></label><select id="breakout" required></select></div>
+      <div class="f"><label for="region">Region</label><select id="region"><option>Asia-Pacific</option><option>Europe</option><option>Middle East</option><option>Africa</option><option>North America</option><option>South Latin America</option><option>Eurasia</option><option>Global</option></select></div>
+      <div class="f"><label for="vStart">Validity starts</label><select id="vStart"><option value="first">From first network connection</option><option value="install">From eSIM installation</option></select></div>
+      <div class="f full"><label>Plan type</label><div class="seg" id="typeSeg"><button type="button" data-t="unlimited">Unlimited</button><button type="button" data-t="fixed">Fixed GB</button><button type="button" data-t="daypass">Day Pass</button></div></div>
+      <div class="f" id="gbWrap"><label for="gb" id="gbLabel">Data (GB)</label><input id="gb" type="number" min="0.1" step="0.1"></div>
+      <div class="f"><label for="days">Validity (days)</label><input id="days" type="number" min="1"></div>
+      <div class="f"><label for="price">Selling price (USD)</label><input id="price" type="number" min="0" step="0.01"></div>
+      <div class="f"><label>Hotspot</label><div class="seg" id="hsSeg"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button></div></div>
+      <div class="f"><label>canTopUp</label><div class="seg" id="tuSeg"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button></div></div>
     </div>
-  </section>
-
-  <!-- =================== WEBSITE =================== -->
-  <section aria-label="Website preview">
-    <div class="pane-title"><span class="dot b"></span>Website · what customers see</div>
-    <div class="site">
-      <div class="browser"><i></i><i></i><i></i><span class="url" id="url"></span></div>
-      <div class="snav"><span class="slogo">eSIM</span><a href="#" onclick="return false">For Businesses</a><a href="#" onclick="return false">Blogs</a><a href="#" class="on" onclick="return false">eSIM</a><a href="#" onclick="return false">Help</a></div>
-      <div class="sbody">
-        <div class="stitle"><h2 id="sTitle"></h2><span id="sSub"></span></div>
-        <div class="cards" id="cards"></div>
-        <div class="detail" id="detail"></div>
-      </div>
+    <div class="tiers" id="stepsBox">
+      <h3>Speed steps <span id="stepHint">(GB used per day → Mbps)</span></h3>
+      <div id="stepRows"></div>
+      <div class="actions"><button type="button" class="btn ghost" id="stepAdd" style="padding:5px 10px">+ Add speed step</button><button type="button" class="btn ghost" id="stepReset" style="padding:5px 10px">Reset steps</button></div>
     </div>
-  </section>
+    <div class="f full"><label for="cSel">Map Country · supported countries</label>
+      <div class="cpick"><select id="cSel"></select><button type="button" class="btn ghost" id="cAdd">+ Add</button><select id="cPreset" aria-label="Load a country set"><option value="">Load a set…</option></select></div>
+      <div class="chips" id="chips"></div></div>
+    <div class="actions"><button type="button" class="btn" id="save">Save plan → website</button><button type="button" class="btn ghost" id="dup">Duplicate</button><button type="button" class="btn ghost" id="del">Delete</button><span id="dirty"></span></div>
+    <details class="ai"><summary>Additional Information (auto-generated)</summary><div class="ai-box" id="aiAdmin"></div></details>
+  </div>
+</section>
+<section aria-label="Website preview">
+  <div class="pt">Website · what customers see</div>
+  <div class="site">
+    <div class="browser"><i></i><i></i><i></i><span class="url" id="url"></span></div>
+    <div class="snav"><span class="slogo">eSIM</span><a href="#" onclick="return false">For Businesses</a><a href="#" onclick="return false">Blogs</a><a href="#" class="on" onclick="return false">eSIM</a><a href="#" onclick="return false">Help</a></div>
+    <div class="sbody"><div class="stitle"><h2 id="sTitle"></h2><span id="sSub"></span></div><div class="cards" id="cards"></div><div class="detail" id="detail"></div></div>
+  </div>
+</section>
 </div>
-
 <script>
 (() => {
 'use strict';
 const $ = id => document.getElementById(id);
-const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const money = n => '$' + (+n || 0).toFixed(2);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const clone = o => JSON.parse(JSON.stringify(o));
+const r1 = n => Math.round(n * 10) / 10;
 
-/* ================= VENDORS: APN + template ================= */
+/* countries: ISO code + name */
+const CL = {};
+const ALLC = 'AE UAE;AM Armenia;AU Australia;AZ Azerbaijan;BD Bangladesh;CN China;CY Cyprus;DE Germany;DK Denmark;EG Egypt;ES Spain;FI Finland;FR France;GB United Kingdom;GE Georgia;HK Hong Kong;ID Indonesia;IL Israel;IN India;IS Iceland;IT Italy;JP Japan;KG Kyrgyzstan;KH Cambodia;KR South Korea;KW Kuwait;KZ Kazakhstan;LK Sri Lanka;MO Macau;MY Malaysia;NO Norway;NP Nepal;PH Philippines;QA Qatar;SA Saudi Arabia;SE Sweden;SG Singapore;TH Thailand;TR Turkey;TW Taiwan;US USA;UZ Uzbekistan;VN Vietnam'
+  .split(';').map(s => { CL[s.slice(0, 2)] = s.slice(3); return s.slice(0, 2); });
+const cn = c => CL[c] || c;
+const byName = (a, b) => cn(a).localeCompare(cn(b));
+const APAC = 'BD CN IN ID JP KZ KG MY NP PH SG KR TW TH UZ'.split(' ');
+const SETS = { 'Asia-Pacific (15)': APAC, 'China · Korea · Japan': ['CN','KR','JP'], 'Nordic Summer': ['DK','FI','IS','NO','SE'], 'Eurasia': ['AM','AZ','GE','KZ','TR'], 'Middle East': ['CY','EG','IL','KW','QA','SA','AE'] };
+const BREAKOUTS = ['Local (in-country)', 'Singapore', 'Hong Kong', 'United Kingdom', 'United States', 'Home routed'];
+
 const VENDORS = {
-  telco: { name: 'Telco Vision', apn: 'plus',
-    template: `# Package Details:
+  telco: { name: 'Telco Vision', apn: 'plus', template: `# Package Details:
 - {{data}}
-[daypass]- {{speedTiers}}
+[speed]- {{speed}}
 - Operates on {{network}}
+- Internet breakout - {{breakout}}
 [hotspot]- Hotspot supports
 - Validity starts {{validityStart}}
 [topup]- Top up available
@@ -224,11 +156,11 @@ const VENDORS = {
 
 # Supported Countries:
 - {{countries}}` },
-  rombty: { name: 'Rombty', apn: 'internet',
-    template: `# Package Details:
+  rombty: { name: 'Rombty', apn: 'internet', template: `# Package Details:
 - {{data}}
-[daypass]- {{speedTiers}}
+[speed]- {{speed}}
 - Network: {{network}}
+- Internet breakout: {{breakout}}
 - Valid for {{validity}}, starting {{validityStart}}
 [hotspot]- Hotspot / tethering allowed
 [topup]- Top up anytime from your account
@@ -238,54 +170,43 @@ const VENDORS = {
 # Coverage ({{countryCount}} countries):
 - {{countries}}` }
 };
-const DEFAULT_TIERS = [{ upTo: 60, mbps: 3 }, { upTo: 80, mbps: 2 }, { upTo: 100, mbps: 1 }];
-const TIER_COLORS = ['var(--t3)', 'var(--t2)', 'var(--t1)'];
+/* steps: cumulative GB per day -> Mbps. Last step has gb:null (rest of day / up to daily limit) */
+const DEF_D = [{ gb: 0.6, mbps: 3 }, { gb: 0.8, mbps: 2 }, { gb: null, mbps: 1 }];
+const DEF_U = [{ gb: 1, mbps: 5 }, { gb: 2, mbps: 2 }, { gb: null, mbps: 1 }];
+const COLS = ['#16a34a', '#84cc16', '#f59e0b', '#f97316', '#ef4444'];
+const col = (i, n) => COLS[n < 2 ? 0 : Math.round(i * 4 / (n - 1))];
+const mk = (id, name, vendor, type, gb, days, price, steps) => ({ id, name, vendor, apn: VENDORS[vendor].apn, operator: 'Multi - Networks', breakout: 'Singapore', region: 'Asia-Pacific', type, gb, days, price, vStart: 'first', hotspot: true, topup: true, countries: APAC.slice(), steps: clone(steps) });
+const SAMPLE = [mk(1, 'APAC Unlimited 3 Days', 'telco', 'unlimited', 0, 3, 9.90, DEF_U), mk(2, 'APAC Day Pass 1 GB', 'rombty', 'daypass', 1, 7, 12.50, DEF_D), mk(3, 'APAC 10 GB 30 Days', 'telco', 'fixed', 10, 30, 14.90, DEF_D)];
 
-const APAC = ['Bangladesh', 'China', 'India', 'Indonesia', 'Japan', 'Kazakhstan', 'Kyrgyzstan', 'Malaysia', 'Nepal', 'Philippines', 'Singapore', 'South Korea', 'Taiwan', 'Thailand', 'Uzbekistan'];
-const SETS = { 'Asia-Pacific (15)': APAC, 'China · Korea · Japan': ['China', 'South Korea', 'Japan'], 'Nordic Summer': ['Denmark', 'Finland', 'Iceland', 'Norway', 'Sweden'], 'Eurasia': ['Armenia', 'Azerbaijan', 'Georgia', 'Kazakhstan', 'Turkey'], 'Middle East': ['Cyprus', 'Egypt', 'Israel', 'Kuwait', 'Qatar', 'Saudi Arabia', 'UAE'] };
-const ALL = [...new Set(Object.values(SETS).flat().concat(['Australia', 'France', 'Germany', 'Hong Kong', 'Italy', 'Macau', 'Spain', 'United Kingdom', 'USA', 'Vietnam', 'Cambodia', 'Sri Lanka']))].sort();
-
-/* ================= SAMPLE PLANS (website data) ================= */
-const SAMPLE = [
-  { id: 1, name: 'APAC Unlimited 3 Days', vendor: 'telco', apn: 'plus', operator: 'Multi - Networks', region: 'Asia-Pacific', type: 'unlimited', gb: 0, days: 3, price: 9.90, vStart: 'first', hotspot: true, topup: true, countries: APAC.slice(), tiers: clone(DEFAULT_TIERS) },
-  { id: 2, name: 'APAC Day Pass 1 GB', vendor: 'rombty', apn: 'internet', operator: 'Multi - Networks', region: 'Asia-Pacific', type: 'daypass', gb: 1, days: 7, price: 12.50, vStart: 'first', hotspot: true, topup: true, countries: APAC.slice(), tiers: clone(DEFAULT_TIERS) },
-  { id: 3, name: 'APAC 10 GB 30 Days', vendor: 'telco', apn: 'plus', operator: 'Multi - Networks', region: 'Asia-Pacific', type: 'fixed', gb: 10, days: 30, price: 14.90, vStart: 'first', hotspot: true, topup: true, countries: APAC.slice(), tiers: clone(DEFAULT_TIERS) }
-];
-
-/* "website database" — kept in this browser so edits survive a refresh */
 let PLANS = load();
-function load() { try { const p = JSON.parse(localStorage.getItem('pm_plans') || 'null'); if (Array.isArray(p) && p.length) return p; } catch (e) {} return clone(SAMPLE); }
-function persist() { try { localStorage.setItem('pm_plans', JSON.stringify(PLANS)); } catch (e) {} }
+function load() { try { const p = JSON.parse(localStorage.getItem('pm_plans_v2') || 'null'); if (Array.isArray(p) && p.length) return p; } catch (e) {} return clone(SAMPLE); }
+function persist() { try { localStorage.setItem('pm_plans_v2', JSON.stringify(PLANS)); } catch (e) {} }
+let editId = PLANS[0].id, viewId = PLANS[0].id, draft = clone(PLANS[0]), flashId = null;
 
-let editId = PLANS[0].id;      // plan open in the admin
-let viewId = PLANS[0].id;      // plan open on the website
-let draft = clone(PLANS[0]);   // unsaved admin edits
-let flashId = null;
-
-/* ================= GENERATOR (same as Additional Information page) ================= */
-function dataLine(p) {
-  if (p.type === 'unlimited') return 'Unlimited High speed data';
-  if (p.type === 'daypass') return `${fmtGb(p.gb)} High speed data per day`;
-  return `${fmtGb(p.gb)} High speed data`;
+/* ---------- helpers ---------- */
+const fmtGb = gb => { gb = +gb || 0; return gb < 1 ? Math.round(gb * 1024) + ' MB' : r1(gb) + ' GB'; };
+const capOf = p => p.type === 'daypass' ? (+p.gb || 0) : null;
+function segs(p) {           // [{from,to,mbps}] ; to=null means open ended
+  const cap = capOf(p); let from = 0;
+  return p.steps.map((t, i) => { const last = i === p.steps.length - 1; const to = last ? cap : t.gb; const s = { from, to, mbps: t.mbps }; if (!last) from = t.gb; return s; });
 }
-function fmtGb(gb) { gb = +gb || 0; return gb < 1 ? Math.round(gb * 1024) + ' MB' : (Math.round(gb * 10) / 10) + ' GB'; }
-function tiersText(p) {
-  let from = 0;
-  return 'Daily speed: ' + p.tiers.map(t => { const s = `${from}–${t.upTo}% at ${t.mbps} Mbps`; from = t.upTo; return s; }).join(', ');
+function speedText(p) {
+  return 'Daily speed: ' + segs(p).map(s => s.to === null ? (s.from ? `after ${s.from} GB at ${s.mbps} Mbps` : `${s.mbps} Mbps`) : `${s.from}–${s.to} GB at ${s.mbps} Mbps`).join(', ');
 }
 function generateAdditionalInfo(p) {
-  const tpl = VENDORS[p.vendor].template;
-  const countries = [...p.countries].sort((a, b) => a.localeCompare(b));
+  const countries = [...p.countries].sort(byName);
   const vars = {
-    data: dataLine(p), speedTiers: tiersText(p),
+    data: p.type === 'unlimited' ? 'Unlimited High speed data' : p.type === 'daypass' ? `${fmtGb(p.gb)} High speed data per day` : `${fmtGb(p.gb)} High speed data`,
+    speed: speedText(p),
     network: (p.operator || '').replace(/\s*-\s*/g, ' ').replace(/^multi networks?$/i, 'Multi network') || 'Multi network',
+    breakout: p.breakout || 'Not set',
     validity: p.days + (+p.days === 1 ? ' day' : ' days'),
     validityStart: p.vStart === 'install' ? 'from eSIM installation' : 'from first network connection',
-    apn: p.apn, countries: countries.join(', '), countryCount: countries.length
+    apn: p.apn, countries: countries.map(c => `${cn(c)} (${c})`).join(', '), countryCount: countries.length
   };
-  const flags = { hotspot: p.hotspot, topup: p.topup, daypass: p.type === 'daypass' };
+  const flags = { hotspot: p.hotspot, topup: p.topup, speed: p.type !== 'fixed' };
   const sections = []; let cur = null;
-  tpl.split('\n').forEach(raw => {
+  VENDORS[p.vendor].template.split('\n').forEach(raw => {
     let line = raw.trim(); if (!line) return;
     const c = line.match(/^\[(\w+)\]\s*/); if (c) { if (!flags[c[1]]) return; line = line.slice(c[0].length); }
     const fill = l => l.replace(/\{\{(\w+)\}\}/g, (m, k) => vars[k] !== undefined ? vars[k] : m);
@@ -296,12 +217,16 @@ function generateAdditionalInfo(p) {
   return sections.map(s => (s.title ? `<p>${esc(s.title)}</p>` : '') + `<ul>${s.items.map(i => `<li>${esc(i)}</li>`).join('')}</ul>`).join('');
 }
 
-/* ================= ADMIN UI ================= */
+/* ---------- admin ---------- */
+$('breakout').innerHTML = '<option value="">Select breakout…</option>' + BREAKOUTS.map(b => `<option>${esc(b)}</option>`).join('');
+$('cPreset').innerHTML += Object.keys(SETS).map(k => `<option>${esc(k)}</option>`).join('');
+
 function fillForm() {
   const p = draft;
   $('name').value = p.name; $('vendor').value = p.vendor; $('apn').value = p.apn; $('operator').value = p.operator;
-  $('region').value = p.region; $('gb').value = p.gb; $('days').value = p.days; $('price').value = p.price; $('vStart').value = p.vStart;
-  paintSegs(); renderChips(); renderTiers(); renderAdminAI(); paintList(); paintDirty();
+  $('breakout').value = p.breakout; $('region').value = p.region; $('gb').value = p.gb; $('days').value = p.days; $('price').value = p.price; $('vStart').value = p.vStart;
+  $('breakout').classList.remove('bad');
+  paintSegs(); renderChips(); renderSteps(); renderAdminAI(); paintList(); paintDirty();
 }
 function paintSegs() {
   document.querySelectorAll('#typeSeg button').forEach(b => b.classList.toggle('on', b.dataset.t === draft.type));
@@ -309,79 +234,90 @@ function paintSegs() {
   document.querySelectorAll('#tuSeg button').forEach(b => b.classList.toggle('on', (b.dataset.v === '1') === draft.topup));
   $('gbWrap').hidden = draft.type === 'unlimited';
   $('gbLabel').textContent = draft.type === 'daypass' ? 'Data per day (GB)' : 'Data (GB)';
-  $('tiersBox').hidden = draft.type !== 'daypass';
+  $('stepsBox').hidden = draft.type === 'fixed';
   $('apnHint').textContent = `· ${VENDORS[draft.vendor].name} default: ${VENDORS[draft.vendor].apn}`;
 }
 function paintList() {
-  $('plist').innerHTML = PLANS.map(p => `<button type="button" class="pbtn ${p.id === editId ? 'on' : ''}" data-id="${p.id}">${esc(p.name)}<small>${VENDORS[p.vendor].name} · ${p.type === 'daypass' ? 'Day Pass' : p.type === 'unlimited' ? 'Unlimited' : fmtGb(p.gb)}</small></button>`).join('')
-    + `<button type="button" class="pbtn new" id="newPlan">+ New plan</button>`;
+  $('plist').innerHTML = PLANS.map(p => `<button type="button" class="pbtn ${p.id === editId ? 'on' : ''}" data-id="${p.id}">${esc(p.name)}<small>${VENDORS[p.vendor].name} · ${p.type === 'daypass' ? 'Day Pass' : p.type === 'unlimited' ? 'Unlimited' : fmtGb(p.gb)}</small></button>`).join('') + '<button type="button" class="pbtn new" id="newPlan">+ New plan</button>';
   $('plist').querySelectorAll('.pbtn[data-id]').forEach(b => b.onclick = () => openPlan(+b.dataset.id));
-  $('newPlan').onclick = () => {
-    const id = Math.max(...PLANS.map(p => p.id)) + 1;
-    PLANS.push({ ...clone(SAMPLE[0]), id, name: 'New plan', countries: [] }); persist(); openPlan(id); renderSite();
-  };
+  $('newPlan').onclick = () => { const id = Math.max(...PLANS.map(p => p.id)) + 1; PLANS.push({ ...clone(SAMPLE[0]), id, name: 'New plan', breakout: '', countries: [] }); persist(); openPlan(id); renderSite(); };
 }
 function openPlan(id) { editId = id; viewId = id; draft = clone(PLANS.find(p => p.id === id)); fillForm(); if ($('cards').childElementCount) renderSite(); }
+
 function renderChips() {
-  $('chips').innerHTML = draft.countries.length ? [...draft.countries].sort().map(c => `<span class="chip">${esc(c)}<button type="button" aria-label="Remove ${esc(c)}" data-c="${esc(c)}">×</button></span>`).join('') : '<span style="color:var(--muted);font-size:12px">No countries</span>';
-  $('chips').querySelectorAll('button').forEach(b => b.onclick = () => { draft.countries = draft.countries.filter(c => c !== b.dataset.c); changed(); renderChips(); });
+  $('chips').innerHTML = draft.countries.length ? [...draft.countries].sort(byName).map(c => `<span class="chip">${esc(cn(c))}<b>${esc(c)}</b><button type="button" aria-label="Remove ${esc(cn(c))}" data-c="${c}">×</button></span>`).join('') : '<span style="color:var(--muted);font-size:12px">No countries</span>';
+  $('chips').querySelectorAll('button').forEach(b => b.onclick = () => { draft.countries = draft.countries.filter(c => c !== b.dataset.c); renderChips(); changed(); });
+  $('cSel').innerHTML = '<option value="">Select a country…</option>' + ALLC.filter(c => !draft.countries.includes(c)).sort(byName).map(c => `<option value="${c}">${esc(cn(c))} (${c})</option>`).join('');
 }
-function renderTiers() {
-  let from = 0;
-  $('tierRows').innerHTML = draft.tiers.map((t, i) => {
-    const row = `<div class="trow"><span class="sw" style="background:${TIER_COLORS[i]}"></span><span>${from}% to</span>
-      <input type="number" min="1" max="100" value="${t.upTo}" data-i="${i}" data-k="upTo" aria-label="Step ${i + 1} up to percent" ${i === draft.tiers.length - 1 ? 'readonly' : ''}>
-      <span>% → speed</span><span style="display:flex;gap:4px;align-items:center"><input type="number" min="0.1" step="0.1" value="${t.mbps}" data-i="${i}" data-k="mbps" aria-label="Step ${i + 1} Mbps" style="width:60px"> Mbps</span></div>`;
-    from = t.upTo; return row;
+function renderSteps() {
+  const p = draft, n = p.steps.length, cap = capOf(p); let from = 0;
+  $('stepHint').textContent = p.type === 'daypass' ? '(GB used per day → Mbps, up to the daily limit)' : '(GB used per day → Mbps, then the rest of the day)';
+  $('stepRows').innerHTML = p.steps.map((t, i) => {
+    const last = i === n - 1;
+    const lead = last ? (cap === null ? `After ${from} GB →` : `${from} GB to daily limit <b>${cap} GB</b> →`) : `${from} GB up to`;
+    const mid = last ? '' : `<input type="number" min="0.1" step="0.1" value="${t.gb}" data-i="${i}" data-k="gb" aria-label="Step ${i + 1} up to GB"> GB →`;
+    const row = `<div class="srow"><span class="sw" style="background:${col(i, n)}"></span><span>${lead}</span>${mid}<input type="number" min="0.1" step="0.1" value="${t.mbps}" data-i="${i}" data-k="mbps" aria-label="Step ${i + 1} Mbps"> Mbps${last || n < 2 ? '' : `<button type="button" class="x" data-r="${i}" aria-label="Remove step ${i + 1}">×</button>`}</div>`;
+    if (!last) from = t.gb; return row;
   }).join('');
-  $('tierRows').querySelectorAll('input').forEach(inp => inp.onchange = () => {
-    const i = +inp.dataset.i, k = inp.dataset.k;
-    let v = +inp.value;
-    if (k === 'upTo') { const lo = i ? draft.tiers[i - 1].upTo + 1 : 1, hi = draft.tiers[i + 1].upTo - 1; v = Math.min(hi, Math.max(lo, Math.round(v) || lo)); }
-    else v = Math.max(0.1, v || 0.1);
-    draft.tiers[i][k] = v; renderTiers(); changed();
+  $('stepRows').querySelectorAll('input').forEach(inp => inp.onchange = () => {
+    const i = +inp.dataset.i, k = inp.dataset.k; let v = +inp.value;
+    if (k === 'gb') {
+      const lo = (i ? draft.steps[i - 1].gb : 0) + 0.1;
+      const hi = i + 1 < n - 1 ? draft.steps[i + 1].gb - 0.1 : (cap !== null ? cap - 0.1 : Infinity);
+      v = r1(Math.min(Math.max(hi, lo), Math.max(lo, v || lo)));
+    } else v = Math.max(0.1, v || 0.1);
+    draft.steps[i][k] = v; renderSteps(); changed();
   });
+  $('stepRows').querySelectorAll('[data-r]').forEach(b => b.onclick = () => { draft.steps.splice(+b.dataset.r, 1); renderSteps(); changed(); });
 }
-function renderAdminAI() { $('aiAdmin').innerHTML = generateAdditionalInfo(draft); }
-function isDirty() { return JSON.stringify(draft) !== JSON.stringify(PLANS.find(p => p.id === editId)); }
-function paintDirty() { $('dirty').innerHTML = isDirty() ? '<span class="dirty">● Unsaved. The website still shows the old version.</span>' : '<span class="saved">✓ Website is up to date</span>'; }
+const renderAdminAI = () => $('aiAdmin').innerHTML = generateAdditionalInfo(draft);
+const isDirty = () => JSON.stringify(draft) !== JSON.stringify(PLANS.find(p => p.id === editId));
+const paintDirty = () => $('dirty').innerHTML = isDirty() ? '<span class="dirty">● Unsaved. The website still shows the old version.</span>' : '<span class="saved">✓ Website is up to date</span>';
 function changed() { renderAdminAI(); paintDirty(); }
 
-// inputs
-const bind = (id, key, num) => $(id).addEventListener('input', () => { draft[key] = num ? +$(id).value : $(id).value; changed(); });
+const bind = (id, key, num) => $(id).addEventListener('input', () => { draft[key] = num ? +$(id).value : $(id).value; if (id === 'gb') renderSteps(); changed(); });
 bind('name', 'name'); bind('apn', 'apn'); bind('operator', 'operator'); bind('gb', 'gb', true); bind('days', 'days', true); bind('price', 'price', true);
 $('region').onchange = () => { draft.region = $('region').value; changed(); };
 $('vStart').onchange = () => { draft.vStart = $('vStart').value; changed(); };
+$('breakout').onchange = () => { draft.breakout = $('breakout').value; $('breakout').classList.toggle('bad', !draft.breakout); changed(); };
 $('vendor').onchange = () => {
-  const prevDefault = VENDORS[draft.vendor].apn;
-  draft.vendor = $('vendor').value;
-  // switch the APN to the new vendor's default unless someone typed a custom one
-  if (!draft.apn || draft.apn === prevDefault) { draft.apn = VENDORS[draft.vendor].apn; $('apn').value = draft.apn; }
+  const prev = VENDORS[draft.vendor].apn; draft.vendor = $('vendor').value;
+  if (!draft.apn || draft.apn === prev) { draft.apn = VENDORS[draft.vendor].apn; $('apn').value = draft.apn; }
   paintSegs(); changed();
 };
-document.querySelectorAll('#typeSeg button').forEach(b => b.onclick = () => { draft.type = b.dataset.t; if (draft.type !== 'unlimited' && !draft.gb) { draft.gb = 1; $('gb').value = 1; } paintSegs(); changed(); });
+document.querySelectorAll('#typeSeg button').forEach(b => b.onclick = () => {
+  const old = draft.type; draft.type = b.dataset.t;
+  if (draft.type !== 'unlimited' && !draft.gb) { draft.gb = 1; $('gb').value = 1; }
+  if (draft.type !== 'fixed' && draft.type !== old) draft.steps = clone(draft.type === 'unlimited' ? DEF_U : DEF_D);
+  paintSegs(); renderSteps(); changed();
+});
 document.querySelectorAll('#hsSeg button').forEach(b => b.onclick = () => { draft.hotspot = b.dataset.v === '1'; paintSegs(); changed(); });
 document.querySelectorAll('#tuSeg button').forEach(b => b.onclick = () => { draft.topup = b.dataset.v === '1'; paintSegs(); changed(); });
-$('tierReset').onclick = () => { draft.tiers = clone(DEFAULT_TIERS); renderTiers(); changed(); };
+$('stepReset').onclick = () => { draft.steps = clone(draft.type === 'unlimited' ? DEF_U : DEF_D); renderSteps(); changed(); };
+$('stepAdd').onclick = () => {
+  const n = draft.steps.length, prev = n > 1 ? draft.steps[n - 2].gb : 0, cap = capOf(draft);
+  const gb = cap !== null ? r1((prev + cap) / 2) : r1(prev + 1);
+  draft.steps.splice(n - 1, 0, { gb: Math.max(gb, r1(prev + 0.1)), mbps: draft.steps[n - 1].mbps });
+  renderSteps(); changed();
+};
+$('cAdd').onclick = () => { const v = $('cSel').value; if (v && !draft.countries.includes(v)) { draft.countries.push(v); renderChips(); changed(); } };
+$('cSel').onchange = () => { if ($('cSel').value) $('cAdd').click(); };
+$('cPreset').onchange = () => { const v = $('cPreset').value; if (v) { draft.countries = SETS[v].slice(); $('cPreset').value = ''; renderChips(); changed(); } };
 
-// countries
-$('cList').innerHTML = ALL.map(c => `<option value="${esc(c)}">`).join('');
-$('cPreset').innerHTML += Object.keys(SETS).map(k => `<option>${esc(k)}</option>`).join('');
-const addC = t => { t.split(/[,\n;]+/).map(x => x.trim()).filter(Boolean).forEach(c => { const m = ALL.find(a => a.toLowerCase() === c.toLowerCase()) || c; if (!draft.countries.some(x => x.toLowerCase() === m.toLowerCase())) draft.countries.push(m); }); renderChips(); changed(); };
-$('cInput').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addC($('cInput').value); $('cInput').value = ''; } });
-$('cInput').addEventListener('change', () => { if (ALL.includes($('cInput').value)) { addC($('cInput').value); $('cInput').value = ''; } });
-$('cInput').addEventListener('paste', e => { const t = e.clipboardData.getData('text'); if (/[,\n]/.test(t)) { e.preventDefault(); addC(t); } });
-$('cPreset').onchange = () => { if ($('cPreset').value) { draft.countries = SETS[$('cPreset').value].slice(); $('cPreset').value = ''; renderChips(); changed(); } };
-
-// actions
+function validate(p) {
+  if (!p.name.trim()) return 'Plan name is required';
+  if (!p.breakout) { $('breakout').classList.add('bad'); $('breakout').focus(); return 'Select the internet breakout (required)'; }
+  if (!p.countries.length) return 'Add at least one country';
+  if (p.type === 'fixed') return '';
+  if (p.type === 'daypass' && !(p.gb > 0)) return 'Enter the daily data (GB)';
+  let prev = 0;
+  for (const t of p.steps.slice(0, -1)) { if (!(t.gb > prev) || (p.type === 'daypass' && t.gb >= p.gb)) return 'Speed step GB must increase and stay below the daily limit'; prev = t.gb; }
+  return '';
+}
 $('save').onclick = () => {
-  if (!draft.name.trim()) { toast('Plan name is required'); return; }
-  if (!draft.countries.length) { toast('Add at least one country'); return; }
-  const i = PLANS.findIndex(p => p.id === editId);
-  PLANS[i] = clone(draft); persist();
-  viewId = editId; flashId = editId;
-  paintList(); paintDirty(); renderSite();
-  toast('Saved. The website now shows the update');
+  const err = validate(draft); if (err) { toast(err); return; }
+  PLANS[PLANS.findIndex(p => p.id === editId)] = clone(draft); persist();
+  viewId = editId; flashId = editId; paintList(); paintDirty(); renderSite(); toast('Saved. The website now shows the update');
 };
 $('dup').onclick = () => { const id = Math.max(...PLANS.map(p => p.id)) + 1; PLANS.push({ ...clone(draft), id, name: draft.name + ' (copy)' }); persist(); openPlan(id); renderSite(); };
 $('del').onclick = () => {
@@ -391,67 +327,44 @@ $('del').onclick = () => {
   openPlan(PLANS[0].id); renderSite(); toast('Plan deleted');
 };
 
-/* ================= WEBSITE ================= */
-function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+/* ---------- website ---------- */
+const slug = s => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 function renderSite() {
   const region = (PLANS.find(p => p.id === viewId) || PLANS[0]).region;
-  $('sTitle').textContent = `${region} eSIM`;
-  $('sSub').textContent = `${PLANS.length} plans`;
+  $('sTitle').textContent = `${region} eSIM`; $('sSub').textContent = `${PLANS.length} plans`;
   $('cards').innerHTML = PLANS.map(p => {
     const big = p.type === 'unlimited' ? 'Unlimited' : fmtGb(p.gb).replace(/ (GB|MB)/, '<small> $1</small>');
     return `<button type="button" class="pc ${p.id === viewId ? 'sel' : ''} ${p.id === flashId ? 'flash' : ''}" data-id="${p.id}">
-      <span class="pill">@ ${esc((p.operator || 'Multi - Networks').toUpperCase())}</span>
-      <span class="nm">${esc(p.name)}</span>
+      <span class="pill">@ ${esc((p.operator || 'Multi - Networks').toUpperCase())}</span><span class="nm">${esc(p.name)}</span>
       <span class="gb">${big}${p.type === 'daypass' ? '<small> / day</small>' : ''}</span>
-      <span class="days">${p.days} ${+p.days === 1 ? 'day' : 'days'}</span>
-      ${p.type === 'daypass' ? '<span class="dp">DAY PASS · speed steps</span>' : ''}
-      <span class="price">$ ${(+p.price).toFixed(2)}<small>USD</small></span>
-      <span class="vd">View Details ↗</span></button>`;
+      <span>${p.days} ${+p.days === 1 ? 'day' : 'days'}</span>
+      ${p.type !== 'fixed' ? `<span class="dp">${p.type === 'daypass' ? 'DAY PASS' : 'UNLIMITED'} · speed steps</span>` : ''}
+      <span class="price">$ ${(+p.price).toFixed(2)}<small>USD</small></span><span class="vd">View Details ↗</span></button>`;
   }).join('');
   $('cards').querySelectorAll('.pc').forEach(c => c.onclick = () => { viewId = +c.dataset.id; flashId = null; renderSite(); });
-  flashId = null;
-  renderDetail();
+  flashId = null; renderDetail();
 }
 function renderDetail() {
   const p = PLANS.find(x => x.id === viewId) || PLANS[0];
   $('url').textContent = `yourstore.com/esim/${slug(p.region)}/${slug(p.name)}`;
-  const facts = [
-    ['Data', p.type === 'unlimited' ? 'Unlimited' : fmtGb(p.gb) + (p.type === 'daypass' ? ' per day' : '')],
-    ['Validity', `${p.days} ${+p.days === 1 ? 'day' : 'days'}`],
-    ['Network', (p.operator || '').replace(/\s*-\s*/g, ' ')],
-    ['APN', p.apn],
-    ['Countries', p.countries.length]
-  ];
+  const facts = [['Data', p.type === 'unlimited' ? 'Unlimited' : fmtGb(p.gb) + (p.type === 'daypass' ? ' per day' : '')], ['Validity', `${p.days} ${+p.days === 1 ? 'day' : 'days'}`], ['Network', (p.operator || '').replace(/\s*-\s*/g, ' ')], ['Internet breakout', p.breakout || '—'], ['APN', p.apn], ['Countries', p.countries.length]];
   let speedHtml = '';
-  if (p.type === 'daypass') {
-    let from = 0;
-    const segs = p.tiers.map((t, i) => { const w = t.upTo - from; const h = `<div style="width:${w}%;background:${TIER_COLORS[i]}">${t.mbps} Mbps</div>`; from = t.upTo; return h; }).join('');
-    const ticks = [0, ...p.tiers.map(t => t.upTo)].map(v => `<span style="left:${v}%">${v}%</span>`).join('');
-    from = 0;
-    const daily = (+p.gb || 0) * 1024;
-    const legend = p.tiers.map((t, i) => {
-      const mbFrom = Math.round(daily * from / 100), mbTo = Math.round(daily * t.upTo / 100);
-      const out = `<div style="border-left:4px solid ${TIER_COLORS[i]}"><b>${t.mbps} Mbps</b>${from}–${t.upTo}% of daily data<br><span style="color:var(--muted)">${fmtMb(mbFrom)} – ${fmtMb(mbTo)} each day</span></div>`;
-      from = t.upTo; return out;
-    }).join('');
-    speedHtml = `<div class="speed"><h4>Your daily speed</h4>
-      <span class="note">You get ${fmtGb(p.gb)} every day. Speed steps down as you use it, and full speed comes back the next day.</span>
-      <div class="sbar" role="img" aria-label="${esc(tiersText(p))}">${segs}</div><div class="sticks">${ticks}</div>
-      <div class="slegend">${legend}</div></div>`;
+  if (p.type !== 'fixed') {
+    const sg = segs(p), n = sg.length, cap = capOf(p), lf = sg[n - 1].from;
+    const total = cap !== null ? cap : lf + Math.max(lf * 0.5, 1);
+    const bar = sg.map((s, i) => `<div style="width:${((s.to === null ? total : s.to) - s.from) / total * 100}%;background:${col(i, n)}">${s.mbps} Mbps</div>`).join('');
+    const ticks = [...sg.map(s => [s.from, s.from + ' GB']), [total, cap !== null ? cap + ' GB' : '∞']].map(([v, l]) => `<span style="left:${v / total * 100}%">${l}</span>`).join('');
+    const legend = sg.map((s, i) => `<div style="border-left:4px solid ${col(i, n)}"><b>${s.mbps} Mbps</b>${s.to === null ? (s.from ? `After ${s.from} GB` : 'All day') : `${s.from}–${s.to} GB`} each day</div>`).join('');
+    speedHtml = `<div class="speed"><h4>Your daily speed</h4><span class="note">${p.type === 'daypass' ? `You get ${fmtGb(p.gb)} every day.` : 'Unlimited data.'} Speed steps down as you use data each day.</span>
+      <div class="sbar" role="img" aria-label="${esc(speedText(p))}">${bar}</div><div class="sticks">${ticks}</div><div class="slegend">${legend}</div></div>`;
   }
-  $('detail').innerHTML = `
-    <div class="dhead"><div><h3>${esc(p.name)}</h3><div class="meta">${esc(p.region)} · ${p.countries.length} countries</div></div>
-      <div><div class="pr">$ ${(+p.price).toFixed(2)} <small>USD</small></div><button type="button" class="buy">Buy now</button></div></div>
-    <div class="facts">${facts.map(f => `<span class="fact">${f[0]}: <b>${esc(f[1])}</b></span>`).join('')}</div>
-    ${speedHtml}
-    <div class="info">${generateAdditionalInfo(p)}</div>`;
+  $('detail').innerHTML = `<div class="dhead"><div><h3>${esc(p.name)}</h3><div class="meta">${esc(p.region)} · ${p.countries.length} countries</div></div>
+    <div><div class="pr">$ ${(+p.price).toFixed(2)} <small>USD</small></div><button type="button" class="buy">Buy now</button></div></div>
+    <div class="facts">${facts.map(f => `<span class="fact">${f[0]}: <b>${esc(f[1])}</b></span>`).join('')}</div>${speedHtml}<div class="info">${generateAdditionalInfo(p)}</div>`;
 }
-function fmtMb(mb) { return mb >= 1024 ? (Math.round(mb / 102.4) / 10) + ' GB' : mb + ' MB'; }
+function toast(m) { let t = document.querySelector('.toast'); if (!t) { t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); } t.textContent = m; t.hidden = false; clearTimeout(t._h); t._h = setTimeout(() => t.hidden = true, 2200); }
 
-function toast(m) { let t = document.querySelector('.toast'); if (!t) { t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); } t.textContent = m; t.hidden = false; clearTimeout(t._h); t._h = setTimeout(() => t.hidden = true, 2000); }
-
-fillForm();
-renderSite();
+fillForm(); renderSite();
 })();
 </script>
 </body>
