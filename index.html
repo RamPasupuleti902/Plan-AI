@@ -278,12 +278,16 @@ const catCountries = v => Object.keys(CATALOG[v] || {}).sort(byName);
 const opNames = (vendor, cc) => ((CATALOG[vendor] || {})[cc] || []).map(n => n.name);
 const mkCov = (vendor, code) => ({ code, networks: (((CATALOG[vendor] || {})[code]) || []).map(n => ({ name: n.name, types: [...n.types] })) });
 function loadRegCat() {
-  try { const c = JSON.parse(localStorage.getItem('pm_regcat_v1') || 'null'); if (c && c.telco && c.rombty) return c; } catch (e) {}
-  return { telco: clone(REGION_SETS), rombty: clone(REGION_SETS) };
+  let c = null;
+  try { c = JSON.parse(localStorage.getItem('pm_regcat_v1') || 'null'); } catch (e) {}
+  if (!c || typeof c !== 'object') c = {};
+  /* fill in any vendor / region that is missing or empty with the default countries */
+  ['telco', 'rombty'].forEach(v => { c[v] = c[v] || {}; Object.keys(REGION_SETS).forEach(r => { if (!Array.isArray(c[v][r]) || !c[v][r].length) c[v][r] = clone(REGION_SETS[r]); }); });
+  return c;
 }
 let REGCAT = loadRegCat();
 function persistRegCat() { try { localStorage.setItem('pm_regcat_v1', JSON.stringify(REGCAT)); } catch (e) {} }
-const regionSet = (r, vendor) => r === 'Global' ? catCountries(vendor) : ((REGCAT[vendor] || {})[r] || []);
+const regionSet = (r, vendor) => { if (r === 'Global') return catCountries(vendor); const l = (REGCAT[vendor] || {})[r]; return Array.isArray(l) && l.length ? l : (REGION_SETS[r] || []); };
 
 const VENDORS = {
   telco: { name: 'Telco Vision', apn: 'plus', template: `# Package Details:
@@ -512,8 +516,9 @@ $('capReset').onclick = () => { draft.capAuto = true; changed(); };
 [['vIn', 'voiceIn'], ['vOut', 'voiceOut'], ['sIn', 'smsIn'], ['sOut', 'smsOut']].forEach(([id, k]) => $(id).addEventListener('change', () => { draft[k] = $(id).checked; changed(); }));
 
 const applyRegion = () => { draft.coverages = regionSet(draft.region, draft.vendor).map(c => mkCov(draft.vendor, c)); };
-$('region').onchange = () => { draft.region = $('region').value; if (draft.scope === 'region') applyRegion(); paintSegs(); renderCov(); changed(); };
+$('region').onchange = () => { $('region').classList.remove('bad'); draft.region = $('region').value; if (draft.scope === 'region') applyRegion(); paintSegs(); renderCov(); changed(); };
 document.querySelectorAll('#scopeSeg button').forEach(b => b.onclick = () => {
+  if (b.dataset.s === 'region' && !draft.region) { $('region').classList.add('bad'); $('region').focus(); toast('Select a region first, then the countries are mapped'); return; }
   draft.scope = b.dataset.s;
   if (draft.scope === 'region') applyRegion(); else draft.coverages = draft.coverages.slice(0, 1);
   paintSegs(); renderCov(); changed();
