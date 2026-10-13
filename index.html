@@ -107,6 +107,12 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
 .slegend{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}
 .slegend div{border-radius:10px;padding:8px 10px;background:#f7f8fb;font-size:13px}.slegend b{display:block;font-size:17px}
 .apibox{border:1px solid var(--line);border-radius:10px;background:#fff}.apibox summary{cursor:pointer;padding:8px 12px;font-weight:600}
+.flg{width:22px;height:16px;object-fit:cover;border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.14);vertical-align:-3px;font-size:10px}
+.cflags{display:flex;flex-wrap:wrap;gap:8px}
+.cflag{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 12px 6px 7px;font-size:13px}
+.cflag .flg{width:30px;height:21px}
+.cstrip{display:flex;align-items:center;gap:4px;margin:2px 0}.cstrip small{color:var(--muted);font-size:12px}
+.covh .flg{margin-right:-2px}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 14px;border-radius:8px;z-index:9}
 </style>
 </head>
@@ -123,7 +129,7 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
       <div class="f"><label for="apn">APN <em id="apnHint"></em></label><input id="apn"></div>
       <div class="f full"><label for="link">Plan link <em>(link)</em> <span class="req">*</span></label><input id="link" type="url" placeholder="https://example.com/plans/usa-10gb"></div>
 
-      <div class="f full"><label for="bkSel">Internet breakout country code <em>(internetBreakouts)</em> <span class="req">*</span></label>
+      <div class="f full"><label for="bkSel">Internet breakout country code <em>(internetBreakouts)</em> <span class="req" id="bkReq">*</span></label>
         <div class="cpick"><select id="bkSel"></select></div>
         <div class="chips" id="bkChips"></div></div>
 
@@ -209,6 +215,8 @@ const ALLC = ('AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG
 let DN = null; try { DN = new Intl.DisplayNames(['en'], { type: 'region' }); } catch (e) {}
 const NAMES = {}; ALLC.forEach(c => { let n = c; try { n = (DN && DN.of(c)) || c; } catch (e) {} NAMES[c] = n; });
 const cn = c => NAMES[c] || c;
+/* country flag image (needs internet); falls back to the country code text if it cannot load */
+const flag = c => `<img class="flg" src="https://flagcdn.com/w40/${String(c).toLowerCase()}.png" alt="${esc(cn(c))} flag" loading="lazy" onerror="this.replaceWith(document.createTextNode('${c} '))">`;
 const byName = (a, b) => cn(a).localeCompare(cn(b));
 const SORTED = ALLC.slice().sort(byName);
 /* phone dialing code per country (telephony.dialingCode) */
@@ -283,7 +291,7 @@ const VENDORS = {
 [voice]- {{voice}}
 [speed]- {{speed}}
 - Operates on {{network}}
-- Internet breakout - {{breakout}}
+[breakout]- Internet breakout - {{breakout}}
 [hotspot]- Hotspot supports
 - Validity starts {{validityStart}}
 [topup]- Top up available
@@ -297,7 +305,7 @@ const VENDORS = {
 [voice]- {{voice}}
 [speed]- {{speed}}
 - Network: {{network}}
-- Internet breakout: {{breakout}}
+[breakout]- Internet breakout: {{breakout}}
 - Valid for {{validity}}, starting {{validityStart}}
 [hotspot]- Hotspot / tethering allowed
 [topup]- Top up anytime from your account
@@ -360,12 +368,12 @@ function generateAdditionalInfo(p) {
     voice: telText(p),
     speed: hasThrottle(p) ? (p.capInfo || '').trim() : '',
     network: netNames(p).join(', ') || 'Multi network',
-    breakout: p.breakouts.length ? p.breakouts.map(c => `${cn(c)} (${c})`).join(', ') : 'Not set',
+    breakout: p.breakouts.map(cn).join(', '),
     validity: p.days + (+p.days === 1 ? ' day' : ' days'),
     validityStart: p.vStart === 'install' ? 'from eSIM installation' : 'from first network connection',
-    apn: p.apn, countries: codes.map(c => `${cn(c)} (${c})`).join(', '), countryCount: codes.length
+    apn: p.apn, countries: codes.map(cn).join(', '), countryCount: codes.length
   };
-  const flags = { hotspot: p.hotspot, topup: p.topup, speed: !!vars.speed, voice: p.planType === 'data-voice' };
+  const flags = { breakout: p.breakouts.length > 0, hotspot: p.hotspot, topup: p.topup, speed: !!vars.speed, voice: p.planType === 'data-voice' };
   const sections = []; let cur = null;
   VENDORS[p.vendor].template.split('\n').forEach(raw => {
     let line = raw.trim(); if (!line) return;
@@ -433,6 +441,7 @@ function paintSegs() {
   $('thrWrap').hidden = draft.type !== 'unlimited';
   $('gbWrap').hidden = unlOpen(draft);
   $('rsBox').hidden = !hasThrottle(draft);
+  $('bkReq').hidden = draft.type === 'fixed';
   $('gbLabel').innerHTML = draft.type === 'daypass' ? 'Daily data cap (GB) <em>(dataCap)</em>' : draft.type === 'unlimited' ? 'Full-speed data per day before throttle (GB) <em>(dataCap)</em>' : 'Data (GB) <em>(dataCap)</em>';
   $('telWrap').hidden = $('telChecks').hidden = draft.planType !== 'data-voice';
   $('apnHint').textContent = `· ${VENDORS[draft.vendor].name} default: ${VENDORS[draft.vendor].apn}`;
@@ -462,7 +471,7 @@ function renderCov() {
   $('covList').innerHTML = draft.coverages.length ? draft.coverages.map((cv, ci) => {
     const known = opNames(draft.vendor, cv.code).filter(n => !cv.networks.some(x => x.name === n));
     const nets = cv.networks.length ? cv.networks.map((n, ni) => `<span class="net"><b>${esc(n.name)}</b>${TYPES.map(t => `<button type="button" class="ty ${n.types.includes(t) ? 'on' : ''}" data-act="ty" data-ci="${ci}" data-ni="${ni}" data-t="${t}">${t}</button>`).join('')}<button type="button" class="x" data-act="rn" data-ci="${ci}" data-ni="${ni}" aria-label="Remove ${esc(n.name)}">×</button></span>`).join('') : `<span class="empty">${opNames(draft.vendor, cv.code).length ? 'No operators selected.' : `No known ${VENDORS[draft.vendor].name} operators for ${esc(cn(cv.code))}. Add one manually or in the Vendor catalog.`}</span>`;
-    return `<div class="cov"><div class="covh"><b>${esc(cn(cv.code))}</b><span class="code">${esc(cv.code)}</span><button type="button" class="x" data-act="rc" data-ci="${ci}" aria-label="Remove ${esc(cn(cv.code))}">×</button></div>
+    return `<div class="cov"><div class="covh">${flag(cv.code)}<b>${esc(cn(cv.code))}</b><span class="code">${esc(cv.code)}</span><button type="button" class="x" data-act="rc" data-ci="${ci}" aria-label="Remove ${esc(cn(cv.code))}">×</button></div>
       <div class="nets">${nets}</div>
       <div class="addop" data-ci="${ci}"><select aria-label="Known operators">${'<option value="">Add known operator…</option>' + known.map(n => `<option>${esc(n)}</option>`).join('')}</select><input placeholder="or type an operator" aria-label="Operator name"><button type="button" class="btn ghost" data-act="ao" data-ci="${ci}">+ Add</button></div></div>`;
   }).join('') : '<div class="empty">No countries yet. Pick a country above (or a region) and its networks are added automatically.</div>';
@@ -545,7 +554,7 @@ function validate(p) {
   if (p.scope === 'region' && !p.region) return 'Select a region for this plan';
   if (!p.name.trim()) return 'Plan name is required';
   if (!/^https?:\/\/\S+$/i.test((p.link || '').trim())) { $('link').classList.add('bad'); $('link').focus(); return 'Enter the plan link (a full https:// URL)'; }
-  if (!p.breakouts.length) { $('bkSel').classList.add('bad'); $('bkSel').focus(); return 'Add at least one internet breakout country (required)'; }
+  if (!p.breakouts.length && p.type !== 'fixed') { $('bkSel').classList.add('bad'); $('bkSel').focus(); return 'Add at least one internet breakout country (required)'; }
   if (!p.coverages.length) { $('cSel').focus(); return 'Pick a country (or a region) for the coverage'; }
   for (const cv of p.coverages) {
     if (!cv.networks.length) return `Add at least one operator for ${cn(cv.code)}`;
@@ -586,6 +595,7 @@ function renderSite() {
       <span class="pill">@ ${esc(opLabel(p).toUpperCase())}</span><span class="nm">${esc(p.name)}</span>
       <span class="gb">${big}${p.type === 'daypass' ? '<small> / day</small>' : ''}</span>
       <span>${p.days} ${+p.days === 1 ? 'day' : 'days'}</span>
+      ${p.coverages.length ? `<span class="cstrip">${p.coverages.slice(0, 5).map(cv => flag(cv.code)).join('')}${p.coverages.length > 5 ? `<small>+${p.coverages.length - 5}</small>` : ''}</span>` : ''}
       ${p.planType === 'data-voice' ? '<span class="vc">DATA + VOICE</span>' : ''}
       ${badge ? `<span class="dp">${esc(badge)}</span>` : ''}
       <span class="price">$ ${(+p.price).toFixed(2)}<small>USD</small></span><span class="vd">View Details ↗</span></button>`;
@@ -599,7 +609,9 @@ function renderDetail() {
   const dataFact = unlOpen(p) ? 'Unlimited' : p.type === 'unlimited' ? `Unlimited (${fmtGb(p.gb)}/day full speed)` : fmtGb(p.gb) + (p.type === 'daypass' ? ' per day' : '');
   const facts = [['Plan type', ptLabel(p)], ['Data', dataFact]];
   if (p.planType === 'data-voice') facts.push(['Number', p.telCountry ? `${cn(p.telCountry)} +${DIAL[p.telCountry]}` : '—'], ['Calls', [p.voiceIn && 'in', p.voiceOut && 'out'].filter(Boolean).join(' / ') || 'none'], ['SMS', [p.smsIn && 'in', p.smsOut && 'out'].filter(Boolean).join(' / ') || 'none']);
-  facts.push(['Validity', `${p.days} ${+p.days === 1 ? 'day' : 'days'}`], ['Networks', netNames(p).join(', ') || '—'], ['Internet breakout', p.breakouts.length ? p.breakouts.join(', ') : '—'], ['Countries', p.coverages.length]);
+  facts.push(['Validity', `${p.days} ${+p.days === 1 ? 'day' : 'days'}`], ['Networks', netNames(p).join(', ') || '—']);
+  if (p.breakouts.length) facts.push(['Internet breakout', p.breakouts.map(cn).join(', ')]);
+  facts.push(['Countries', p.coverages.length]);
   let speedHtml = '';
   if (hasThrottle(p)) {
     const rs = p.reducedSpeed > 0, per = p.type === 'fixed' ? '' : ' / day';
@@ -609,7 +621,7 @@ function renderDetail() {
   }
   $('detail').innerHTML = `<div class="dhead"><div><h3>${esc(p.name)}</h3><div class="meta">${esc(p.region || 'Any region')} · ${p.coverages.length} ${p.coverages.length === 1 ? 'country' : 'countries'}</div></div>
     <div><div class="pr">$ ${(+p.price).toFixed(2)} <small>USD</small></div><button type="button" class="buy">Buy now</button></div></div>
-    <div class="facts">${facts.map(f => `<span class="fact">${f[0]}: <b>${esc(f[1])}</b></span>`).join('')}</div>${speedHtml}<div class="info">${generateAdditionalInfo(p)}</div>
+    <div class="facts">${facts.map(f => `<span class="fact">${f[0]}: <b>${esc(f[1])}</b></span>`).join('')}</div>${speedHtml}${p.coverages.length ? `<div class="info"><p>Countries covered</p><div class="cflags">${p.coverages.map(cv => `<span class="cflag">${flag(cv.code)}${esc(cn(cv.code))}</span>`).join('')}</div></div>` : ''}<div class="info">${generateAdditionalInfo(p)}</div>
     <details class="apibox"><summary>JSON output for this plan</summary><pre class="json">${esc(apiJson([p]))}</pre></details>`;
 }
 function toast(m) { let t = document.querySelector('.toast'); if (!t) { t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); } t.textContent = m; t.hidden = false; clearTimeout(t._h); t._h = setTimeout(() => t.hidden = true, 2600); }
