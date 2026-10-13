@@ -13,8 +13,11 @@ button,input,select{font:inherit;color:inherit}button{cursor:pointer}
 :focus-visible{outline:2px solid var(--blue);outline-offset:1px}[hidden]{display:none!important}
 .top{padding:12px 16px;background:linear-gradient(90deg,#1b2559,#3d2a80);display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 .top h1{font-size:15px;margin:0;color:#fff}.top span{color:#c9d0f5;font-size:12px}
-.layout{display:grid;grid-template-columns:minmax(0,620px) minmax(0,1fr);gap:16px;padding:16px;max-width:1700px;margin:0 auto;align-items:start}
+.tabs{display:flex;gap:6px}.tab{border:1px solid rgba(255,255,255,.35);background:transparent;color:#c9d0f5;border-radius:6px;padding:5px 14px;font-size:12.5px}
+.tab.on{background:#fff;color:#1b2559;font-weight:600}
+.layout{display:grid;grid-template-columns:minmax(0,640px) minmax(0,1fr);gap:16px;padding:16px;max-width:1700px;margin:0 auto;align-items:start}
 @media(max-width:1150px){.layout{grid-template-columns:minmax(0,1fr)}}
+.catwrap{padding:16px;max-width:860px;margin:0 auto}
 .pt{font:600 11px var(--fa);letter-spacing:.08em;text-transform:uppercase;color:#5a4f8f;margin:0 0 8px}
 .admin{background:#fff8f6;border:1px solid #f5d3d0;border-top:4px solid var(--red);border-radius:8px;padding:14px;display:grid;gap:12px;box-shadow:0 4px 14px rgba(227,33,43,.08)}
 .plist{display:flex;gap:6px;flex-wrap:wrap}
@@ -32,16 +35,17 @@ input,select{border:1px solid var(--line);border-radius:4px;padding:7px 9px;back
 .seg{display:flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
 .seg button{flex:1;border:0;background:#fff;padding:7px 6px;font-size:12px;border-right:1px solid var(--line)}
 .seg button:last-child{border:0}.seg button.on{background:var(--rs);color:var(--red);font-weight:600}
+.checks{display:flex;flex-wrap:wrap;gap:6px 18px;background:#fff;border:1px solid var(--line);border-radius:6px;padding:8px 10px}
+.checks label{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--ink)}.checks input{width:auto;padding:0}
 .tiers{border:1px solid #f5d3d0;border-radius:6px;padding:10px;display:grid;gap:8px;background:#fff1ec}
 .tiers h3{margin:0;font-size:12px}.tiers h3 span{font-weight:400;color:var(--muted)}
-.srow{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:12px;margin-bottom:6px}
-.srow input{width:70px;padding:5px 7px}.srow .sw{width:10px;height:10px;border-radius:3px}
 .x{border:0;background:none;color:var(--muted);font-size:16px;line-height:1}
 .chips{display:flex;flex-wrap:wrap;gap:5px;padding:6px;border:1px dashed #f0c9c6;background:#fff;border-radius:6px;min-height:30px}
 .chip{background:var(--chip);border-radius:999px;padding:2px 3px 2px 9px;font-size:11.5px;display:inline-flex;align-items:center;gap:5px}
 .chip b{background:#fff;border-radius:4px;padding:0 5px;font-size:10.5px;color:var(--ink2)}
+.chip .warn{font-style:normal;color:var(--red);font-size:10.5px}
 .chip button{border:0;background:none;width:17px;height:17px;border-radius:50%;color:var(--muted)}
-.cpick{display:flex;gap:6px;flex-wrap:wrap}.cpick select:first-child{flex:1;min-width:150px}
+.cpick{display:flex;gap:6px;flex-wrap:wrap}.cpick select{flex:1;min-width:150px}
 .btn{border:0;border-radius:4px;padding:9px 16px;font-weight:600;background:linear-gradient(90deg,var(--red),#f04a3a);color:#fff;font-size:12.5px}
 .btn:hover{background:var(--red2)}.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);font-weight:500}
 .actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
@@ -58,7 +62,7 @@ input,select{border:1px solid var(--line);border-radius:4px;padding:7px 9px;back
 .empty{color:var(--muted);font-size:12px;padding:4px}
 details.ai{border:1px solid #f0c9c6;background:#fff;border-radius:6px}details.ai summary{cursor:pointer;padding:8px 10px;font-weight:600}
 .ai-box{padding:0 10px 10px}.ai-box p{margin:0 0 3px;font-weight:600}.ai-box ul{margin:0 0 8px;padding-left:18px}
-pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;padding:10px;font:11.5px/1.5 ui-monospace,Menlo,Consolas,monospace;overflow:auto;max-height:360px;white-space:pre}
+pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;padding:10px;font:11.5px/1.5 ui-monospace,Menlo,Consolas,monospace;overflow:auto;max-height:380px;white-space:pre}
 .site{background:#eaf1ff;border:1px solid #cfdcf7;border-top:4px solid var(--blue);border-radius:10px;overflow:hidden;font:15px var(--fw);box-shadow:0 4px 14px rgba(31,95,224,.1)}
 .browser{display:flex;align-items:center;gap:8px;background:#d5e1fb;padding:8px 12px;font:12px var(--fa)}
 .browser i{width:10px;height:10px;border-radius:50%;background:#c9ced8}
@@ -89,13 +93,9 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
 .speed h4{margin:0}.note{font-size:13px;color:var(--muted)}
 .sbar{display:flex;height:34px;border-radius:9px;overflow:hidden}
 .sbar div{display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;overflow:hidden;white-space:nowrap}
-.sticks{position:relative;height:18px;font-size:12px;color:var(--muted);margin:0 14px}.sticks span{position:absolute;transform:translateX(-50%)}
-.slegend{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.slegend{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}
 .slegend div{border-radius:10px;padding:8px 10px;background:#f7f8fb;font-size:13px}.slegend b{display:block;font-size:17px}
 .apibox{border:1px solid var(--line);border-radius:10px;background:#fff}.apibox summary{cursor:pointer;padding:8px 12px;font-weight:600}
-.tabs{display:flex;gap:6px}.tab{border:1px solid rgba(255,255,255,.35);background:transparent;color:#c9d0f5;border-radius:6px;padding:5px 14px;font-size:12.5px}
-.tab.on{background:#fff;color:#1b2559;font-weight:600}
-.catwrap{padding:16px;max-width:860px;margin:0 auto}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 14px;border-radius:8px;z-index:9}
 </style>
 </head>
@@ -116,15 +116,17 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
         <div class="cpick"><select id="bkSel"></select></div>
         <div class="chips" id="bkChips"></div></div>
 
+      <div class="f full"><label>Plan is for</label><div class="seg" id="scopeSeg"><button type="button" data-s="country">A country</button><button type="button" data-s="region">A region</button></div></div>
       <div class="f"><label for="region">Region</label><select id="region"><option>Asia-Pacific</option><option>Europe</option><option>Middle East</option><option>Africa</option><option>North America</option><option>South Latin America</option><option>Eurasia</option><option>Global</option></select></div>
-      <div class="f"><label for="cSel">Country <em>(operators fill in automatically)</em> <span class="req">*</span></label><select id="cSel"></select></div>
+      <div class="f"><label for="cSel" id="cLabel">Country</label><select id="cSel"></select></div>
 
       <div class="f full"><label>Plan type</label><div class="seg" id="ptSeg"><button type="button" data-p="data">Data</button><button type="button" data-p="data-voice">Data + Voice</button></div></div>
-      <div class="f full" id="telWrap"><label for="telCountry">Number country code <em>(telephony)</em> <span class="req">*</span></label><select id="telCountry"></select><span class="hint">Country of the phone number that comes with the plan.</span></div>
-      <div class="f" id="vmWrap"><label for="voiceMin">Voice minutes</label><input id="voiceMin" type="number" min="0" step="1"></div>
-      <div class="f" id="smsWrap"><label for="sms">SMS</label><input id="sms" type="number" min="0" step="1"></div>
+      <div class="f full" id="telWrap"><label for="telCountry">Number country code <em>(telephony.dialingCode)</em> <span class="req">*</span></label><select id="telCountry"></select></div>
+      <div class="f full" id="telChecks"><label>Voice &amp; SMS capabilities <em>(telephony.voice / telephony.sms)</em></label>
+        <div class="checks"><label><input type="checkbox" id="vIn"> Voice: receive calls (inbound)</label><label><input type="checkbox" id="vOut"> Voice: make calls (outbound)</label><label><input type="checkbox" id="sIn"> SMS: receive (inbound)</label><label><input type="checkbox" id="sOut"> SMS: send (outbound)</label></div></div>
 
-      <div class="f full"><label>Data allowance</label><div class="seg" id="typeSeg"><button type="button" data-t="unlimited">Unlimited</button><button type="button" data-t="fixed">Fixed GB</button><button type="button" data-t="daypass">Day Pass</button></div></div>
+      <div class="f full"><label>Data allowance</label><div class="seg" id="typeSeg"><button type="button" data-t="fixed">Fixed GB</button><button type="button" data-t="daypass">Day Pass (daily cap)</button><button type="button" data-t="unlimited">Unlimited</button></div></div>
+      <div class="f full" id="thrWrap"><label>Throttle this unlimited plan?</label><div class="seg" id="thrSeg"><button type="button" data-v="0">No, truly unlimited</button><button type="button" data-v="1">Yes, throttle after a daily cap</button></div></div>
       <div class="f" id="gbWrap"><label for="gb" id="gbLabel">Data (GB)</label><input id="gb" type="number" min="0.1" step="0.1"></div>
       <div class="f"><label for="days">Validity (days) <em>(validity)</em></label><input id="days" type="number" min="1"></div>
       <div class="f"><label for="price">Selling price (USD) <em>(prices.USD)</em></label><input id="price" type="number" min="0" step="0.01"></div>
@@ -134,16 +136,18 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
       <div class="f"><label>subscription</label><div class="seg" id="subSeg"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button></div></div>
       <div class="f"><label>eKYC</label><div class="seg" id="kycSeg"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button></div></div>
     </div>
-    <div class="tiers" id="stepsBox">
-      <h3>Throttling <span id="stepHint">(throttle after X GB used per day)</span> <span>· website only</span></h3>
-      <div id="stepRows"></div>
-      <div class="actions"><button type="button" class="btn ghost" id="stepAdd" style="padding:5px 10px">+ Add throttle step</button><button type="button" class="btn ghost" id="stepReset" style="padding:5px 10px">Reset throttling</button></div>
+    <div class="tiers" id="rsBox">
+      <h3>Throttling after the cap <span>(reducedSpeed, capacityInfo)</span></h3>
+      <div class="fields">
+        <div class="f"><label for="rs">Reduced speed after the cap, in kbps <em>(reducedSpeed)</em></label><input id="rs" type="number" min="1" step="1" placeholder="e.g. 128"><span class="hint">Leave empty if the connection is cut off when the data is used up.</span></div>
+        <div class="f"><label for="capInfo">Capacity info <em>(capacityInfo)</em></label><input id="capInfo" placeholder="e.g. Unlimited 2G (128 kbps) after cap"><span class="hint"><button type="button" class="x" id="capReset" style="font-size:11px;color:var(--blue)">Auto-fill this text</button></span></div>
+      </div>
     </div>
-    <div class="f full"><label>Coverage <em>(coverages)</em>: the countries you pick above, with operators from the vendor catalog <span class="req">*</span></label>
-      <div class="cpick"><button type="button" class="btn ghost" id="cAll">+ Add all catalog countries</button></div>
+    <div class="f full"><label>Coverage <em>(coverages)</em>: the mapped countries and their networks, from the vendor catalog <span class="req">*</span></label>
+      <div class="cpick"><button type="button" class="btn ghost" id="cAll">Reset to region countries</button></div>
       <div class="cov-list" id="covList"></div></div>
     <div class="actions"><button type="button" class="btn" id="save">Save plan → website</button><button type="button" class="btn ghost" id="dup">Duplicate</button><button type="button" class="btn ghost" id="del">Delete</button><button type="button" class="btn ghost" id="copyAll">Copy all plans JSON</button><span id="dirty"></span></div>
-    <details class="ai" open><summary>JSON output (matches the API sample)</summary><pre class="json" id="apiAdmin"></pre></details>
+    <details class="ai" open><summary>JSON output (matches the endpoint)</summary><pre class="json" id="apiAdmin"></pre></details>
     <details class="ai"><summary>Additional Information (auto-generated)</summary><div class="ai-box" id="aiAdmin"></div></details>
   </div>
 </section>
@@ -156,16 +160,27 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
   </div>
 </section>
 </div>
+
 <div class="catwrap" id="catView" hidden>
   <div class="pt">Admin · Vendor catalog</div>
   <div class="admin">
     <div class="fields">
       <div class="f"><label for="catVendor">Vendor</label><select id="catVendor"><option value="telco">Telco Vision (TEL VSN)</option><option value="rombty">Rombty</option></select></div>
-      <div class="f"><label for="catSel">Add a country to this vendor</label><select id="catSel"></select></div>
+      <div class="f" id="catSelWrap"><label for="catSel">Add a country to this vendor</label><select id="catSel"></select></div>
+      <div class="f" id="catRegWrap" hidden><label for="catRegion">Region</label><select id="catRegion"><option>North America</option><option>Asia-Pacific</option><option>Europe</option><option>Middle East</option><option>Africa</option><option>South Latin America</option><option>Eurasia</option></select></div>
     </div>
-    <div class="actions"><span class="hint" id="catSummary"></span><button type="button" class="btn ghost" id="catClear" style="margin-left:auto">Clear this vendor</button></div>
-    <span class="hint">Enter every country this vendor covers and its operators (type several at once, separated by commas). On the Plans page, picking a country for this vendor fills in these operators automatically. Changes save in this browser.</span>
-    <div class="cov-list" id="catList" style="max-height:none"></div>
+    <div class="seg" id="catSeg"><button type="button" data-m="cty">Countries &amp; operators</button><button type="button" data-m="reg">Regions</button></div>
+    <div id="catCtyBox" style="display:grid;gap:12px">
+      <div class="actions"><span class="hint" id="catSummary"></span><button type="button" class="btn ghost" id="catClear" style="margin-left:auto">Clear this vendor</button></div>
+      <span class="hint">Enter every country this vendor covers and its operators (type several at once, separated by commas). On the Plans page, picking a country for this vendor fills in these operators automatically.</span>
+      <div class="cov-list" id="catList" style="max-height:none"></div>
+    </div>
+    <div id="catRegBox" style="display:grid;gap:10px" hidden>
+      <span class="hint" id="catRegSummary"></span>
+      <span class="hint">A region plan with this vendor maps exactly these countries (for example North America = United States, Canada, Mexico), and each country's operators come from the Countries &amp; operators list.</span>
+      <div class="cpick"><select id="catRegSel"></select><button type="button" class="btn ghost" id="catRegReset">Reset to default</button></div>
+      <div class="chips" id="catRegChips"></div>
+    </div>
   </div>
 </div>
 <script>
@@ -175,6 +190,7 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const clone = o => JSON.parse(JSON.stringify(o));
 const r1 = n => Math.round(n * 10) / 10;
+const r2 = n => Math.round(n * 100) / 100;
 const slug = s => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
 /* ---------- ALL countries (ISO 3166-1 alpha-2); names come from the browser ---------- */
@@ -184,14 +200,13 @@ const NAMES = {}; ALLC.forEach(c => { let n = c; try { n = (DN && DN.of(c)) || c
 const cn = c => NAMES[c] || c;
 const byName = (a, b) => cn(a).localeCompare(cn(b));
 const SORTED = ALLC.slice().sort(byName);
-/* phone dialing code per country (for the "number country code" of data+voice plans) */
+/* phone dialing code per country (telephony.dialingCode) */
 const DIAL = {};
 'AD376 AE971 AF93 AG1268 AI1264 AL355 AM374 AO244 AR54 AS1684 AT43 AU61 AW297 AX358 AZ994 BA387 BB1246 BD880 BE32 BF226 BG359 BH973 BI257 BJ229 BL590 BM1441 BN673 BO591 BQ599 BR55 BS1242 BT975 BW267 BY375 BZ501 CA1 CC61 CD243 CF236 CG242 CH41 CI225 CK682 CL56 CM237 CN86 CO57 CR506 CU53 CV238 CW599 CX61 CY357 CZ420 DE49 DJ253 DK45 DM1767 DO1809 DZ213 EC593 EE372 EG20 EH212 ER291 ES34 ET251 FI358 FJ679 FK500 FM691 FO298 FR33 GA241 GB44 GD1473 GE995 GF594 GG44 GH233 GI350 GL299 GM220 GN224 GP590 GQ240 GR30 GT502 GU1671 GW245 GY592 HK852 HN504 HR385 HT509 HU36 ID62 IE353 IL972 IM44 IN91 IQ964 IR98 IS354 IT39 JE44 JM1876 JO962 JP81 KE254 KG996 KH855 KI686 KM269 KN1869 KP850 KR82 KW965 KY1345 KZ7 LA856 LB961 LC1758 LI423 LK94 LR231 LS266 LT370 LU352 LV371 LY218 MA212 MC377 MD373 ME382 MF590 MG261 MH692 MK389 ML223 MM95 MN976 MO853 MP1670 MQ596 MR222 MS1664 MT356 MU230 MV960 MW265 MX52 MY60 MZ258 NA264 NC687 NE227 NF672 NG234 NI505 NL31 NO47 NP977 NR674 NU683 NZ64 OM968 PA507 PE51 PF689 PG675 PH63 PK92 PL48 PM508 PR1787 PS970 PT351 PW680 PY595 QA974 RE262 RO40 RS381 RU7 RW250 SA966 SB677 SC248 SD249 SE46 SG65 SH290 SI386 SJ47 SK421 SL232 SM378 SN221 SO252 SR597 SS211 ST239 SV503 SX1721 SY963 SZ268 TC1649 TD235 TG228 TH66 TJ992 TK690 TL670 TM993 TN216 TO676 TR90 TT1868 TV688 TW886 TZ255 UA380 UG256 US1 UY598 UZ998 VA39 VC1784 VE58 VG1284 VI1340 VN84 VU678 WF681 WS685 XK383 YE967 YT262 ZA27 ZM260 ZW263'
   .split(' ').forEach(s => { DIAL[s.slice(0, 2)] = s.slice(2); });
 const TELC = ALLC.filter(c => DIAL[c]).sort(byName);
 
 const APAC = 'BD CN IN ID JP KZ KG MY NP PH SG KR TW TH UZ'.split(' ');
-const SETS = { 'Asia-Pacific (15)': APAC, 'China · Korea · Japan': ['CN','KR','JP'], 'Nordic Summer': ['DK','FI','IS','NO','SE'], 'Eurasia': ['AM','AZ','GE','KZ','TR'], 'Middle East': ['CY','EG','IL','KW','QA','SA','AE'], 'North America': ['US','CA','MX'], 'Western Europe': ['GB','DE','FR','ES','IT'] };
 const TYPES = ['3G', '4G', '5G'];
 /* which countries belong to each region (the Country dropdown follows the Region dropdown; "Global" shows all) */
 const REGIONS = {
@@ -205,6 +220,16 @@ const REGIONS = {
 };
 const REGION_OF = {}; Object.keys(REGIONS).forEach(r => REGIONS[r].split(' ').forEach(c => { REGION_OF[c] = r; }));
 const regionCountries = r => r === 'Global' ? SORTED : SORTED.filter(c => REGION_OF[c] === r);
+/* default countries a REGION plan maps (editable per vendor in the Vendor catalog → Regions) */
+const REGION_SETS = {
+  'North America': ['US', 'CA', 'MX'],
+  'Asia-Pacific': APAC,
+  'Europe': ['GB', 'DE', 'FR', 'ES', 'IT', 'NL'],
+  'Middle East': ['AE', 'CY', 'EG', 'IL', 'KW', 'QA', 'SA'],
+  'Africa': ['ZA', 'KE', 'NG', 'MA'],
+  'South Latin America': ['AR', 'BR', 'CL', 'CO', 'PE'],
+  'Eurasia': ['AM', 'AZ', 'GE', 'KZ', 'TR']
+};
 
 /* ---------- starting data only: edit the real catalog in the "Vendor catalog" tab ---------- */
 const OPERATORS = {
@@ -222,7 +247,6 @@ function loadCatalog() {
   try {
     let c = JSON.parse(localStorage.getItem('pm_catalog_v2') || 'null');
     if (!(c && c.telco && c.rombty)) {
-      /* earlier version: keep what was entered, and turn 4G+5G entries into 3G+4G+5G (the new default) */
       c = JSON.parse(localStorage.getItem('pm_catalog_v1') || 'null');
       if (c && c.telco && c.rombty) Object.values(c).forEach(v => Object.values(v).forEach(list => list.forEach(n => { if (n.types.join() === '4G,5G') n.types = ['3G', '4G', '5G']; })));
       else c = null;
@@ -238,11 +262,19 @@ function persistCatalog() { try { localStorage.setItem('pm_catalog_v2', JSON.str
 const catCountries = v => Object.keys(CATALOG[v] || {}).sort(byName);
 const opNames = (vendor, cc) => ((CATALOG[vendor] || {})[cc] || []).map(n => n.name);
 const mkCov = (vendor, code) => ({ code, networks: (((CATALOG[vendor] || {})[code]) || []).map(n => ({ name: n.name, types: [...n.types] })) });
+/* region catalog per vendor: { vendor: { 'North America': ['US','CA','MX'], ... } } */
+function loadRegCat() {
+  try { const c = JSON.parse(localStorage.getItem('pm_regcat_v1') || 'null'); if (c && c.telco && c.rombty) return c; } catch (e) {}
+  return { telco: clone(REGION_SETS), rombty: clone(REGION_SETS) };
+}
+let REGCAT = loadRegCat();
+function persistRegCat() { try { localStorage.setItem('pm_regcat_v1', JSON.stringify(REGCAT)); } catch (e) {} }
+const regionSet = (r, vendor) => r === 'Global' ? catCountries(vendor) : ((REGCAT[vendor] || {})[r] || []);
 
 const VENDORS = {
   telco: { name: 'Telco Vision', apn: 'plus', template: `# Package Details:
 - {{data}}
-[voice]- Voice: {{voice}}
+[voice]- {{voice}}
 [speed]- {{speed}}
 - Operates on {{network}}
 - Internet breakout - {{breakout}}
@@ -256,7 +288,7 @@ const VENDORS = {
 - {{countries}}` },
   rombty: { name: 'Rombty', apn: 'internet', template: `# Package Details:
 - {{data}}
-[voice]- Voice: {{voice}}
+[voice]- {{voice}}
 [speed]- {{speed}}
 - Network: {{network}}
 - Internet breakout: {{breakout}}
@@ -269,59 +301,40 @@ const VENDORS = {
 # Coverage ({{countryCount}} countries):
 - {{countries}}` }
 };
-const DEF_D = [{ gb: 0.6, mbps: 3 }, { gb: 0.8, mbps: 2 }, { gb: null, mbps: 1 }];
-const DEF_U = [{ gb: 1, mbps: 5 }, { gb: 2, mbps: 2 }, { gb: null, mbps: 1 }];
-const COLS = ['#16a34a', '#84cc16', '#f59e0b', '#f97316', '#ef4444'];
-const col = (i, n) => COLS[n < 2 ? 0 : Math.round(i * 4 / (n - 1))];
-const mk = (id, name, vendor, type, gb, days, price, steps, codes, planType, extra) => Object.assign({
-  id, name, vendor, apn: VENDORS[vendor].apn, link: `https://example.com/plans/${slug(name)}`, breakouts: ['SG'], region: 'Asia-Pacific',
-  planType: planType || 'data', telCountry: '', voiceMin: 100, sms: 50, type, gb, days, price, vStart: 'first',
-  hotspot: true, topup: true, subscription: false, ekyc: false, coverages: codes.map(c => mkCov(vendor, c)), steps: clone(steps)
-}, extra || {});
-const SAMPLE = [
-  mk(1, 'APAC Unlimited 3 Days', 'telco', 'unlimited', 0, 3, 9.90, DEF_U, ['SG', 'JP', 'TH', 'KR', 'MY']),
-  mk(2, 'APAC Day Pass 1 GB', 'rombty', 'daypass', 1, 7, 12.50, DEF_D, ['SG', 'JP', 'TH', 'KR', 'MY']),
-  mk(3, 'APAC 10 GB + Voice 30 Days', 'telco', 'fixed', 10, 30, 14.90, DEF_D, ['SG', 'JP', 'TH'], 'data-voice', { telCountry: 'SG' }),
-  mk(4, 'USA 10GB for 30 Days', 'rombty', 'fixed', 10, 30, 30, DEF_D, [], 'data', {
-    link: 'https://example.com/plans/usa-10gb', region: 'North America',
-    coverages: [{ code: 'US', networks: [{ name: 'Verizon', types: ['4G', '5G'] }, { name: 'AT&T', types: ['4G', '5G'] }] }]
-  })
-];
-
-let PLANS = load();
-function load() { try { const p = JSON.parse(localStorage.getItem('pm_plans_v4') || 'null'); if (Array.isArray(p) && p.length) return p; } catch (e) {} return clone(SAMPLE); }
-function persist() { try { localStorage.setItem('pm_plans_v4', JSON.stringify(PLANS)); } catch (e) {} }
-let editId = PLANS[0].id, viewId = PLANS[0].id, draft = clone(PLANS[0]), flashId = null;
 
 /* ---------- helpers ---------- */
-const fmtGb = gb => { gb = +gb || 0; return gb < 1 ? Math.round(gb * 1024) + ' MB' : r1(gb) + ' GB'; };
-const capOf = p => p.type === 'daypass' ? (+p.gb || 0) : null;
+const fmtGb = gb => { gb = +gb || 0; return gb < 1 ? Math.round(gb * 1024) + ' MB' : r2(gb) + ' GB'; };
 const ptLabel = p => p.planType === 'data-voice' ? 'Data + Voice' : 'Data';
+const unlOpen = p => p.type === 'unlimited' && !p.throttle;          /* truly unlimited: dataCap 0, no throttle */
 const netNames = p => [...new Set(p.coverages.flatMap(cv => cv.networks.map(n => n.name)))];
 const coverCodes = p => p.coverages.map(cv => cv.code);
 const opLabel = p => { const n = netNames(p); return !n.length ? 'Multi - Networks' : p.coverages.length > 1 || n.length > 2 ? 'Multi - Networks' : n.join(' / '); };
-function segs(p) {
-  const cap = capOf(p); let from = 0;
-  return p.steps.map((t, i) => { const last = i === p.steps.length - 1; const to = last ? cap : t.gb; const s = { from, to, mbps: t.mbps }; if (!last) from = t.gb; return s; });
+function speedLabel(k) { k = +k; return k >= 1000 ? r2(k / 1000) + ' Mbps' : k + ' kbps'; }
+/* capacityInfo text, generated until you type your own */
+function capText(p) {
+  if (unlOpen(p)) return '';
+  const g = r2(+p.gb || 0), after = p.reducedSpeed > 0 ? `then ${speedLabel(p.reducedSpeed)} after cap` : 'connection stops after cap';
+  const base = p.type === 'unlimited' ? `Unlimited data, ${g} GB/day at full speed` : p.type === 'daypass' ? `${g} GB per day at full speed` : `${g} GB at full speed`;
+  return `${base}, ${after}`;
 }
-function speedText(p) {
-  const s = segs(p);
-  return 'Throttling: ' + s.map((x, i) => i === 0
-    ? (x.to === null ? `${x.mbps} Mbps all day` : `up to ${x.to} GB at ${x.mbps} Mbps`)
-    : `throttled to ${x.mbps} Mbps after ${x.from} GB`).join(', ') + ' (per day)';
+function telText(p) {
+  const j = (a, b) => [a && 'receive', b && 'make/send'].filter(Boolean).join(' & ') || 'not included';
+  return `Voice: ${[p.voiceIn && 'receive calls', p.voiceOut && 'make calls'].filter(Boolean).join(' & ') || 'not included'}; SMS: ${[p.smsIn && 'receive', p.smsOut && 'send'].filter(Boolean).join(' & ') || 'not included'}; number ${p.telCountry ? cn(p.telCountry) + ' +' + DIAL[p.telCountry] : 'not set'}`;
 }
-/* JSON output: same keys and order as the API sample. Returns the array the API expects. */
+/* JSON output for the data-plans endpoint. Returns one plan object. */
 function toApi(p) {
-  const unl = p.type === 'unlimited', gbv = +p.gb || 0, mb = gbv < 1;
+  const open = unlOpen(p), info = (p.capInfo || '').trim();
   return {
     planName: p.name,
     validity: +p.days,
-    dataCap: unl ? null : (mb ? Math.round(gbv * 1024) : r1(gbv)),
-    dataUnit: unl ? null : (mb ? 'MB' : 'GB'),
+    dataCap: open ? 0 : r2(+p.gb || 0),
+    dataUnit: 'GB',
+    reducedSpeed: !open && p.reducedSpeed > 0 ? Math.round(p.reducedSpeed) : null,
+    capacityInfo: !open && info ? info : null,
     prices: { USD: +(+p.price || 0) },
     link: p.link,
     telephony: p.planType === 'data-voice'
-      ? { numberCountryCode: p.telCountry || null, dialCode: DIAL[p.telCountry] ? '+' + DIAL[p.telCountry] : null, minutes: +p.voiceMin || 0, sms: +p.sms || 0 }
+      ? { dialingCode: DIAL[p.telCountry] ? '+' + DIAL[p.telCountry] : null, sms: { inbound: !!p.smsIn, outbound: !!p.smsOut }, voice: { inbound: !!p.voiceIn, outbound: !!p.voiceOut } }
       : null,
     subscription: !!p.subscription,
     canTopUp: !!p.topup,
@@ -335,16 +348,16 @@ const apiJson = list => JSON.stringify(list.map(toApi), null, 2);
 function generateAdditionalInfo(p) {
   const codes = [...coverCodes(p)].sort(byName);
   const vars = {
-    data: p.type === 'unlimited' ? 'Unlimited High speed data' : p.type === 'daypass' ? `${fmtGb(p.gb)} High speed data per day` : `${fmtGb(p.gb)} High speed data`,
-    voice: `${+p.voiceMin || 0} minutes + ${+p.sms || 0} SMS (number: ${p.telCountry ? cn(p.telCountry) + ' +' + DIAL[p.telCountry] : 'not set'})`,
-    speed: speedText(p),
+    data: unlOpen(p) ? 'Unlimited High speed data' : p.type === 'unlimited' ? `Unlimited data (${fmtGb(p.gb)} per day at full speed)` : p.type === 'daypass' ? `${fmtGb(p.gb)} High speed data per day` : `${fmtGb(p.gb)} High speed data`,
+    voice: telText(p),
+    speed: unlOpen(p) ? '' : (p.capInfo || '').trim(),
     network: netNames(p).join(', ') || 'Multi network',
     breakout: p.breakouts.length ? p.breakouts.map(c => `${cn(c)} (${c})`).join(', ') : 'Not set',
     validity: p.days + (+p.days === 1 ? ' day' : ' days'),
     validityStart: p.vStart === 'install' ? 'from eSIM installation' : 'from first network connection',
     apn: p.apn, countries: codes.map(c => `${cn(c)} (${c})`).join(', '), countryCount: codes.length
   };
-  const flags = { hotspot: p.hotspot, topup: p.topup, speed: p.type !== 'fixed', voice: p.planType === 'data-voice' };
+  const flags = { hotspot: p.hotspot, topup: p.topup, speed: !!vars.speed, voice: p.planType === 'data-voice' };
   const sections = []; let cur = null;
   VENDORS[p.vendor].template.split('\n').forEach(raw => {
     let line = raw.trim(); if (!line) return;
@@ -357,6 +370,32 @@ function generateAdditionalInfo(p) {
   return sections.map(s => (s.title ? `<p>${esc(s.title)}</p>` : '') + `<ul>${s.items.map(i => `<li>${esc(i)}</li>`).join('')}</ul>`).join('');
 }
 
+/* ---------- sample plans ---------- */
+const mk = (id, name, vendor, type, gb, days, price, codes, planType, extra) => {
+  const p = Object.assign({
+    id, name, nameAuto: false, vendor, scope: 'country', apn: VENDORS[vendor].apn, link: `https://example.com/plans/${slug(name)}`, breakouts: ['SG'], region: 'Asia-Pacific',
+    planType: planType || 'data', telCountry: '', voiceIn: true, voiceOut: true, smsIn: true, smsOut: true,
+    type, throttle: false, gb, reducedSpeed: null, capInfo: '', capAuto: true, days, price, vStart: 'first',
+    hotspot: true, topup: true, subscription: false, ekyc: false, coverages: codes.map(c => mkCov(vendor, c))
+  }, extra || {});
+  p.capInfo = capText(p); return p;
+};
+const SAMPLE = [
+  mk(1, 'APAC Unlimited 3 Days', 'telco', 'unlimited', 1, 3, 9.90, ['SG', 'JP', 'TH', 'KR', 'MY'], 'data', { scope: 'region', throttle: true, reducedSpeed: 128 }),
+  mk(2, 'APAC Day Pass 1 GB', 'rombty', 'daypass', 1, 7, 12.50, ['SG', 'JP', 'TH', 'KR', 'MY'], 'data', { scope: 'region', reducedSpeed: 512 }),
+  mk(3, 'APAC 10 GB + Voice 30 Days', 'telco', 'fixed', 10, 30, 14.90, ['SG', 'JP', 'TH'], 'data-voice', { scope: 'region', telCountry: 'SG' }),
+  mk(4, 'USA 10GB for 30 Days', 'rombty', 'fixed', 10, 30, 30, [], 'data', {
+    link: 'https://example.com/plans/usa-10gb', region: 'North America',
+    coverages: [{ code: 'US', networks: [{ name: 'Verizon', types: ['4G', '5G'] }, { name: 'AT&T', types: ['4G', '5G'] }] }]
+  })
+];
+const blankPlan = id => { const p = Object.assign(clone(SAMPLE[3]), { id, name: 'New plan', nameAuto: true, scope: 'country', link: 'https://example.com/plans/new-plan', breakouts: [], coverages: [], telCountry: '', planType: 'data', type: 'fixed', throttle: false, gb: 10, reducedSpeed: null, capAuto: true, days: 30, price: 10, region: 'Asia-Pacific' }); p.capInfo = capText(p); return p; };
+
+let PLANS = load();
+function load() { try { const p = JSON.parse(localStorage.getItem('pm_plans_v5') || 'null'); if (Array.isArray(p) && p.length) return p; } catch (e) {} return clone(SAMPLE); }
+function persist() { try { localStorage.setItem('pm_plans_v5', JSON.stringify(PLANS)); } catch (e) {} }
+let editId = PLANS[0].id, viewId = PLANS[0].id, draft = clone(PLANS[0]), flashId = null;
+
 /* ---------- admin ---------- */
 const countryOpts = (ph, list) => `<option value="">${ph}</option>` + list.map(c => `<option value="${c}">${esc(cn(c))} (${c})</option>`).join('');
 $('telCountry').innerHTML = '<option value="">Select number country…</option>' + TELC.map(c => `<option value="${c}">${esc(cn(c))} (+${DIAL[c]})</option>`).join('');
@@ -365,27 +404,36 @@ function fillForm() {
   const p = draft;
   $('name').value = p.name; $('vendor').value = p.vendor; $('apn').value = p.apn; $('link').value = p.link; $('link').classList.remove('bad');
   $('region').value = p.region; $('gb').value = p.gb; $('days').value = p.days; $('price').value = p.price; $('vStart').value = p.vStart;
-  $('voiceMin').value = p.voiceMin; $('sms').value = p.sms; $('telCountry').value = p.telCountry || ''; $('telCountry').classList.remove('bad');
-  paintSegs(); renderBreakouts(); renderCov(); renderSteps(); renderAdminAI(); paintList(); paintDirty();
+  $('telCountry').value = p.telCountry || ''; $('telCountry').classList.remove('bad');
+  $('vIn').checked = !!p.voiceIn; $('vOut').checked = !!p.voiceOut; $('sIn').checked = !!p.smsIn; $('sOut').checked = !!p.smsOut;
+  $('rs').value = p.reducedSpeed == null ? '' : p.reducedSpeed; $('capInfo').value = p.capInfo || '';
+  paintSegs(); renderBreakouts(); renderCov(); renderAdminAI(); paintList(); paintDirty();
 }
 function paintSegs() {
   const on = (sel, fn) => document.querySelectorAll(sel + ' button').forEach(b => b.classList.toggle('on', fn(b)));
   on('#typeSeg', b => b.dataset.t === draft.type);
   on('#ptSeg', b => b.dataset.p === draft.planType);
+  on('#thrSeg', b => (b.dataset.v === '1') === !!draft.throttle);
   on('#hsSeg', b => (b.dataset.v === '1') === draft.hotspot);
   on('#tuSeg', b => (b.dataset.v === '1') === draft.topup);
   on('#subSeg', b => (b.dataset.v === '1') === draft.subscription);
   on('#kycSeg', b => (b.dataset.v === '1') === draft.ekyc);
-  $('gbWrap').hidden = draft.type === 'unlimited';
-  $('telWrap').hidden = $('vmWrap').hidden = $('smsWrap').hidden = draft.planType !== 'data-voice';
-  $('gbLabel').textContent = draft.type === 'daypass' ? 'Data per day (GB)' : 'Data (GB)';
-  $('stepsBox').hidden = draft.type === 'fixed';
+  on('#scopeSeg', b => b.dataset.s === draft.scope);
+  const reg = draft.scope === 'region';
+  $('cLabel').innerHTML = reg ? 'Add another country <em>(optional)</em>' : 'Country <em>(operators fill in automatically)</em> <span class="req">*</span>';
+  $('cAll').hidden = !reg; $('cAll').textContent = `Reset to ${draft.region} countries`;
+  $('thrWrap').hidden = draft.type !== 'unlimited';
+  $('gbWrap').hidden = unlOpen(draft);
+  $('rsBox').hidden = unlOpen(draft);
+  $('gbLabel').innerHTML = draft.type === 'daypass' ? 'Daily data cap (GB) <em>(dataCap)</em>' : draft.type === 'unlimited' ? 'Full-speed data per day before throttle (GB) <em>(dataCap)</em>' : 'Data (GB) <em>(dataCap)</em>';
+  $('telWrap').hidden = $('telChecks').hidden = draft.planType !== 'data-voice';
   $('apnHint').textContent = `· ${VENDORS[draft.vendor].name} default: ${VENDORS[draft.vendor].apn}`;
 }
 function paintList() {
-  $('plist').innerHTML = PLANS.map(p => `<button type="button" class="pbtn ${p.id === editId ? 'on' : ''}" data-id="${p.id}">${esc(p.name)}<small>${VENDORS[p.vendor].name} · ${ptLabel(p)} · ${p.type === 'daypass' ? 'Day Pass' : p.type === 'unlimited' ? 'Unlimited' : fmtGb(p.gb)}</small></button>`).join('') + '<button type="button" class="pbtn new" id="newPlan">+ New plan</button>';
+  const kind = p => p.type === 'daypass' ? 'Day Pass' : p.type === 'unlimited' ? (p.throttle ? 'Unlimited + throttle' : 'Unlimited') : fmtGb(p.gb);
+  $('plist').innerHTML = PLANS.map(p => `<button type="button" class="pbtn ${p.id === editId ? 'on' : ''}" data-id="${p.id}">${esc(p.name)}<small>${VENDORS[p.vendor].name} · ${ptLabel(p)} · ${kind(p)}</small></button>`).join('') + '<button type="button" class="pbtn new" id="newPlan">+ New plan</button>';
   $('plist').querySelectorAll('.pbtn[data-id]').forEach(b => b.onclick = () => openPlan(+b.dataset.id));
-  $('newPlan').onclick = () => { const id = Math.max(...PLANS.map(p => p.id)) + 1; PLANS.push({ ...clone(SAMPLE[0]), id, name: 'New plan', nameAuto: true, link: 'https://example.com/plans/new-plan', breakouts: [], coverages: [], telCountry: '' }); persist(); openPlan(id); renderSite(); };
+  $('newPlan').onclick = () => { const id = Math.max(...PLANS.map(p => p.id)) + 1; PLANS.push(blankPlan(id)); persist(); openPlan(id); renderSite(); };
 }
 function openPlan(id) { editId = id; viewId = id; draft = clone(PLANS.find(p => p.id === id)); fillForm(); if ($('cards').childElementCount) renderSite(); }
 
@@ -395,19 +443,21 @@ function renderBreakouts() {
   $('bkSel').innerHTML = countryOpts('Add breakout country…', SORTED.filter(c => !draft.breakouts.includes(c)));
 }
 function renderCov() {
-  const free = regionCountries(draft.region).filter(c => !coverCodes(draft).includes(c)), cat = CATALOG[draft.vendor] || {};
+  const single = draft.scope !== 'region', cat = CATALOG[draft.vendor] || {};
+  const free = regionCountries(draft.region).filter(c => single || !coverCodes(draft).includes(c));
   const opt = c => `<option value="${c}">${esc(cn(c))} (${c})</option>`;
   const withOps = free.filter(c => cat[c]), others = free.filter(c => !cat[c]);
-  $('cSel').innerHTML = `<option value="">Select a country in ${esc(draft.region)}…</option>`
+  $('cSel').innerHTML = `<option value="">${single ? 'Select a country in ' + esc(draft.region) : 'Add a country'}…</option>`
     + (withOps.length ? `<optgroup label="In the ${esc(VENDORS[draft.vendor].name)} catalog (operators auto-fill)">${withOps.map(opt).join('')}</optgroup>` : '')
     + (others.length ? `<optgroup label="Not in the catalog yet (add operators manually)">${others.map(opt).join('')}</optgroup>` : '');
+  if (single) $('cSel').value = coverCodes(draft)[0] || '';
   $('covList').innerHTML = draft.coverages.length ? draft.coverages.map((cv, ci) => {
     const known = opNames(draft.vendor, cv.code).filter(n => !cv.networks.some(x => x.name === n));
-    const nets = cv.networks.length ? cv.networks.map((n, ni) => `<span class="net"><b>${esc(n.name)}</b>${TYPES.map(t => `<button type="button" class="ty ${n.types.includes(t) ? 'on' : ''}" data-act="ty" data-ci="${ci}" data-ni="${ni}" data-t="${t}">${t}</button>`).join('')}<button type="button" class="x" data-act="rn" data-ci="${ci}" data-ni="${ni}" aria-label="Remove ${esc(n.name)}">×</button></span>`).join('') : `<span class="empty">${opNames(draft.vendor, cv.code).length ? 'No operators selected.' : `No known ${VENDORS[draft.vendor].name} operators for ${esc(cn(cv.code))}. Add one manually.`}</span>`;
+    const nets = cv.networks.length ? cv.networks.map((n, ni) => `<span class="net"><b>${esc(n.name)}</b>${TYPES.map(t => `<button type="button" class="ty ${n.types.includes(t) ? 'on' : ''}" data-act="ty" data-ci="${ci}" data-ni="${ni}" data-t="${t}">${t}</button>`).join('')}<button type="button" class="x" data-act="rn" data-ci="${ci}" data-ni="${ni}" aria-label="Remove ${esc(n.name)}">×</button></span>`).join('') : `<span class="empty">${opNames(draft.vendor, cv.code).length ? 'No operators selected.' : `No known ${VENDORS[draft.vendor].name} operators for ${esc(cn(cv.code))}. Add one manually or in the Vendor catalog.`}</span>`;
     return `<div class="cov"><div class="covh"><b>${esc(cn(cv.code))}</b><span class="code">${esc(cv.code)}</span><button type="button" class="x" data-act="rc" data-ci="${ci}" aria-label="Remove ${esc(cn(cv.code))}">×</button></div>
       <div class="nets">${nets}</div>
       <div class="addop" data-ci="${ci}"><select aria-label="Known operators">${'<option value="">Add known operator…</option>' + known.map(n => `<option>${esc(n)}</option>`).join('')}</select><input placeholder="or type an operator" aria-label="Operator name"><button type="button" class="btn ghost" data-act="ao" data-ci="${ci}">+ Add</button></div></div>`;
-  }).join('') : '<div class="empty">No countries yet. Pick a country above and its operators are added automatically.</div>';
+  }).join('') : '<div class="empty">No countries yet. Pick a country above (or a region) and its networks are added automatically.</div>';
 }
 $('covList').addEventListener('click', e => {
   const b = e.target.closest('button[data-act]'); if (!b) return;
@@ -422,99 +472,90 @@ $('covList').addEventListener('click', e => {
   }
   renderCov(); changed();
 });
-function renderSteps() {
-  const p = draft, n = p.steps.length, cap = capOf(p); let from = 0;
-  $('stepHint').textContent = p.type === 'daypass' ? '(throttle after X GB used per day, up to the daily limit)' : '(throttle after X GB used per day)';
-  $('stepRows').innerHTML = p.steps.map((t, i) => {
-    const last = i === n - 1;
-    const lead = last ? (cap === null ? `After ${from} GB →` : `${from} GB to daily limit <b>${cap} GB</b> →`) : `${from} GB up to`;
-    const mid = last ? '' : `<input type="number" min="0.1" step="0.1" value="${t.gb}" data-i="${i}" data-k="gb" aria-label="Step ${i + 1} up to GB"> GB →`;
-    const row = `<div class="srow"><span class="sw" style="background:${col(i, n)}"></span><span>${lead}</span>${mid}<input type="number" min="0.1" step="0.1" value="${t.mbps}" data-i="${i}" data-k="mbps" aria-label="Step ${i + 1} Mbps"> Mbps${last || n < 2 ? '' : `<button type="button" class="x" data-r="${i}" aria-label="Remove step ${i + 1}">×</button>`}</div>`;
-    if (!last) from = t.gb; return row;
-  }).join('');
-  $('stepRows').querySelectorAll('input').forEach(inp => inp.onchange = () => {
-    const i = +inp.dataset.i, k = inp.dataset.k; let v = +inp.value;
-    if (k === 'gb') {
-      const lo = (i ? draft.steps[i - 1].gb : 0) + 0.1;
-      const hi = i + 1 < n - 1 ? draft.steps[i + 1].gb - 0.1 : (cap !== null ? cap - 0.1 : Infinity);
-      v = r1(Math.min(Math.max(hi, lo), Math.max(lo, v || lo)));
-    } else v = Math.max(0.1, v || 0.1);
-    draft.steps[i][k] = v; renderSteps(); changed();
-  });
-  $('stepRows').querySelectorAll('[data-r]').forEach(b => b.onclick = () => { draft.steps.splice(+b.dataset.r, 1); renderSteps(); changed(); });
-}
 const renderAdminAI = () => { $('aiAdmin').innerHTML = generateAdditionalInfo(draft); $('apiAdmin').textContent = apiJson([draft]); };
 const isDirty = () => JSON.stringify(draft) !== JSON.stringify(PLANS.find(p => p.id === editId));
 const paintDirty = () => $('dirty').innerHTML = isDirty() ? '<span class="dirty">● Unsaved. The website still shows the old version.</span>' : '<span class="saved">✓ Website is up to date</span>';
 /* plan name suggests itself ("Australia 10GB 30 days") until you type your own name */
 function autoName() {
   if (!draft.nameAuto || !draft.coverages.length) return;
-  const place = draft.coverages.length === 1 ? cn(draft.coverages[0].code) : draft.region;
-  const g = +draft.gb || 0, amt = g < 1 ? Math.round(g * 1024) + 'MB' : r1(g) + 'GB';
+  const place = draft.scope === 'region' ? draft.region : cn(draft.coverages[0].code);
+  const g = +draft.gb || 0, amt = g < 1 ? Math.round(g * 1024) + 'MB' : r2(g) + 'GB';
   const data = draft.type === 'unlimited' ? 'Unlimited' : draft.type === 'daypass' ? amt + '/day' : amt;
   draft.name = `${place} ${data} ${draft.days} ${+draft.days === 1 ? 'day' : 'days'}`;
   $('name').value = draft.name;
 }
-function changed() { autoName(); renderAdminAI(); paintDirty(); }
+/* capacityInfo text suggests itself until you type your own */
+function autoCap() { if (draft.capAuto) { draft.capInfo = capText(draft); $('capInfo').value = draft.capInfo; } }
+function changed() { autoName(); autoCap(); renderAdminAI(); paintDirty(); }
 
-const bind = (id, key, num) => $(id).addEventListener('input', () => { draft[key] = num ? +$(id).value : $(id).value; if (id === 'gb') renderSteps(); if (id === 'link') $('link').classList.remove('bad'); changed(); });
+const bind = (id, key, num) => $(id).addEventListener('input', () => { draft[key] = num ? +$(id).value : $(id).value; if (id === 'link') $('link').classList.remove('bad'); changed(); });
 $('name').addEventListener('input', () => { draft.nameAuto = false; });
-bind('name', 'name'); bind('apn', 'apn'); bind('link', 'link'); bind('gb', 'gb', true); bind('days', 'days', true); bind('price', 'price', true); bind('voiceMin', 'voiceMin', true); bind('sms', 'sms', true);
-$('region').onchange = () => { draft.region = $('region').value; renderCov(); changed(); };
+bind('name', 'name'); bind('apn', 'apn'); bind('link', 'link'); bind('gb', 'gb', true); bind('days', 'days', true); bind('price', 'price', true);
+$('rs').addEventListener('input', () => { const v = $('rs').value.trim(); draft.reducedSpeed = v === '' ? null : Math.round(+v); changed(); });
+$('capInfo').addEventListener('input', () => { draft.capAuto = false; draft.capInfo = $('capInfo').value; changed(); });
+$('capReset').onclick = () => { draft.capAuto = true; changed(); };
+[['vIn', 'voiceIn'], ['vOut', 'voiceOut'], ['sIn', 'smsIn'], ['sOut', 'smsOut']].forEach(([id, k]) => $(id).addEventListener('change', () => { draft[k] = $(id).checked; changed(); }));
+
+const applyRegion = () => { draft.coverages = regionSet(draft.region, draft.vendor).map(c => mkCov(draft.vendor, c)); };
+$('region').onchange = () => { draft.region = $('region').value; if (draft.scope === 'region') applyRegion(); paintSegs(); renderCov(); changed(); };
+document.querySelectorAll('#scopeSeg button').forEach(b => b.onclick = () => {
+  draft.scope = b.dataset.s;
+  if (draft.scope === 'region') applyRegion(); else draft.coverages = draft.coverages.slice(0, 1);
+  paintSegs(); renderCov(); changed();
+});
 $('vStart').onchange = () => { draft.vStart = $('vStart').value; changed(); };
 $('telCountry').onchange = () => { draft.telCountry = $('telCountry').value; $('telCountry').classList.toggle('bad', !draft.telCountry); changed(); };
 $('bkSel').onchange = () => { const v = $('bkSel').value; if (v && !draft.breakouts.includes(v)) { draft.breakouts.push(v); renderBreakouts(); changed(); } };
-/* pick a country → coverage entry with that supplier's operators filled in automatically */
+$('bkSel').addEventListener('change', () => $('bkSel').classList.remove('bad'));
 const addCountry = code => { if (code && !coverCodes(draft).includes(code)) draft.coverages.push(mkCov(draft.vendor, code)); };
-$('cSel').onchange = () => { addCountry($('cSel').value); renderCov(); changed(); };
-$('cAll').onclick = () => { catCountries(draft.vendor).forEach(addCountry); renderCov(); changed(); };
+$('cSel').onchange = () => {
+  const c = $('cSel').value; if (!c) return;
+  if (draft.scope === 'region') addCountry(c); else draft.coverages = [mkCov(draft.vendor, c)];
+  renderCov(); changed();
+};
+$('cAll').onclick = () => { applyRegion(); renderCov(); changed(); };
 $('vendor').onchange = () => {
   const prev = VENDORS[draft.vendor].apn; draft.vendor = $('vendor').value;
   if (!draft.apn || draft.apn === prev) { draft.apn = VENDORS[draft.vendor].apn; $('apn').value = draft.apn; }
-  /* operators belong to the supplier, so reload every country's operators for the new supplier */
-  draft.coverages = draft.coverages.map(cv => mkCov(draft.vendor, cv.code));
-  paintSegs(); renderCov(); changed(); if (draft.coverages.length) toast(`Operators reloaded for ${VENDORS[draft.vendor].name}`);
+  /* operators and region sets belong to the vendor, so reload them for the new vendor */
+  if (draft.scope === 'region') applyRegion(); else draft.coverages = draft.coverages.map(cv => mkCov(draft.vendor, cv.code));
+  paintSegs(); renderCov(); changed(); if (draft.coverages.length) toast(`Countries and operators reloaded for ${VENDORS[draft.vendor].name}`);
 };
 document.querySelectorAll('#ptSeg button').forEach(b => b.onclick = () => { draft.planType = b.dataset.p; paintSegs(); changed(); });
 document.querySelectorAll('#typeSeg button').forEach(b => b.onclick = () => {
-  const old = draft.type; draft.type = b.dataset.t;
-  if (draft.type !== 'unlimited' && !draft.gb) { draft.gb = 1; $('gb').value = 1; }
-  if (draft.type !== 'fixed' && draft.type !== old) draft.steps = clone(draft.type === 'unlimited' ? DEF_U : DEF_D);
-  paintSegs(); renderSteps(); changed();
+  draft.type = b.dataset.t;
+  if (!(+draft.gb > 0)) { draft.gb = 1; $('gb').value = 1; }
+  paintSegs(); changed();
+});
+document.querySelectorAll('#thrSeg button').forEach(b => b.onclick = () => {
+  draft.throttle = b.dataset.v === '1';
+  if (draft.throttle && !(+draft.gb > 0)) { draft.gb = 1; $('gb').value = 1; }
+  paintSegs(); changed();
 });
 [['hsSeg', 'hotspot'], ['tuSeg', 'topup'], ['subSeg', 'subscription'], ['kycSeg', 'ekyc']].forEach(([id, key]) =>
   document.querySelectorAll('#' + id + ' button').forEach(b => b.onclick = () => { draft[key] = b.dataset.v === '1'; paintSegs(); changed(); }));
-$('stepReset').onclick = () => { draft.steps = clone(draft.type === 'unlimited' ? DEF_U : DEF_D); renderSteps(); changed(); };
-$('stepAdd').onclick = () => {
-  const n = draft.steps.length, prev = n > 1 ? draft.steps[n - 2].gb : 0, cap = capOf(draft);
-  const gb = cap !== null ? r1((prev + cap) / 2) : r1(prev + 1);
-  draft.steps.splice(n - 1, 0, { gb: Math.max(gb, r1(prev + 0.1)), mbps: draft.steps[n - 1].mbps });
-  renderSteps(); changed();
-};
 
 function validate(p) {
   if (!p.name.trim()) return 'Plan name is required';
   if (!/^https?:\/\/\S+$/i.test((p.link || '').trim())) { $('link').classList.add('bad'); $('link').focus(); return 'Enter the plan link (a full https:// URL)'; }
   if (!p.breakouts.length) { $('bkSel').classList.add('bad'); $('bkSel').focus(); return 'Add at least one internet breakout country (required)'; }
-  if (!p.coverages.length) { $('cSel').focus(); return 'Add at least one coverage country'; }
+  if (!p.coverages.length) { $('cSel').focus(); return 'Pick a country (or a region) for the coverage'; }
   for (const cv of p.coverages) {
     if (!cv.networks.length) return `Add at least one operator for ${cn(cv.code)}`;
     if (cv.networks.some(n => !n.types.length)) return `Pick a network type (3G/4G/5G) for every operator in ${cn(cv.code)}`;
   }
   if (p.planType === 'data-voice' && !p.telCountry) { $('telCountry').classList.add('bad'); $('telCountry').focus(); return 'Select the number country code for the voice plan'; }
-  if (p.type !== 'unlimited' && !(p.gb > 0)) return 'Enter the data amount (GB)';
-  if (p.type === 'fixed') return '';
-  let prev = 0;
-  for (const t of p.steps.slice(0, -1)) { if (!(t.gb > prev) || (p.type === 'daypass' && t.gb >= p.gb)) return 'Throttle step GB must increase and stay below the daily limit'; prev = t.gb; }
+  if (!unlOpen(p) && !(+p.gb > 0)) return 'Enter the data amount in GB (dataCap)';
+  if (p.reducedSpeed !== null && !(p.reducedSpeed > 0)) return 'Reduced speed must be a number of kbps, or empty for cut-off';
+  if (p.type === 'unlimited' && p.throttle && !(p.reducedSpeed > 0)) return 'Enter the reduced speed (kbps) for the throttled unlimited plan';
   return '';
 }
-$('bkSel').addEventListener('change', () => $('bkSel').classList.remove('bad'));
 $('save').onclick = () => {
   const err = validate(draft); if (err) { toast(err); return; }
   PLANS[PLANS.findIndex(p => p.id === editId)] = clone(draft); persist();
   viewId = editId; flashId = editId; paintList(); paintDirty(); renderSite(); toast('Saved. The website now shows the update');
 };
-$('dup').onclick = () => { const id = Math.max(...PLANS.map(p => p.id)) + 1; PLANS.push({ ...clone(draft), id, name: draft.name + ' (copy)' }); persist(); openPlan(id); renderSite(); };
+$('dup').onclick = () => { const id = Math.max(...PLANS.map(p => p.id)) + 1; PLANS.push({ ...clone(draft), id, name: draft.name + ' (copy)', nameAuto: false }); persist(); openPlan(id); renderSite(); };
 $('del').onclick = () => {
   if (PLANS.length === 1) { toast('Keep at least one plan'); return; }
   PLANS = PLANS.filter(p => p.id !== editId); persist();
@@ -532,13 +573,14 @@ function renderSite() {
   const region = (PLANS.find(p => p.id === viewId) || PLANS[0]).region;
   $('sTitle').textContent = `${region} eSIM`; $('sSub').textContent = `${PLANS.length} plans`;
   $('cards').innerHTML = PLANS.map(p => {
-    const big = p.type === 'unlimited' ? 'Unlimited' : fmtGb(p.gb).replace(/ (GB|MB)/, '<small> $1</small>');
+    const big = unlOpen(p) || p.type === 'unlimited' ? 'Unlimited' : fmtGb(p.gb).replace(/ (GB|MB)/, '<small> $1</small>');
+    const badge = p.type === 'unlimited' ? (p.throttle ? `UNLIMITED · ${fmtGb(p.gb)}/day then ${speedLabel(p.reducedSpeed || 0)}` : 'UNLIMITED') : p.type === 'daypass' ? `DAY PASS${p.reducedSpeed > 0 ? ' · then ' + speedLabel(p.reducedSpeed) : ''}` : '';
     return `<button type="button" class="pc ${p.id === viewId ? 'sel' : ''} ${p.id === flashId ? 'flash' : ''}" data-id="${p.id}">
       <span class="pill">@ ${esc(opLabel(p).toUpperCase())}</span><span class="nm">${esc(p.name)}</span>
       <span class="gb">${big}${p.type === 'daypass' ? '<small> / day</small>' : ''}</span>
       <span>${p.days} ${+p.days === 1 ? 'day' : 'days'}</span>
-      ${p.planType === 'data-voice' ? `<span class="vc">DATA + VOICE · ${+p.voiceMin || 0} min</span>` : ''}
-      ${p.type !== 'fixed' ? `<span class="dp">${p.type === 'daypass' ? 'DAY PASS' : 'UNLIMITED'} · throttling</span>` : ''}
+      ${p.planType === 'data-voice' ? '<span class="vc">DATA + VOICE</span>' : ''}
+      ${badge ? `<span class="dp">${esc(badge)}</span>` : ''}
       <span class="price">$ ${(+p.price).toFixed(2)}<small>USD</small></span><span class="vd">View Details ↗</span></button>`;
   }).join('');
   $('cards').querySelectorAll('.pc').forEach(c => c.onclick = () => { viewId = +c.dataset.id; flashId = null; renderSite(); });
@@ -547,18 +589,16 @@ function renderSite() {
 function renderDetail() {
   const p = PLANS.find(x => x.id === viewId) || PLANS[0];
   $('url').textContent = `yourstore.com/esim/${slug(p.region)}/${slug(p.name)}`;
-  const facts = [['Plan type', ptLabel(p)], ['Data', p.type === 'unlimited' ? 'Unlimited' : fmtGb(p.gb) + (p.type === 'daypass' ? ' per day' : '')]];
-  if (p.planType === 'data-voice') facts.push(['Voice', `${+p.voiceMin || 0} min`], ['SMS', +p.sms || 0], ['Number', p.telCountry ? `${cn(p.telCountry)} +${DIAL[p.telCountry]}` : '—']);
+  const dataFact = unlOpen(p) ? 'Unlimited' : p.type === 'unlimited' ? `Unlimited (${fmtGb(p.gb)}/day full speed)` : fmtGb(p.gb) + (p.type === 'daypass' ? ' per day' : '');
+  const facts = [['Plan type', ptLabel(p)], ['Data', dataFact]];
+  if (p.planType === 'data-voice') facts.push(['Number', p.telCountry ? `${cn(p.telCountry)} +${DIAL[p.telCountry]}` : '—'], ['Calls', [p.voiceIn && 'in', p.voiceOut && 'out'].filter(Boolean).join(' / ') || 'none'], ['SMS', [p.smsIn && 'in', p.smsOut && 'out'].filter(Boolean).join(' / ') || 'none']);
   facts.push(['Validity', `${p.days} ${+p.days === 1 ? 'day' : 'days'}`], ['Networks', netNames(p).join(', ') || '—'], ['Internet breakout', p.breakouts.length ? p.breakouts.join(', ') : '—'], ['Countries', p.coverages.length]);
   let speedHtml = '';
-  if (p.type !== 'fixed') {
-    const sg = segs(p), n = sg.length, cap = capOf(p), lf = sg[n - 1].from;
-    const total = cap !== null ? cap : lf + Math.max(lf * 0.5, 1);
-    const bar = sg.map((s, i) => `<div style="width:${((s.to === null ? total : s.to) - s.from) / total * 100}%;background:${col(i, n)}">${s.mbps} Mbps</div>`).join('');
-    const ticks = [...sg.map(s => [s.from, s.from + ' GB']), [total, cap !== null ? cap + ' GB' : '∞']].map(([v, l]) => `<span style="left:${v / total * 100}%">${l}</span>`).join('');
-    const legend = sg.map((s, i) => `<div style="border-left:4px solid ${col(i, n)}"><b>${s.mbps} Mbps</b>${s.to === null ? (s.from ? `After ${s.from} GB` : 'All day') : `${s.from}–${s.to} GB`} each day</div>`).join('');
-    speedHtml = `<div class="speed"><h4>Your daily speed (throttling)</h4><span class="note">${p.type === 'daypass' ? `You get ${fmtGb(p.gb)} every day.` : 'Unlimited data.'} Speed steps down as you use data each day.</span>
-      <div class="sbar" role="img" aria-label="${esc(speedText(p))}">${bar}</div><div class="sticks">${ticks}</div><div class="slegend">${legend}</div></div>`;
+  if (!unlOpen(p)) {
+    const rs = p.reducedSpeed > 0, per = p.type === 'fixed' ? '' : ' / day';
+    speedHtml = `<div class="speed"><h4>Your speed</h4><span class="note">${esc((p.capInfo || '').trim() || capText(p))}</span>
+      <div class="sbar" role="img" aria-label="${esc(capText(p))}"><div style="width:60%;background:#16a34a">Full speed</div><div style="width:40%;background:${rs ? '#f59e0b' : '#ef4444'}">${rs ? speedLabel(p.reducedSpeed) : 'Cut off'}</div></div>
+      <div class="slegend"><div style="border-left:4px solid #16a34a"><b>${fmtGb(p.gb)}${per}</b>at full speed</div><div style="border-left:4px solid ${rs ? '#f59e0b' : '#ef4444'}"><b>${rs ? speedLabel(p.reducedSpeed) : 'Cut off'}</b>${rs ? 'after the cap' : 'connection stops after the cap'}</div></div></div>`;
   }
   $('detail').innerHTML = `<div class="dhead"><div><h3>${esc(p.name)}</h3><div class="meta">${esc(p.region)} · ${p.coverages.length} ${p.coverages.length === 1 ? 'country' : 'countries'}</div></div>
     <div><div class="pr">$ ${(+p.price).toFixed(2)} <small>USD</small></div><button type="button" class="buy">Buy now</button></div></div>
@@ -568,8 +608,13 @@ function renderDetail() {
 function toast(m) { let t = document.querySelector('.toast'); if (!t) { t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); } t.textContent = m; t.hidden = false; clearTimeout(t._h); t._h = setTimeout(() => t.hidden = true, 2600); }
 
 /* ---------- vendor catalog page ---------- */
+let catMode = 'cty';
 const catV = () => $('catVendor').value;
 function renderCat(focusCode) {
+  const reg = catMode === 'reg';
+  document.querySelectorAll('#catSeg button').forEach(b => b.classList.toggle('on', b.dataset.m === catMode));
+  $('catSelWrap').hidden = reg; $('catRegWrap').hidden = !reg; $('catCtyBox').hidden = reg; $('catRegBox').hidden = !reg;
+  if (reg) return renderCatRegions();
   const v = catV(), cat = CATALOG[v] = CATALOG[v] || {}, codes = catCountries(v);
   $('catSel').innerHTML = countryOpts('Add a country…', SORTED.filter(c => !cat[c]));
   $('catSummary').textContent = `${VENDORS[v].name}: ${codes.length} countries · ${codes.reduce((s, c) => s + cat[c].length, 0)} operators`;
@@ -579,8 +624,26 @@ function renderCat(focusCode) {
   }).join('') : '<div class="empty">No countries for this vendor yet. Add a country above, then its operators.</div>';
   if (focusCode) { const btn = $('catList').querySelector(`button[data-act="ao"][data-c="${focusCode}"]`); const inp = btn && btn.closest('.addop').querySelector('input'); if (inp) { inp.focus(); if (inp.scrollIntoView) inp.scrollIntoView({ block: 'nearest' }); } }
 }
+function renderCatRegions() {
+  const v = catV(), r = $('catRegion').value, rv = REGCAT[v] = REGCAT[v] || {}, set = rv[r] = rv[r] || [], cat = CATALOG[v] || {};
+  $('catRegSummary').textContent = `${VENDORS[v].name} · ${r}: ${set.length} ${set.length === 1 ? 'country' : 'countries'}`;
+  $('catRegChips').innerHTML = set.length ? set.map(c => `<span class="chip">${esc(cn(c))}<b>${esc(c)}</b>${cat[c] && cat[c].length ? '' : '<em class="warn">no operators</em>'}<button type="button" aria-label="Remove ${esc(cn(c))}" data-c="${c}">×</button></span>`).join('') : '<span class="empty">No countries in this region yet.</span>';
+  const free = SORTED.filter(c => !set.includes(c)), opt = c => `<option value="${c}">${esc(cn(c))} (${c})</option>`;
+  const withOps = free.filter(c => cat[c] && cat[c].length), others = free.filter(c => !(cat[c] && cat[c].length));
+  $('catRegSel').innerHTML = '<option value="">Add a country to this region…</option>'
+    + (withOps.length ? `<optgroup label="With operators in the catalog">${withOps.map(opt).join('')}</optgroup>` : '')
+    + (others.length ? `<optgroup label="No operators yet">${others.map(opt).join('')}</optgroup>` : '');
+}
 $('catVendor').onchange = () => renderCat();
+$('catRegion').onchange = () => renderCat();
+document.querySelectorAll('#catSeg button').forEach(b => b.onclick = () => { catMode = b.dataset.m; renderCat(); });
 $('catSel').onchange = () => { const c = $('catSel').value; if (c) { CATALOG[catV()][c] = []; persistCatalog(); renderCat(c); } };
+$('catRegSel').onchange = () => { const c = $('catRegSel').value; if (c) { REGCAT[catV()][$('catRegion').value].push(c); persistRegCat(); renderCat(); } };
+$('catRegChips').addEventListener('click', e => {
+  const b = e.target.closest('button[data-c]'); if (!b) return;
+  const v = catV(), r = $('catRegion').value; REGCAT[v][r] = REGCAT[v][r].filter(c => c !== b.dataset.c); persistRegCat(); renderCat();
+});
+$('catRegReset').onclick = () => { const v = catV(), r = $('catRegion').value; REGCAT[v][r] = clone(REGION_SETS[r] || []); persistRegCat(); renderCat(); toast(`${r} reset to its default countries`); };
 $('catList').addEventListener('click', e => {
   const b = e.target.closest('button[data-act]'); if (!b) return;
   const cat = CATALOG[catV()], code = b.dataset.c, act = b.dataset.act;
@@ -604,7 +667,7 @@ document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
   const cat = t.dataset.v === 'catalog';
   document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t));
   $('plansView').hidden = cat; $('catView').hidden = !cat;
-  $('topHint').textContent = cat ? 'Enter each vendor\'s countries and operators once. The Plans page uses them automatically.' : 'Edit a plan on the left and click Save. The website and the JSON output update from the same data.';
+  $('topHint').textContent = cat ? 'Enter each vendor\'s countries, operators and regions once. The Plans page uses them automatically.' : 'Edit a plan on the left and click Save. The website and the JSON output update from the same data.';
   if (cat) { $('catVendor').value = draft.vendor; renderCat(); } else renderCov();
 });
 
