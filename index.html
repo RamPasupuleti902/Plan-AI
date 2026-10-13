@@ -113,6 +113,9 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
 .cflag .flg{width:30px;height:21px}
 .cstrip{display:flex;align-items:center;gap:4px;margin:2px 0}.cstrip small{color:var(--muted);font-size:12px}
 .covh .flg{margin-right:-2px}
+.sec{background:rgba(255,255,255,.72);border:1px solid #f0d9d6;border-radius:10px;padding:12px;display:grid;gap:10px}
+.st{display:flex;align-items:center;gap:8px;font-weight:600;font-size:12.5px;color:#3b2f6f}
+.st i{font-style:normal;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--red);color:#fff;font-size:11px}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 14px;border-radius:8px;z-index:9}
 </style>
 </head>
@@ -123,47 +126,65 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
   <div class="pt">Admin · Update Plan</div>
   <div class="admin">
     <div class="plist" id="plist"></div>
-    <div class="fields">
-      <div class="f full"><label for="name">Plan name <em>(planName)</em></label><input id="name"></div>
-      <div class="f"><label for="vendor">Supplier / vendor</label><select id="vendor"><option value="telco">Telco Vision (TEL VSN)</option><option value="rombty">Rombty</option></select></div>
-      <div class="f"><label for="apn">APN <em id="apnHint"></em></label><input id="apn"></div>
-      <div class="f full"><label for="link">Plan link <em>(link)</em> <span class="req">*</span></label><input id="link" type="url" placeholder="https://example.com/plans/usa-10gb"></div>
-
-      <div class="f full"><label for="bkSel">Internet breakout country code <em>(internetBreakouts)</em> <span class="req" id="bkReq">*</span></label>
-        <div class="cpick"><select id="bkSel"></select></div>
-        <div class="chips" id="bkChips"></div></div>
-
-      <div class="f full"><label>Plan is for</label><div class="seg" id="scopeSeg"><button type="button" data-s="country">A country</button><button type="button" data-s="region">A region</button></div></div>
-      <div class="f"><label for="region">Region</label><select id="region"><option value="">Select region…</option><option>Asia-Pacific</option><option>Europe</option><option>Middle East</option><option>Africa</option><option>North America</option><option>South Latin America</option><option>Eurasia</option><option>Global</option></select></div>
-      <div class="f"><label for="cSel" id="cLabel">Country</label><select id="cSel"></select></div>
-
-      <div class="f full"><label>Plan type</label><div class="seg" id="ptSeg"><button type="button" data-p="data">Data</button><button type="button" data-p="data-voice">Data + Voice</button></div></div>
-      <div class="f full" id="telWrap"><label for="telCountry">Number country code <em>(telephony.dialingCode)</em> <span class="req">*</span></label><select id="telCountry"></select></div>
-      <div class="f full" id="telChecks"><label>Voice &amp; SMS capabilities <em>(telephony.voice / telephony.sms)</em></label>
-        <div class="checks"><label><input type="checkbox" id="vIn"> Voice: receive calls (inbound)</label><label><input type="checkbox" id="vOut"> Voice: make calls (outbound)</label><label><input type="checkbox" id="sIn"> SMS: receive (inbound)</label><label><input type="checkbox" id="sOut"> SMS: send (outbound)</label></div></div>
-
-      <div class="f full"><label>Data allowance</label><div class="seg" id="typeSeg"><button type="button" data-t="fixed">Fixed GB</button><button type="button" data-t="daypass">Day Pass (daily cap)</button><button type="button" data-t="unlimited">Unlimited</button></div></div>
-      <div class="f full" id="thrWrap"><label>Throttle this unlimited plan?</label><div class="seg" id="thrSeg"><button type="button" data-v="0">No, truly unlimited</button><button type="button" data-v="1">Yes, throttle after a daily cap</button></div></div>
-      <div class="f" id="gbWrap"><label for="gb" id="gbLabel">Data (GB)</label><input id="gb" type="number" min="0.1" step="0.1"></div>
-      <div class="f"><label for="days">Validity (days) <em>(validity)</em></label><input id="days" type="number" min="1"></div>
-      <div class="f"><label for="price">Selling price (USD) <em>(prices.USD)</em></label><input id="price" type="number" min="0" step="0.01"></div>
-      <div class="f"><label for="vStart">Validity starts <em>(website only)</em></label><select id="vStart"><option value="first">From first network connection</option><option value="install">From eSIM installation</option></select></div>
-      <div class="f"><label>Tethering <em>(tethering)</em></label><div class="seg" id="hsSeg"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button></div></div>
-      <div class="f"><label>canTopUp</label><div class="seg" id="tuSeg"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button></div></div>
-      <div class="f"><label>subscription</label><div class="seg" id="subSeg"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button></div></div>
-      <div class="f"><label>eKYC</label><div class="seg" id="kycSeg"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button></div></div>
-    </div>
-    <div class="tiers" id="rsBox">
-      <h3>Throttling after the cap <span>(reducedSpeed, capacityInfo)</span></h3>
+    <div class="sec"><div class="st"><i>1</i>Basics</div>
       <div class="fields">
-        <div class="f"><label for="rs">Reduced speed after the cap, in kbps <em>(reducedSpeed)</em></label><input id="rs" type="number" min="1" step="1" placeholder="e.g. 128"><span class="hint">Leave empty if the connection is cut off when the data is used up.</span></div>
-        <div class="f"><label for="capInfo">Capacity info <em>(capacityInfo)</em></label><input id="capInfo" placeholder="e.g. Unlimited 2G (128 kbps) after cap"><span class="hint"><button type="button" class="x" id="capReset" style="font-size:11px;color:var(--blue)">Auto-fill this text</button></span></div>
+        <div class="f full"><label for="name">Plan name <em>(planName)</em></label><input id="name"></div>
+        <div class="f"><label for="vendor">Supplier / vendor</label><select id="vendor"><option value="telco">Telco Vision (TEL VSN)</option><option value="rombty">Rombty</option></select></div>
+        <div class="f"><label for="apn">APN <em id="apnHint"></em></label><input id="apn"></div>
+        <div class="f full"><label for="link">Plan link <em>(link)</em> <span class="req">*</span></label><input id="link" type="url" placeholder="https://example.com/plans/usa-10gb"></div>
+      </div></div>
+
+    <div class="sec"><div class="st"><i>2</i>Coverage</div>
+      <div class="fields">
+        <div class="f full"><label>Plan is for</label><div class="seg" id="scopeSeg"><button type="button" data-s="country">A country</button><button type="button" data-s="region">A region</button></div></div>
+        <div class="f"><label for="region">Region</label><select id="region"><option value="">Select region…</option><option>Asia-Pacific</option><option>Europe</option><option>Middle East</option><option>Africa</option><option>North America</option><option>South Latin America</option><option>Eurasia</option><option>Global</option></select></div>
+        <div class="f"><label for="cSel" id="cLabel">Country</label><select id="cSel"></select></div>
+        <div class="f full"><label>Mapped countries and networks <em>(coverages)</em> <span class="req">*</span></label>
+          <div class="cpick"><button type="button" class="btn ghost" id="cAll">Reset to region countries</button></div>
+          <div class="cov-list" id="covList"></div></div>
+        <div class="f full"><label for="bkSel">Internet breakout country <em>(internetBreakouts)</em> <span class="req" id="bkReq">*</span></label>
+          <div class="cpick"><select id="bkSel"></select></div>
+          <div class="chips" id="bkChips"></div></div>
+      </div></div>
+
+    <div class="sec"><div class="st"><i>3</i>Plan type</div>
+      <div class="fields">
+        <div class="f full"><div class="seg" id="ptSeg"><button type="button" data-p="data">Data</button><button type="button" data-p="data-voice">Data + Voice</button></div></div>
+        <div class="f full" id="telWrap"><label for="telCountry">Number country code <em>(telephony.dialingCode)</em> <span class="req">*</span></label><select id="telCountry"></select></div>
+        <div class="f full" id="telChecks"><label>Voice &amp; SMS capabilities <em>(telephony.voice / telephony.sms)</em></label>
+          <div class="checks"><label><input type="checkbox" id="vIn"> Voice: receive calls (inbound)</label><label><input type="checkbox" id="vOut"> Voice: make calls (outbound)</label><label><input type="checkbox" id="sIn"> SMS: receive (inbound)</label><label><input type="checkbox" id="sOut"> SMS: send (outbound)</label></div></div>
+      </div></div>
+
+    <div class="sec"><div class="st"><i>4</i>Data allowance</div>
+      <div class="fields">
+        <div class="f full"><div class="seg" id="typeSeg"><button type="button" data-t="fixed">Fixed GB</button><button type="button" data-t="daypass">Day Pass (daily cap)</button><button type="button" data-t="unlimited">Unlimited</button></div></div>
+        <div class="f full" id="thrWrap"><label>Throttle this unlimited plan?</label><div class="seg" id="thrSeg"><button type="button" data-v="0">No, truly unlimited</button><button type="button" data-v="1">Yes, throttle after a daily cap</button></div></div>
+        <div class="f" id="gbWrap"><label for="gb" id="gbLabel">Data (GB)</label><input id="gb" type="number" min="0.1" step="0.1"></div>
       </div>
-    </div>
-    <div class="f full"><label>Coverage <em>(coverages)</em>: the mapped countries and their networks, from the vendor catalog <span class="req">*</span></label>
-      <div class="cpick"><button type="button" class="btn ghost" id="cAll">Reset to region countries</button></div>
-      <div class="cov-list" id="covList"></div></div>
-    <div class="actions"><button type="button" class="btn" id="save">Save plan → website</button><button type="button" class="btn ghost" id="dup">Duplicate</button><button type="button" class="btn ghost" id="del">Delete</button><button type="button" class="btn ghost" id="copyAll">Copy all plans JSON</button><span id="dirty"></span></div>
+      <div class="tiers" id="rsBox">
+        <h3>Throttling after the cap <span>(reducedSpeed, capacityInfo)</span></h3>
+        <div class="fields">
+          <div class="f"><label for="rs">Reduced speed after the cap, in kbps <em>(reducedSpeed)</em></label><input id="rs" type="number" min="1" step="1" placeholder="e.g. 128"><span class="hint">Leave empty if the connection is cut off when the data is used up.</span></div>
+          <div class="f"><label for="capInfo">Capacity info <em>(capacityInfo)</em></label><input id="capInfo" placeholder="e.g. Unlimited 2G (128 kbps) after cap"><span class="hint"><button type="button" class="x" id="capReset" style="font-size:11px;color:var(--blue)">Auto-fill this text</button></span></div>
+        </div>
+      </div></div>
+
+    <div class="sec"><div class="st"><i>5</i>Validity &amp; price</div>
+      <div class="fields">
+        <div class="f"><label for="days">Validity (days) <em>(validity)</em></label><input id="days" type="number" min="1"></div>
+        <div class="f"><label for="price">Selling price (USD) <em>(prices.USD)</em></label><input id="price" type="number" min="0" step="0.01"></div>
+        <div class="f full"><label for="vStart">Validity starts <em>(website only)</em></label><select id="vStart"><option value="first">From first network connection</option><option value="install">From eSIM installation</option></select></div>
+      </div></div>
+
+    <div class="sec"><div class="st"><i>6</i>Options</div>
+      <div class="fields">
+        <div class="f"><label>Tethering <em>(tethering)</em></label><div class="seg" id="hsSeg"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button></div></div>
+        <div class="f"><label>Top up <em>(canTopUp)</em></label><div class="seg" id="tuSeg"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button></div></div>
+        <div class="f"><label>Subscription <em>(subscription)</em></label><div class="seg" id="subSeg"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button></div></div>
+        <div class="f"><label>eKYC <em>(eKYC)</em></label><div class="seg" id="kycSeg"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button></div></div>
+      </div></div>
+
+    <div class="actions"><button type="button" class="btn" id="save">Save plan → website</button><button type="button" class="btn ghost" id="dup">Duplicate</button><button type="button" class="btn ghost" id="del">Delete</button><button type="button" class="btn ghost" id="copyAll">Copy all plans JSON</button><button type="button" class="btn ghost" id="migrate" title="Update every saved plan to the latest rules">Apply latest schema to all plans</button><span id="dirty"></span></div>
     <details class="ai" open><summary>JSON output (matches the endpoint)</summary><pre class="json" id="apiAdmin"></pre></details>
     <details class="ai"><summary>Additional Information (auto-generated)</summary><div class="ai-box" id="aiAdmin"></div></details>
   </div>
@@ -587,6 +608,31 @@ $('copyAll').onclick = async () => {
   const txt = apiJson(PLANS);
   try { await navigator.clipboard.writeText(txt); toast(`Copied JSON for ${PLANS.length} saved plans`); }
   catch (e) { toast('Copy blocked by the browser. Copy from the JSON box instead.'); }
+};
+
+/* ---------- apply the latest schema to plans saved earlier ---------- */
+function normalizePlan(p) {
+  const d = { vendor: 'telco', scope: 'country', planType: 'data', type: 'fixed', throttle: false, gb: 1, reducedSpeed: null, capInfo: '', capAuto: true, days: 1, price: 0, vStart: 'first', hotspot: true, topup: true, subscription: false, ekyc: false, breakouts: [], coverages: [], region: '', telCountry: '', voiceIn: true, voiceOut: true, smsIn: true, smsOut: true, apn: '', link: '', nameAuto: false };
+  Object.keys(d).forEach(k => { if (p[k] === undefined) p[k] = d[k]; });
+  if (!VENDORS[p.vendor]) p.vendor = 'telco';
+  if (!p.apn) p.apn = VENDORS[p.vendor].apn;
+  if (p.type !== 'unlimited') p.throttle = false;
+  if (p.type === 'fixed') { p.reducedSpeed = null; p.capAuto = true; }
+  p.coverages.forEach(cv => cv.networks.forEach(n => { if (!Array.isArray(n.types) || !n.types.length) n.types = ['3G', '4G', '5G']; }));
+  p.coverages.forEach(cv => { if (!cv.networks.length) cv.networks = mkCov(p.vendor, cv.code).networks; });
+  if (p.scope === 'region' && p.region) {
+    const old = {}; p.coverages.forEach(cv => { old[cv.code] = cv; });
+    p.coverages = regionSet(p.region, p.vendor).map(c => old[c] && old[c].networks.length ? old[c] : mkCov(p.vendor, c));
+  }
+  if (p.capAuto) p.capInfo = capText(p);
+  return p;
+}
+$('migrate').onclick = () => {
+  if (!confirm('Update all saved plans to the latest rules?\n\n- Fixed GB plans lose throttle fields\n- Missing fields get defaults\n- Region plans are re-mapped to the region catalog (operators you already set are kept)')) return;
+  PLANS = PLANS.map(p => normalizePlan(clone(p))); persist();
+  const bad = PLANS.filter(p => !p.coverages.length || p.coverages.some(cv => !cv.networks.length)).length;
+  openPlan(PLANS.some(p => p.id === editId) ? editId : PLANS[0].id); renderSite();
+  toast(`Updated ${PLANS.length} plans.` + (bad ? ` ${bad} still need operators.` : ' Use Copy all plans JSON for the new output.'));
 };
 
 /* ---------- website ---------- */
