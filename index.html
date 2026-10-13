@@ -13,7 +13,7 @@ button,input,select{font:inherit;color:inherit}button{cursor:pointer}
 :focus-visible{outline:2px solid var(--blue);outline-offset:1px}[hidden]{display:none!important}
 .top{padding:12px 16px;background:linear-gradient(90deg,#1b2559,#3d2a80);display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 .top h1{font-size:15px;margin:0;color:#fff}.top span{color:#c9d0f5;font-size:12px}
-.layout{display:grid;grid-template-columns:minmax(0,580px) minmax(0,1fr);gap:16px;padding:16px;max-width:1700px;margin:0 auto;align-items:start}
+.layout{display:grid;grid-template-columns:minmax(0,600px) minmax(0,1fr);gap:16px;padding:16px;max-width:1700px;margin:0 auto;align-items:start}
 @media(max-width:1150px){.layout{grid-template-columns:minmax(0,1fr)}}
 .pt{font:600 11px var(--fa);letter-spacing:.08em;text-transform:uppercase;color:#5a4f8f;margin:0 0 8px}
 .admin{background:#fff8f6;border:1px solid #f5d3d0;border-top:4px solid var(--red);border-radius:8px;padding:14px;display:grid;gap:12px;box-shadow:0 4px 14px rgba(227,33,43,.08)}
@@ -23,8 +23,9 @@ button,input,select{font:inherit;color:inherit}button{cursor:pointer}
 .pbtn.on{border-color:var(--red);background:var(--rs);color:var(--red)}.pbtn.new{border-style:dashed}
 .fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 12px}
 @media(max-width:520px){.fields{grid-template-columns:1fr}}
-.f{display:grid;gap:3px;min-width:0}.f.full{grid-column:1/-1}
+.f{display:grid;gap:3px;min-width:0;align-content:start}.f.full{grid-column:1/-1}
 .f label{font-size:11px;color:var(--ink2)}.f label em{font-style:normal;color:var(--muted)}.req{color:var(--red)}
+.hint{font-size:11px;color:var(--muted)}
 input,select{border:1px solid var(--line);border-radius:4px;padding:7px 9px;background:#fff;min-width:0}
 .f input,.f select{width:100%}input:focus,select:focus{border-color:var(--blue);outline:none}
 .bad{border-color:var(--red)!important;background:var(--rs)}
@@ -36,7 +37,7 @@ input,select{border:1px solid var(--line);border-radius:4px;padding:7px 9px;back
 .srow{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:12px;margin-bottom:6px}
 .srow input{width:70px;padding:5px 7px}.srow .sw{width:10px;height:10px;border-radius:3px}
 .x{border:0;background:none;color:var(--muted);font-size:16px;line-height:1}
-.chips{display:flex;flex-wrap:wrap;gap:5px;padding:6px;border:1px dashed #f0c9c6;background:#fff;border-radius:6px;min-height:30px}
+.chips{display:flex;flex-wrap:wrap;gap:5px;padding:6px;border:1px dashed #f0c9c6;background:#fff;border-radius:6px;min-height:30px;max-height:180px;overflow:auto}
 .chip{background:var(--chip);border-radius:999px;padding:2px 3px 2px 9px;font-size:11.5px;display:inline-flex;align-items:center;gap:5px}
 .chip b{background:#fff;border-radius:4px;padding:0 5px;font-size:10.5px;color:var(--ink2)}
 .chip button{border:0;background:none;width:17px;height:17px;border-radius:50%;color:var(--muted)}
@@ -47,6 +48,7 @@ input,select{border:1px solid var(--line);border-radius:4px;padding:7px 9px;back
 .dirty{color:var(--red);font-weight:600}.saved{color:var(--ok);font-weight:600}
 details.ai{border:1px solid #f0c9c6;background:#fff;border-radius:6px}details.ai summary{cursor:pointer;padding:8px 10px;font-weight:600}
 .ai-box{padding:0 10px 10px}.ai-box p{margin:0 0 3px;font-weight:600}.ai-box ul{margin:0 0 8px;padding-left:18px}
+pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;padding:10px;font:11.5px/1.5 ui-monospace,Menlo,Consolas,monospace;overflow:auto;max-height:320px;white-space:pre}
 .site{background:#eaf1ff;border:1px solid #cfdcf7;border-top:4px solid var(--blue);border-radius:10px;overflow:hidden;font:15px var(--fw);box-shadow:0 4px 14px rgba(31,95,224,.1)}
 .browser{display:flex;align-items:center;gap:8px;background:#d5e1fb;padding:8px 12px;font:12px var(--fa)}
 .browser i{width:10px;height:10px;border-radius:50%;background:#c9ced8}
@@ -65,6 +67,7 @@ details.ai{border:1px solid #f0c9c6;background:#fff;border-radius:6px}details.ai
 .nm{font-size:13px;color:var(--muted)}.gb{font-size:24px;font-weight:700}.gb small{font-size:15px;color:var(--ink2)}
 .price{font-size:22px;font-weight:700}.price small{font-size:16px;color:var(--ink2);margin-left:4px}
 .dp{font-size:11px;font-weight:700;background:#fff7e6;color:#b45309;border-radius:6px;padding:2px 7px;justify-self:start}
+.vc{font-size:11px;font-weight:700;background:#eaf7ee;color:#16803c;border-radius:6px;padding:2px 7px;justify-self:start}
 .vd{color:var(--blue);margin-top:6px}
 .detail{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:20px 22px;display:grid;gap:16px}
 .dhead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.dhead h3{margin:0;font-size:22px}
@@ -79,11 +82,12 @@ details.ai{border:1px solid #f0c9c6;background:#fff;border-radius:6px}details.ai
 .sticks{position:relative;height:18px;font-size:12px;color:var(--muted);margin:0 14px}.sticks span{position:absolute;transform:translateX(-50%)}
 .slegend{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
 .slegend div{border-radius:10px;padding:8px 10px;background:#f7f8fb;font-size:13px}.slegend b{display:block;font-size:17px}
+.apibox{border:1px solid var(--line);border-radius:10px;background:#fff}.apibox summary{cursor:pointer;padding:8px 12px;font-weight:600}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 14px;border-radius:8px;z-index:9}
 </style>
 </head>
 <body>
-<div class="top"><h1>Plan manager → website</h1><span>Edit a plan on the left and click Save. The website on the right updates from the same data.</span></div>
+<div class="top"><h1>Plan manager → website</h1><span>Edit a plan on the left and click Save. The website and the API payload update from the same data.</span></div>
 <div class="layout">
 <section aria-label="Admin plan editor">
   <div class="pt">Admin · Update Plan</div>
@@ -93,11 +97,19 @@ details.ai{border:1px solid #f0c9c6;background:#fff;border-radius:6px}details.ai
       <div class="f full"><label for="name">Plan name</label><input id="name"></div>
       <div class="f"><label for="vendor">Supplier / vendor</label><select id="vendor"><option value="telco">Telco Vision (TEL VSN)</option><option value="rombty">Rombty</option></select></div>
       <div class="f"><label for="apn">APN <em id="apnHint"></em></label><input id="apn"></div>
-      <div class="f"><label for="operator">Operator Name 1</label><input id="operator"></div>
-      <div class="f"><label for="breakout">Internet breakout <span class="req">*</span></label><select id="breakout" required></select></div>
+
+      <div class="f"><label for="opCountry">Operator country <span class="req">*</span></label><select id="opCountry" required></select></div>
+      <div class="f"><label for="operator">Operator <span class="req">*</span></label><select id="operator" required></select></div>
+      <div class="f full" id="opManualWrap" hidden><label for="operatorManual">Operator name (manual)</label><input id="operatorManual" placeholder="Type the operator name"><span class="hint" id="opHint"></span></div>
+
+      <div class="f"><label for="breakout">Internet breakout (country code) <span class="req">*</span></label><select id="breakout" required></select></div>
       <div class="f"><label for="region">Region</label><select id="region"><option>Asia-Pacific</option><option>Europe</option><option>Middle East</option><option>Africa</option><option>North America</option><option>South Latin America</option><option>Eurasia</option><option>Global</option></select></div>
-      <div class="f"><label for="bCountry">Local breakout country <span class="req">*</span></label><select id="bCountry" required></select></div>
-      <div class="f full"><label>Plan type</label><div class="seg" id="typeSeg"><button type="button" data-t="unlimited">Unlimited</button><button type="button" data-t="fixed">Fixed GB</button><button type="button" data-t="daypass">Day Pass</button></div></div>
+
+      <div class="f full"><label>Plan type</label><div class="seg" id="ptSeg"><button type="button" data-p="data">Data</button><button type="button" data-p="data-voice">Data + Voice</button></div></div>
+      <div class="f" id="vmWrap"><label for="voiceMin">Voice minutes</label><input id="voiceMin" type="number" min="0" step="1"></div>
+      <div class="f" id="smsWrap"><label for="sms">SMS</label><input id="sms" type="number" min="0" step="1"></div>
+
+      <div class="f full"><label>Data allowance</label><div class="seg" id="typeSeg"><button type="button" data-t="unlimited">Unlimited</button><button type="button" data-t="fixed">Fixed GB</button><button type="button" data-t="daypass">Day Pass</button></div></div>
       <div class="f" id="gbWrap"><label for="gb" id="gbLabel">Data (GB)</label><input id="gb" type="number" min="0.1" step="0.1"></div>
       <div class="f"><label for="days">Validity (days)</label><input id="days" type="number" min="1"></div>
       <div class="f"><label for="price">Selling price (USD)</label><input id="price" type="number" min="0" step="0.01"></div>
@@ -110,11 +122,12 @@ details.ai{border:1px solid #f0c9c6;background:#fff;border-radius:6px}details.ai
       <div id="stepRows"></div>
       <div class="actions"><button type="button" class="btn ghost" id="stepAdd" style="padding:5px 10px">+ Add throttle step</button><button type="button" class="btn ghost" id="stepReset" style="padding:5px 10px">Reset throttling</button></div>
     </div>
-    <div class="f full"><label for="cSel">Map Country · supported countries</label>
+    <div class="f full"><label for="cSel">Map Country · supported countries <em>(auto-filled from operator, editable)</em></label>
       <div class="cpick"><select id="cSel"></select><button type="button" class="btn ghost" id="cAdd">+ Add</button><select id="cPreset" aria-label="Load a country set"><option value="">Load a set…</option></select></div>
       <div class="chips" id="chips"></div></div>
     <div class="actions"><button type="button" class="btn" id="save">Save plan → website</button><button type="button" class="btn ghost" id="dup">Duplicate</button><button type="button" class="btn ghost" id="del">Delete</button><span id="dirty"></span></div>
     <details class="ai"><summary>Additional Information (auto-generated)</summary><div class="ai-box" id="aiAdmin"></div></details>
+    <details class="ai"><summary>API payload (JSON)</summary><pre class="json" id="apiAdmin"></pre></details>
   </div>
 </section>
 <section aria-label="Website preview">
@@ -134,23 +147,46 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>'
 const clone = o => JSON.parse(JSON.stringify(o));
 const r1 = n => Math.round(n * 10) / 10;
 
-/* countries: ISO code + name */
-const CL = {};
-const ALLC = 'AE UAE;AM Armenia;AU Australia;AZ Azerbaijan;BD Bangladesh;CN China;CY Cyprus;DE Germany;DK Denmark;EG Egypt;ES Spain;FI Finland;FR France;GB United Kingdom;GE Georgia;HK Hong Kong;ID Indonesia;IL Israel;IN India;IS Iceland;IT Italy;JP Japan;KG Kyrgyzstan;KH Cambodia;KR South Korea;KW Kuwait;KZ Kazakhstan;LK Sri Lanka;MO Macau;MY Malaysia;NO Norway;NP Nepal;PH Philippines;QA Qatar;SA Saudi Arabia;SE Sweden;SG Singapore;TH Thailand;TR Turkey;TW Taiwan;US USA;UZ Uzbekistan;VN Vietnam'
-  .split(';').map(s => { CL[s.slice(0, 2)] = s.slice(3); return s.slice(0, 2); });
-const cn = c => CL[c] || c;
+/* ---------- ALL countries (ISO 3166-1 alpha-2); names come from the browser ---------- */
+const ALLC = ('AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XK YE YT ZA ZM ZW').split(' ');
+let DN = null; try { DN = new Intl.DisplayNames(['en'], { type: 'region' }); } catch (e) {}
+const NAMES = {}; ALLC.forEach(c => { let n = c; try { n = (DN && DN.of(c)) || c; } catch (e) {} NAMES[c] = n; });
+const cn = c => NAMES[c] || c;
 const byName = (a, b) => cn(a).localeCompare(cn(b));
+const SORTED = ALLC.slice().sort(byName);
 const APAC = 'BD CN IN ID JP KZ KG MY NP PH SG KR TW TH UZ'.split(' ');
-const SETS = { 'Asia-Pacific (15)': APAC, 'China · Korea · Japan': ['CN','KR','JP'], 'Nordic Summer': ['DK','FI','IS','NO','SE'], 'Eurasia': ['AM','AZ','GE','KZ','TR'], 'Middle East': ['CY','EG','IL','KW','QA','SA','AE'] };
-const BREAKOUTS = ['Local (in-country)', 'Singapore', 'Hong Kong', 'United Kingdom', 'United States', 'Home routed'];
+const SETS = { 'Asia-Pacific (15)': APAC, 'China · Korea · Japan': ['CN','KR','JP'], 'Nordic Summer': ['DK','FI','IS','NO','SE'], 'Eurasia': ['AM','AZ','GE','KZ','TR'], 'Middle East': ['CY','EG','IL','KW','QA','SA','AE'], 'North America': ['US','CA','MX'] };
+
+/* ---------- OPERATORS per vendor → operator country (REPLACE with your real supplier data) ----------
+   { n: operator name, c: [country codes the operator's plan covers] } ; c omitted = operator country only */
+const OPERATORS = {
+  telco: {
+    US: [{ n: 'T-Mobile US' }, { n: 'AT&T' }, { n: 'Multi - Networks (North America)', c: ['US', 'CA', 'MX'] }],
+    SG: [{ n: 'Singtel' }, { n: 'StarHub' }, { n: 'Multi - Networks (APAC)', c: APAC }],
+    JP: [{ n: 'NTT Docomo' }, { n: 'SoftBank' }, { n: 'KDDI au' }],
+    GB: [{ n: 'EE' }, { n: 'Vodafone UK' }, { n: 'Three UK' }],
+    TH: [{ n: 'AIS' }, { n: 'True Move H' }, { n: 'dtac' }],
+    IN: [{ n: 'Airtel' }, { n: 'Jio' }],
+    AE: [{ n: 'Etisalat (e&)' }, { n: 'du' }]
+  },
+  rombty: {
+    US: [{ n: 'Verizon' }, { n: 'T-Mobile US' }, { n: 'AT&T' }],
+    SG: [{ n: 'Singtel' }, { n: 'M1' }, { n: 'Multi - Networks (APAC)', c: APAC }],
+    JP: [{ n: 'NTT Docomo' }, { n: 'SoftBank' }],
+    GB: [{ n: 'O2 UK' }, { n: 'Vodafone UK' }],
+    DE: [{ n: 'Telekom DE' }, { n: 'Vodafone DE' }, { n: 'Telefonica DE' }],
+    TH: [{ n: 'AIS' }, { n: 'True Move H' }]
+  }
+};
+const opList = (vendor, cc) => (OPERATORS[vendor] && OPERATORS[vendor][cc]) || [];
 
 const VENDORS = {
   telco: { name: 'Telco Vision', apn: 'plus', template: `# Package Details:
 - {{data}}
+[voice]- Voice: {{voice}}
 [speed]- {{speed}}
 - Operates on {{network}}
 - Internet breakout - {{breakout}}
-- Local breakout country - {{breakoutCountry}}
 [hotspot]- Hotspot supports
 - Validity starts {{validityStart}}
 [topup]- Top up available
@@ -161,10 +197,10 @@ const VENDORS = {
 - {{countries}}` },
   rombty: { name: 'Rombty', apn: 'internet', template: `# Package Details:
 - {{data}}
+[voice]- Voice: {{voice}}
 [speed]- {{speed}}
 - Network: {{network}}
 - Internet breakout: {{breakout}}
-- Local breakout country: {{breakoutCountry}}
 - Valid for {{validity}}, starting {{validityStart}}
 [hotspot]- Hotspot / tethering allowed
 [topup]- Top up anytime from your account
@@ -174,23 +210,30 @@ const VENDORS = {
 # Coverage ({{countryCount}} countries):
 - {{countries}}` }
 };
-/* steps: cumulative GB per day -> Mbps. Last step has gb:null (rest of day / up to daily limit) */
 const DEF_D = [{ gb: 0.6, mbps: 3 }, { gb: 0.8, mbps: 2 }, { gb: null, mbps: 1 }];
 const DEF_U = [{ gb: 1, mbps: 5 }, { gb: 2, mbps: 2 }, { gb: null, mbps: 1 }];
 const COLS = ['#16a34a', '#84cc16', '#f59e0b', '#f97316', '#ef4444'];
 const col = (i, n) => COLS[n < 2 ? 0 : Math.round(i * 4 / (n - 1))];
-const mk = (id, name, vendor, type, gb, days, price, steps) => ({ id, name, vendor, apn: VENDORS[vendor].apn, operator: 'Multi - Networks', breakout: 'Singapore', breakoutCountry: 'SG', region: 'Asia-Pacific', type, gb, days, price, vStart: 'first', hotspot: true, topup: true, countries: APAC.slice(), steps: clone(steps) });
-const SAMPLE = [mk(1, 'APAC Unlimited 3 Days', 'telco', 'unlimited', 0, 3, 9.90, DEF_U), mk(2, 'APAC Day Pass 1 GB', 'rombty', 'daypass', 1, 7, 12.50, DEF_D), mk(3, 'APAC 10 GB 30 Days', 'telco', 'fixed', 10, 30, 14.90, DEF_D)];
+const mk = (id, name, vendor, type, gb, days, price, steps, opCountry, operator, countries, planType) => ({
+  id, name, vendor, apn: VENDORS[vendor].apn, opCountry, operator, breakout: opCountry, region: 'Asia-Pacific',
+  planType: planType || 'data', voiceMin: 100, sms: 50, type, gb, days, price, vStart: 'first', hotspot: true, topup: true, countries: countries.slice(), steps: clone(steps)
+});
+const SAMPLE = [
+  mk(1, 'APAC Unlimited 3 Days', 'telco', 'unlimited', 0, 3, 9.90, DEF_U, 'SG', 'Multi - Networks (APAC)', APAC),
+  mk(2, 'APAC Day Pass 1 GB', 'rombty', 'daypass', 1, 7, 12.50, DEF_D, 'SG', 'Multi - Networks (APAC)', APAC),
+  mk(3, 'APAC 10 GB 30 Days', 'telco', 'fixed', 10, 30, 14.90, DEF_D, 'SG', 'Multi - Networks (APAC)', APAC, 'data-voice')
+];
 
 let PLANS = load();
-function load() { try { const p = JSON.parse(localStorage.getItem('pm_plans_v2') || 'null'); if (Array.isArray(p) && p.length) return p; } catch (e) {} return clone(SAMPLE); }
-function persist() { try { localStorage.setItem('pm_plans_v2', JSON.stringify(PLANS)); } catch (e) {} }
-let editId = PLANS[0].id, viewId = PLANS[0].id, draft = clone(PLANS[0]), flashId = null;
+function load() { try { const p = JSON.parse(localStorage.getItem('pm_plans_v3') || 'null'); if (Array.isArray(p) && p.length) return p; } catch (e) {} return clone(SAMPLE); }
+function persist() { try { localStorage.setItem('pm_plans_v3', JSON.stringify(PLANS)); } catch (e) {} }
+let editId = PLANS[0].id, viewId = PLANS[0].id, draft = clone(PLANS[0]), flashId = null, manualOp = false;
 
 /* ---------- helpers ---------- */
 const fmtGb = gb => { gb = +gb || 0; return gb < 1 ? Math.round(gb * 1024) + ' MB' : r1(gb) + ' GB'; };
 const capOf = p => p.type === 'daypass' ? (+p.gb || 0) : null;
-function segs(p) {           // [{from,to,mbps}] ; to=null means open ended
+const ptLabel = p => p.planType === 'data-voice' ? 'Data + Voice' : 'Data';
+function segs(p) {
   const cap = capOf(p); let from = 0;
   return p.steps.map((t, i) => { const last = i === p.steps.length - 1; const to = last ? cap : t.gb; const s = { from, to, mbps: t.mbps }; if (!last) from = t.gb; return s; });
 }
@@ -200,19 +243,46 @@ function speedText(p) {
     ? (x.to === null ? `${x.mbps} Mbps all day` : `up to ${x.to} GB at ${x.mbps} Mbps`)
     : `throttled to ${x.mbps} Mbps after ${x.from} GB`).join(', ') + ' (per day)';
 }
+/* API-shaped payload. Field names are a best match to the eSIMDB data-plans structure;
+   adjust ONLY this function if the partner doc uses different names. */
+function toApi(p) {
+  const unl = p.type === 'unlimited';
+  const o = {
+    id: String(p.id),
+    title: p.name,
+    supplier: VENDORS[p.vendor].name,
+    plan_type: p.planType,
+    is_unlimited: unl,
+    is_day_pass: p.type === 'daypass',
+    data: unl ? 'Unlimited' : fmtGb(p.gb) + (p.type === 'daypass' ? ' / day' : ''),
+    amount_mb: unl ? null : Math.round((+p.gb || 0) * 1024),
+    validity_days: +p.days,
+    validity_starts: p.vStart === 'install' ? 'installation' : 'first_connection',
+    price: { amount: +(+p.price).toFixed(2), currency: 'USD' },
+    operator: { name: p.operator || null, country_code: p.opCountry || null },
+    internet_breakout: p.breakout || null,
+    countries: [...p.countries].sort(byName),
+    apn: p.apn,
+    hotspot: !!p.hotspot,
+    can_top_up: !!p.topup
+  };
+  if (p.planType === 'data-voice') { o.voice_minutes = +p.voiceMin || 0; o.sms = +p.sms || 0; }
+  if (p.type !== 'fixed') o.throttling = segs(p).map(s => ({ from_gb: s.from, to_gb: s.to, speed_mbps: s.mbps }));
+  return o;
+}
 function generateAdditionalInfo(p) {
   const countries = [...p.countries].sort(byName);
   const vars = {
     data: p.type === 'unlimited' ? 'Unlimited High speed data' : p.type === 'daypass' ? `${fmtGb(p.gb)} High speed data per day` : `${fmtGb(p.gb)} High speed data`,
+    voice: `${+p.voiceMin || 0} minutes + ${+p.sms || 0} SMS`,
     speed: speedText(p),
-    network: (p.operator || '').replace(/\s*-\s*/g, ' ').replace(/^multi networks?$/i, 'Multi network') || 'Multi network',
-    breakout: p.breakout || 'Not set',
-    breakoutCountry: p.breakoutCountry ? `${cn(p.breakoutCountry)} (${p.breakoutCountry})` : 'Not set',
+    network: p.operator || 'Multi network',
+    breakout: p.breakout ? `${cn(p.breakout)} (${p.breakout})` : 'Not set',
     validity: p.days + (+p.days === 1 ? ' day' : ' days'),
     validityStart: p.vStart === 'install' ? 'from eSIM installation' : 'from first network connection',
     apn: p.apn, countries: countries.map(c => `${cn(c)} (${c})`).join(', '), countryCount: countries.length
   };
-  const flags = { hotspot: p.hotspot, topup: p.topup, speed: p.type !== 'fixed' };
+  const flags = { hotspot: p.hotspot, topup: p.topup, speed: p.type !== 'fixed', voice: p.planType === 'data-voice' };
   const sections = []; let cur = null;
   VENDORS[p.vendor].template.split('\n').forEach(raw => {
     let line = raw.trim(); if (!line) return;
@@ -226,38 +296,54 @@ function generateAdditionalInfo(p) {
 }
 
 /* ---------- admin ---------- */
-$('breakout').innerHTML = '<option value="">Select breakout…</option>' + BREAKOUTS.map(b => `<option>${esc(b)}</option>`).join('');
-$('bCountry').innerHTML = '<option value="">Select country…</option>' + ALLC.slice().sort(byName).map(c => `<option value="${c}">${esc(cn(c))} (${c})</option>`).join('');
+const countryOpts = ph => `<option value="">${ph}</option>` + SORTED.map(c => `<option value="${c}">${esc(cn(c))} (${c})</option>`).join('');
+$('breakout').innerHTML = countryOpts('Select breakout country…');
+$('opCountry').innerHTML = countryOpts('Select country…');
 $('cPreset').innerHTML += Object.keys(SETS).map(k => `<option>${esc(k)}</option>`).join('');
 
+function fillOperators() {
+  const list = opList(draft.vendor, draft.opCountry);
+  if (draft.operator && !list.some(o => o.n === draft.operator)) manualOp = true;
+  if (draft.opCountry && !list.length) manualOp = true;
+  $('operator').innerHTML = '<option value="">' + (draft.opCountry ? 'Select operator…' : 'Select operator country first') + '</option>'
+    + list.map(o => `<option value="${esc(o.n)}">${esc(o.n)}</option>`).join('')
+    + (draft.opCountry ? '<option value="__manual">Other: type manually</option>' : '');
+  $('operator').value = manualOp ? '__manual' : (draft.operator || '');
+  $('opManualWrap').hidden = !manualOp;
+  $('operatorManual').value = manualOp ? draft.operator : '';
+  $('opHint').textContent = draft.opCountry && !list.length ? `No saved operators for ${cn(draft.opCountry)} with ${VENDORS[draft.vendor].name}. Enter it manually.` : '';
+}
 function fillForm() {
-  const p = draft;
-  $('name').value = p.name; $('vendor').value = p.vendor; $('apn').value = p.apn; $('operator').value = p.operator;
-  $('breakout').value = p.breakout; $('region').value = p.region; $('gb').value = p.gb; $('days').value = p.days; $('price').value = p.price; $('vStart').value = p.vStart;
-  $('breakout').classList.remove('bad');
-  $('bCountry').value = p.breakoutCountry || ''; $('bCountry').classList.remove('bad');
-  paintSegs(); renderChips(); renderSteps(); renderAdminAI(); paintList(); paintDirty();
+  const p = draft; manualOp = false;
+  $('name').value = p.name; $('vendor').value = p.vendor; $('apn').value = p.apn;
+  $('opCountry').value = p.opCountry || ''; $('opCountry').classList.remove('bad'); $('operator').classList.remove('bad');
+  $('breakout').value = p.breakout || ''; $('breakout').classList.remove('bad');
+  $('region').value = p.region; $('gb').value = p.gb; $('days').value = p.days; $('price').value = p.price; $('vStart').value = p.vStart;
+  $('voiceMin').value = p.voiceMin; $('sms').value = p.sms;
+  fillOperators(); paintSegs(); renderChips(); renderSteps(); renderAdminAI(); paintList(); paintDirty();
 }
 function paintSegs() {
   document.querySelectorAll('#typeSeg button').forEach(b => b.classList.toggle('on', b.dataset.t === draft.type));
+  document.querySelectorAll('#ptSeg button').forEach(b => b.classList.toggle('on', b.dataset.p === draft.planType));
   document.querySelectorAll('#hsSeg button').forEach(b => b.classList.toggle('on', (b.dataset.v === '1') === draft.hotspot));
   document.querySelectorAll('#tuSeg button').forEach(b => b.classList.toggle('on', (b.dataset.v === '1') === draft.topup));
   $('gbWrap').hidden = draft.type === 'unlimited';
+  $('vmWrap').hidden = $('smsWrap').hidden = draft.planType !== 'data-voice';
   $('gbLabel').textContent = draft.type === 'daypass' ? 'Data per day (GB)' : 'Data (GB)';
   $('stepsBox').hidden = draft.type === 'fixed';
   $('apnHint').textContent = `· ${VENDORS[draft.vendor].name} default: ${VENDORS[draft.vendor].apn}`;
 }
 function paintList() {
-  $('plist').innerHTML = PLANS.map(p => `<button type="button" class="pbtn ${p.id === editId ? 'on' : ''}" data-id="${p.id}">${esc(p.name)}<small>${VENDORS[p.vendor].name} · ${p.type === 'daypass' ? 'Day Pass' : p.type === 'unlimited' ? 'Unlimited' : fmtGb(p.gb)}</small></button>`).join('') + '<button type="button" class="pbtn new" id="newPlan">+ New plan</button>';
+  $('plist').innerHTML = PLANS.map(p => `<button type="button" class="pbtn ${p.id === editId ? 'on' : ''}" data-id="${p.id}">${esc(p.name)}<small>${VENDORS[p.vendor].name} · ${ptLabel(p)} · ${p.type === 'daypass' ? 'Day Pass' : p.type === 'unlimited' ? 'Unlimited' : fmtGb(p.gb)}</small></button>`).join('') + '<button type="button" class="pbtn new" id="newPlan">+ New plan</button>';
   $('plist').querySelectorAll('.pbtn[data-id]').forEach(b => b.onclick = () => openPlan(+b.dataset.id));
-  $('newPlan').onclick = () => { const id = Math.max(...PLANS.map(p => p.id)) + 1; PLANS.push({ ...clone(SAMPLE[0]), id, name: 'New plan', breakout: '', breakoutCountry: '', countries: [] }); persist(); openPlan(id); renderSite(); };
+  $('newPlan').onclick = () => { const id = Math.max(...PLANS.map(p => p.id)) + 1; PLANS.push({ ...clone(SAMPLE[0]), id, name: 'New plan', breakout: '', opCountry: '', operator: '', countries: [] }); persist(); openPlan(id); renderSite(); };
 }
 function openPlan(id) { editId = id; viewId = id; draft = clone(PLANS.find(p => p.id === id)); fillForm(); if ($('cards').childElementCount) renderSite(); }
 
 function renderChips() {
   $('chips').innerHTML = draft.countries.length ? [...draft.countries].sort(byName).map(c => `<span class="chip">${esc(cn(c))}<b>${esc(c)}</b><button type="button" aria-label="Remove ${esc(cn(c))}" data-c="${c}">×</button></span>`).join('') : '<span style="color:var(--muted);font-size:12px">No countries</span>';
   $('chips').querySelectorAll('button').forEach(b => b.onclick = () => { draft.countries = draft.countries.filter(c => c !== b.dataset.c); renderChips(); changed(); });
-  $('cSel').innerHTML = '<option value="">Select a country…</option>' + ALLC.filter(c => !draft.countries.includes(c)).sort(byName).map(c => `<option value="${c}">${esc(cn(c))} (${c})</option>`).join('');
+  $('cSel').innerHTML = '<option value="">Select a country…</option>' + SORTED.filter(c => !draft.countries.includes(c)).map(c => `<option value="${c}">${esc(cn(c))} (${c})</option>`).join('');
 }
 function renderSteps() {
   const p = draft, n = p.steps.length, cap = capOf(p); let from = 0;
@@ -280,22 +366,45 @@ function renderSteps() {
   });
   $('stepRows').querySelectorAll('[data-r]').forEach(b => b.onclick = () => { draft.steps.splice(+b.dataset.r, 1); renderSteps(); changed(); });
 }
-const renderAdminAI = () => $('aiAdmin').innerHTML = generateAdditionalInfo(draft);
+const renderAdminAI = () => { $('aiAdmin').innerHTML = generateAdditionalInfo(draft); $('apiAdmin').textContent = JSON.stringify(toApi(draft), null, 2); };
 const isDirty = () => JSON.stringify(draft) !== JSON.stringify(PLANS.find(p => p.id === editId));
 const paintDirty = () => $('dirty').innerHTML = isDirty() ? '<span class="dirty">● Unsaved. The website still shows the old version.</span>' : '<span class="saved">✓ Website is up to date</span>';
 function changed() { renderAdminAI(); paintDirty(); }
 
 const bind = (id, key, num) => $(id).addEventListener('input', () => { draft[key] = num ? +$(id).value : $(id).value; if (id === 'gb') renderSteps(); changed(); });
-bind('name', 'name'); bind('apn', 'apn'); bind('operator', 'operator'); bind('gb', 'gb', true); bind('days', 'days', true); bind('price', 'price', true);
+bind('name', 'name'); bind('apn', 'apn'); bind('gb', 'gb', true); bind('days', 'days', true); bind('price', 'price', true); bind('voiceMin', 'voiceMin', true); bind('sms', 'sms', true);
 $('region').onchange = () => { draft.region = $('region').value; changed(); };
 $('vStart').onchange = () => { draft.vStart = $('vStart').value; changed(); };
 $('breakout').onchange = () => { draft.breakout = $('breakout').value; $('breakout').classList.toggle('bad', !draft.breakout); changed(); };
-$('bCountry').onchange = () => { draft.breakoutCountry = $('bCountry').value; $('bCountry').classList.toggle('bad', !draft.breakoutCountry); changed(); };
+
+/* operator country → reset operator, map to that country */
+$('opCountry').onchange = () => {
+  draft.opCountry = $('opCountry').value; draft.operator = ''; manualOp = false;
+  draft.countries = draft.opCountry ? [draft.opCountry] : [];
+  $('opCountry').classList.toggle('bad', !draft.opCountry);
+  fillOperators(); renderChips(); changed();
+};
+/* operator pick → map countries from that operator */
+$('operator').onchange = () => {
+  const v = $('operator').value;
+  if (v === '__manual') { manualOp = true; draft.operator = ''; $('opManualWrap').hidden = false; $('operatorManual').value = ''; $('operatorManual').focus(); }
+  else {
+    manualOp = false; draft.operator = v; $('opManualWrap').hidden = true;
+    const o = opList(draft.vendor, draft.opCountry).find(x => x.n === v);
+    if (o) { draft.countries = (o.c || [draft.opCountry]).slice(); renderChips(); }
+  }
+  $('operator').classList.toggle('bad', !draft.operator && !manualOp);
+  changed();
+};
+$('operatorManual').addEventListener('input', () => { draft.operator = $('operatorManual').value; changed(); });
 $('vendor').onchange = () => {
   const prev = VENDORS[draft.vendor].apn; draft.vendor = $('vendor').value;
   if (!draft.apn || draft.apn === prev) { draft.apn = VENDORS[draft.vendor].apn; $('apn').value = draft.apn; }
-  paintSegs(); changed();
+  /* operators differ per vendor: keep the name only if the new vendor has it */
+  if (!manualOp && !opList(draft.vendor, draft.opCountry).some(o => o.n === draft.operator)) draft.operator = '';
+  fillOperators(); paintSegs(); changed();
 };
+document.querySelectorAll('#ptSeg button').forEach(b => b.onclick = () => { draft.planType = b.dataset.p; paintSegs(); changed(); });
 document.querySelectorAll('#typeSeg button').forEach(b => b.onclick = () => {
   const old = draft.type; draft.type = b.dataset.t;
   if (draft.type !== 'unlimited' && !draft.gb) { draft.gb = 1; $('gb').value = 1; }
@@ -317,8 +426,9 @@ $('cPreset').onchange = () => { const v = $('cPreset').value; if (v) { draft.cou
 
 function validate(p) {
   if (!p.name.trim()) return 'Plan name is required';
-  if (!p.breakout) { $('breakout').classList.add('bad'); $('breakout').focus(); return 'Select the internet breakout (required)'; }
-  if (!p.breakoutCountry) { $('bCountry').classList.add('bad'); $('bCountry').focus(); return 'Select the local breakout country (required)'; }
+  if (!p.opCountry) { $('opCountry').classList.add('bad'); $('opCountry').focus(); return 'Select the operator country (required)'; }
+  if (!p.operator.trim()) { $('operator').classList.add('bad'); $('operator').focus(); return 'Select or type the operator (required)'; }
+  if (!p.breakout) { $('breakout').classList.add('bad'); $('breakout').focus(); return 'Select the internet breakout country code (required)'; }
   if (!p.countries.length) return 'Add at least one country';
   if (p.type === 'fixed') return '';
   if (p.type === 'daypass' && !(p.gb > 0)) return 'Enter the daily data (GB)';
@@ -350,6 +460,7 @@ function renderSite() {
       <span class="pill">@ ${esc((p.operator || 'Multi - Networks').toUpperCase())}</span><span class="nm">${esc(p.name)}</span>
       <span class="gb">${big}${p.type === 'daypass' ? '<small> / day</small>' : ''}</span>
       <span>${p.days} ${+p.days === 1 ? 'day' : 'days'}</span>
+      ${p.planType === 'data-voice' ? `<span class="vc">DATA + VOICE · ${+p.voiceMin || 0} min</span>` : ''}
       ${p.type !== 'fixed' ? `<span class="dp">${p.type === 'daypass' ? 'DAY PASS' : 'UNLIMITED'} · throttling</span>` : ''}
       <span class="price">$ ${(+p.price).toFixed(2)}<small>USD</small></span><span class="vd">View Details ↗</span></button>`;
   }).join('');
@@ -359,7 +470,9 @@ function renderSite() {
 function renderDetail() {
   const p = PLANS.find(x => x.id === viewId) || PLANS[0];
   $('url').textContent = `yourstore.com/esim/${slug(p.region)}/${slug(p.name)}`;
-  const facts = [['Data', p.type === 'unlimited' ? 'Unlimited' : fmtGb(p.gb) + (p.type === 'daypass' ? ' per day' : '')], ['Validity', `${p.days} ${+p.days === 1 ? 'day' : 'days'}`], ['Network', (p.operator || '').replace(/\s*-\s*/g, ' ')], ['Internet breakout', p.breakout || '—'], ['Local breakout', p.breakoutCountry ? cn(p.breakoutCountry) : '—'], ['APN', p.apn], ['Countries', p.countries.length]];
+  const facts = [['Plan type', ptLabel(p)], ['Data', p.type === 'unlimited' ? 'Unlimited' : fmtGb(p.gb) + (p.type === 'daypass' ? ' per day' : '')]];
+  if (p.planType === 'data-voice') facts.push(['Voice', `${+p.voiceMin || 0} min`], ['SMS', +p.sms || 0]);
+  facts.push(['Validity', `${p.days} ${+p.days === 1 ? 'day' : 'days'}`], ['Operator', p.operator || '—'], ['Internet breakout', p.breakout ? `${p.breakout} · ${cn(p.breakout)}` : '—'], ['APN', p.apn], ['Countries', p.countries.length]);
   let speedHtml = '';
   if (p.type !== 'fixed') {
     const sg = segs(p), n = sg.length, cap = capOf(p), lf = sg[n - 1].from;
@@ -372,7 +485,8 @@ function renderDetail() {
   }
   $('detail').innerHTML = `<div class="dhead"><div><h3>${esc(p.name)}</h3><div class="meta">${esc(p.region)} · ${p.countries.length} countries</div></div>
     <div><div class="pr">$ ${(+p.price).toFixed(2)} <small>USD</small></div><button type="button" class="buy">Buy now</button></div></div>
-    <div class="facts">${facts.map(f => `<span class="fact">${f[0]}: <b>${esc(f[1])}</b></span>`).join('')}</div>${speedHtml}<div class="info">${generateAdditionalInfo(p)}</div>`;
+    <div class="facts">${facts.map(f => `<span class="fact">${f[0]}: <b>${esc(f[1])}</b></span>`).join('')}</div>${speedHtml}<div class="info">${generateAdditionalInfo(p)}</div>
+    <details class="apibox"><summary>API payload (JSON)</summary><pre class="json">${esc(JSON.stringify(toApi(p), null, 2))}</pre></details>`;
 }
 function toast(m) { let t = document.querySelector('.toast'); if (!t) { t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); } t.textContent = m; t.hidden = false; clearTimeout(t._h); t._h = setTimeout(() => t.hidden = true, 2200); }
 
