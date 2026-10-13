@@ -8,7 +8,15 @@
 <style>
 :root{--bg:#eef1f5;--ink:#1f2430;--ink2:#4b5263;--muted:#8a90a0;--line:#e3e6ec;--red:#e3212b;--red2:#c41a23;--rs:#fdecec;--blue:#1f5fe0;--bs:#eef3ff;--chip:#eef1f7;--ok:#16803c;--fa:"Poppins","Segoe UI",system-ui,sans-serif;--fw:"Outfit","Segoe UI",system-ui,sans-serif}
 *{box-sizing:border-box}
-body{margin:0;background:linear-gradient(135deg,#e6edff 0%,#f1e8fc 50%,#ffe8ee 100%) fixed;color:var(--ink);font:13px/1.45 var(--fa)}
+body{margin:0;color:var(--ink);font:13px/1.45 var(--fa);min-height:100vh;
+background:
+radial-gradient(900px 500px at 8% 4%,rgba(227,33,43,.16),transparent 60%),
+radial-gradient(800px 520px at 92% 8%,rgba(61,42,128,.22),transparent 60%),
+radial-gradient(900px 600px at 50% 105%,rgba(31,95,224,.18),transparent 60%),
+linear-gradient(135deg,#e6edff 0%,#f1e8fc 50%,#ffe8ee 100%) fixed}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+background-image:radial-gradient(rgba(61,42,128,.16) 1.2px,transparent 1.3px);background-size:22px 22px;
+-webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.9),rgba(0,0,0,.25));mask-image:linear-gradient(180deg,rgba(0,0,0,.9),rgba(0,0,0,.25))}
 button,input,select{font:inherit;color:inherit}button{cursor:pointer}
 :focus-visible{outline:2px solid var(--blue);outline-offset:1px}[hidden]{display:none!important}
 .top{padding:12px 16px;background:linear-gradient(90deg,#1b2559,#3d2a80);display:flex;gap:12px;flex-wrap:wrap;align-items:center}
@@ -19,7 +27,10 @@ button,input,select{font:inherit;color:inherit}button{cursor:pointer}
 @media(max-width:1150px){.layout{grid-template-columns:minmax(0,1fr)}}
 .catwrap{padding:16px;max-width:860px;margin:0 auto}
 .pt{font:600 11px var(--fa);letter-spacing:.08em;text-transform:uppercase;color:#5a4f8f;margin:0 0 8px}
-.admin{background:#fff8f6;border:1px solid #f5d3d0;border-top:4px solid var(--red);border-radius:8px;padding:14px;display:grid;gap:12px;box-shadow:0 4px 14px rgba(227,33,43,.08)}
+.admin{position:relative;overflow:hidden;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(245,211,208,.9);border-top:4px solid var(--red);border-radius:12px;padding:14px;display:grid;gap:12px;box-shadow:0 10px 30px rgba(61,42,128,.14),0 2px 6px rgba(227,33,43,.08)}
+.admin::before{content:"";position:absolute;right:-90px;top:-90px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(227,33,43,.14),transparent 70%);pointer-events:none}
+.admin::after{content:"";position:absolute;left:-100px;bottom:-100px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(31,95,224,.12),transparent 70%);pointer-events:none}
+.admin>*{position:relative;z-index:1}
 .plist{display:flex;gap:6px;flex-wrap:wrap}
 .pbtn{border:1px solid var(--line);background:#fff;border-radius:6px;padding:6px 10px;font-size:12px;text-align:left}
 .pbtn small{display:block;color:var(--muted);font-size:10.5px}
@@ -117,7 +128,7 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
         <div class="chips" id="bkChips"></div></div>
 
       <div class="f full"><label>Plan is for</label><div class="seg" id="scopeSeg"><button type="button" data-s="country">A country</button><button type="button" data-s="region">A region</button></div></div>
-      <div class="f"><label for="region">Region</label><select id="region"><option>Asia-Pacific</option><option>Europe</option><option>Middle East</option><option>Africa</option><option>North America</option><option>South Latin America</option><option>Eurasia</option><option>Global</option></select></div>
+      <div class="f"><label for="region">Region</label><select id="region"><option value="">Select region…</option><option>Asia-Pacific</option><option>Europe</option><option>Middle East</option><option>Africa</option><option>North America</option><option>South Latin America</option><option>Eurasia</option><option>Global</option></select></div>
       <div class="f"><label for="cSel" id="cLabel">Country</label><select id="cSel"></select></div>
 
       <div class="f full"><label>Plan type</label><div class="seg" id="ptSeg"><button type="button" data-p="data">Data</button><button type="button" data-p="data-voice">Data + Voice</button></div></div>
@@ -167,7 +178,7 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
     <div class="fields">
       <div class="f"><label for="catVendor">Vendor</label><select id="catVendor"><option value="telco">Telco Vision (TEL VSN)</option><option value="rombty">Rombty</option></select></div>
       <div class="f" id="catSelWrap"><label for="catSel">Add a country to this vendor</label><select id="catSel"></select></div>
-      <div class="f" id="catRegWrap" hidden><label for="catRegion">Region</label><select id="catRegion"><option>North America</option><option>Asia-Pacific</option><option>Europe</option><option>Middle East</option><option>Africa</option><option>South Latin America</option><option>Eurasia</option></select></div>
+      <div class="f" id="catRegWrap" hidden><label for="catRegion">Region</label><select id="catRegion"><option value="">Select region…</option><option>North America</option><option>Asia-Pacific</option><option>Europe</option><option>Middle East</option><option>Africa</option><option>South Latin America</option><option>Eurasia</option></select></div>
     </div>
     <div class="seg" id="catSeg"><button type="button" data-m="cty">Countries &amp; operators</button><button type="button" data-m="reg">Regions</button></div>
     <div id="catCtyBox" style="display:grid;gap:12px">
@@ -208,7 +219,6 @@ const TELC = ALLC.filter(c => DIAL[c]).sort(byName);
 
 const APAC = 'BD CN IN ID JP KZ KG MY NP PH SG KR TW TH UZ'.split(' ');
 const TYPES = ['3G', '4G', '5G'];
-/* which countries belong to each region (the Country dropdown follows the Region dropdown; "Global" shows all) */
 const REGIONS = {
   'Asia-Pacific': 'AF AS AU BD BN BT CC CK CN CX FJ FM GU HK ID IN JP KH KI KR LA LK MH MM MN MO MP MV MY NC NF NP NR NU NZ PF PG PH PK PN PW SB SG TH TK TL TO TV TW VN VU WF WS',
   'Europe': 'AD AL AT AX BA BE BG BY CH CZ DE DK EE ES FI FO FR GB GG GI GR HR HU IE IM IS IT JE LI LT LU LV MC MD ME MK MT NL NO PL PT RO RS SE SI SJ SK SM UA VA XK',
@@ -219,8 +229,7 @@ const REGIONS = {
   'Eurasia': 'AM AZ GE KG KZ RU TJ TM TR UZ'
 };
 const REGION_OF = {}; Object.keys(REGIONS).forEach(r => REGIONS[r].split(' ').forEach(c => { REGION_OF[c] = r; }));
-const regionCountries = r => r === 'Global' ? SORTED : SORTED.filter(c => REGION_OF[c] === r);
-/* default countries a REGION plan maps (editable per vendor in the Vendor catalog → Regions) */
+const regionCountries = r => (!r || r === 'Global') ? SORTED : SORTED.filter(c => REGION_OF[c] === r);
 const REGION_SETS = {
   'North America': ['US', 'CA', 'MX'],
   'Asia-Pacific': APAC,
@@ -231,7 +240,6 @@ const REGION_SETS = {
   'Eurasia': ['AM', 'AZ', 'GE', 'KZ', 'TR']
 };
 
-/* ---------- starting data only: edit the real catalog in the "Vendor catalog" tab ---------- */
 const OPERATORS = {
   telco: { US: ['T-Mobile US', 'AT&T'], CA: ['Rogers', 'Bell'], MX: ['Telcel', 'AT&T Mexico'], GB: ['EE', 'Vodafone UK', 'Three UK'], DE: ['Telekom DE', 'Vodafone DE'], FR: ['Orange', 'SFR'], ES: ['Movistar', 'Orange Spain'], IT: ['TIM', 'Vodafone IT'],
     SG: ['Singtel', 'StarHub'], JP: ['NTT Docomo', 'SoftBank'], KR: ['SK Telecom', 'KT'], TH: ['AIS', 'True Move H'], MY: ['Maxis', 'CelcomDigi'], ID: ['Telkomsel', 'Indosat'], IN: ['Airtel', 'Jio'], CN: ['China Unicom', 'China Mobile'], HK: ['CSL', '3 HK'], TW: ['Chunghwa', 'Taiwan Mobile'], PH: ['Globe', 'Smart'], VN: ['Viettel', 'Vinaphone'],
@@ -242,7 +250,6 @@ const OPERATORS = {
     BD: ['Grameenphone', 'Banglalink'], KZ: ['Beeline KZ', 'Tele2 KZ'], KG: ['O!', 'MegaCom'], NP: ['Ncell', 'Nepal Telecom'], UZ: ['Ucell', 'Mobiuz'], AU: ['Optus', 'Telstra'], AE: ['du', 'e&'], TR: ['Turkcell', 'Turk Telekom'],
     DK: ['Telenor DK', '3 DK'], FI: ['Telia FI', 'Elisa'], IS: ['Siminn', 'Vodafone IS'], NO: ['Telia NO', 'Telenor NO'], SE: ['Tele2', 'Telia SE'] }
 };
-/* editable vendor catalog: { vendor: { CC: [{ name, types }] } }, saved in this browser */
 function loadCatalog() {
   try {
     let c = JSON.parse(localStorage.getItem('pm_catalog_v2') || 'null');
@@ -262,7 +269,6 @@ function persistCatalog() { try { localStorage.setItem('pm_catalog_v2', JSON.str
 const catCountries = v => Object.keys(CATALOG[v] || {}).sort(byName);
 const opNames = (vendor, cc) => ((CATALOG[vendor] || {})[cc] || []).map(n => n.name);
 const mkCov = (vendor, code) => ({ code, networks: (((CATALOG[vendor] || {})[code]) || []).map(n => ({ name: n.name, types: [...n.types] })) });
-/* region catalog per vendor: { vendor: { 'North America': ['US','CA','MX'], ... } } */
 function loadRegCat() {
   try { const c = JSON.parse(localStorage.getItem('pm_regcat_v1') || 'null'); if (c && c.telco && c.rombty) return c; } catch (e) {}
   return { telco: clone(REGION_SETS), rombty: clone(REGION_SETS) };
@@ -306,11 +312,11 @@ const VENDORS = {
 const fmtGb = gb => { gb = +gb || 0; return gb < 1 ? Math.round(gb * 1024) + ' MB' : r2(gb) + ' GB'; };
 const ptLabel = p => p.planType === 'data-voice' ? 'Data + Voice' : 'Data';
 const unlOpen = p => p.type === 'unlimited' && !p.throttle;          /* truly unlimited: dataCap 0, no throttle */
+const hasThrottle = p => p.type !== 'fixed' && !unlOpen(p);          /* only Day Pass and throttled Unlimited */
 const netNames = p => [...new Set(p.coverages.flatMap(cv => cv.networks.map(n => n.name)))];
 const coverCodes = p => p.coverages.map(cv => cv.code);
 const opLabel = p => { const n = netNames(p); return !n.length ? 'Multi - Networks' : p.coverages.length > 1 || n.length > 2 ? 'Multi - Networks' : n.join(' / '); };
 function speedLabel(k) { k = +k; return k >= 1000 ? r2(k / 1000) + ' Mbps' : k + ' kbps'; }
-/* capacityInfo text, generated until you type your own */
 function capText(p) {
   if (unlOpen(p)) return '';
   const g = r2(+p.gb || 0), after = p.reducedSpeed > 0 ? `then ${speedLabel(p.reducedSpeed)} after cap` : 'connection stops after cap';
@@ -318,31 +324,33 @@ function capText(p) {
   return `${base}, ${after}`;
 }
 function telText(p) {
-  const j = (a, b) => [a && 'receive', b && 'make/send'].filter(Boolean).join(' & ') || 'not included';
   return `Voice: ${[p.voiceIn && 'receive calls', p.voiceOut && 'make calls'].filter(Boolean).join(' & ') || 'not included'}; SMS: ${[p.smsIn && 'receive', p.smsOut && 'send'].filter(Boolean).join(' & ') || 'not included'}; number ${p.telCountry ? cn(p.telCountry) + ' +' + DIAL[p.telCountry] : 'not set'}`;
 }
 /* JSON output for the data-plans endpoint. Returns one plan object. */
 function toApi(p) {
-  const open = unlOpen(p), info = (p.capInfo || '').trim();
-  return {
+  const out = {
     planName: p.name,
     validity: +p.days,
-    dataCap: open ? 0 : r2(+p.gb || 0),
-    dataUnit: 'GB',
-    reducedSpeed: !open && p.reducedSpeed > 0 ? Math.round(p.reducedSpeed) : null,
-    capacityInfo: !open && info ? info : null,
-    prices: { USD: +(+p.price || 0) },
-    link: p.link,
-    telephony: p.planType === 'data-voice'
-      ? { dialingCode: DIAL[p.telCountry] ? '+' + DIAL[p.telCountry] : null, sms: { inbound: !!p.smsIn, outbound: !!p.smsOut }, voice: { inbound: !!p.voiceIn, outbound: !!p.voiceOut } }
-      : null,
-    subscription: !!p.subscription,
-    canTopUp: !!p.topup,
-    eKYC: !!p.ekyc,
-    tethering: !!p.hotspot,
-    internetBreakouts: p.breakouts.map(c => ({ country: c })),
-    coverages: p.coverages.map(cv => ({ code: cv.code, networks: cv.networks.map(n => ({ name: n.name, types: [...n.types] })) }))
+    dataCap: unlOpen(p) ? 0 : r2(+p.gb || 0),
+    dataUnit: 'GB'
   };
+  if (hasThrottle(p)) {
+    const info = (p.capInfo || '').trim();
+    out.reducedSpeed = p.reducedSpeed > 0 ? Math.round(p.reducedSpeed) : null;
+    out.capacityInfo = info || null;
+  }
+  out.prices = { USD: +(+p.price || 0) };
+  out.link = p.link;
+  out.telephony = p.planType === 'data-voice'
+    ? { dialingCode: DIAL[p.telCountry] ? '+' + DIAL[p.telCountry] : null, sms: { inbound: !!p.smsIn, outbound: !!p.smsOut }, voice: { inbound: !!p.voiceIn, outbound: !!p.voiceOut } }
+    : null;
+  out.subscription = !!p.subscription;
+  out.canTopUp = !!p.topup;
+  out.eKYC = !!p.ekyc;
+  out.tethering = !!p.hotspot;
+  out.internetBreakouts = p.breakouts.map(c => ({ country: c }));
+  out.coverages = p.coverages.map(cv => ({ code: cv.code, networks: cv.networks.map(n => ({ name: n.name, types: [...n.types] })) }));
+  return out;
 }
 const apiJson = list => JSON.stringify(list.map(toApi), null, 2);
 function generateAdditionalInfo(p) {
@@ -350,7 +358,7 @@ function generateAdditionalInfo(p) {
   const vars = {
     data: unlOpen(p) ? 'Unlimited High speed data' : p.type === 'unlimited' ? `Unlimited data (${fmtGb(p.gb)} per day at full speed)` : p.type === 'daypass' ? `${fmtGb(p.gb)} High speed data per day` : `${fmtGb(p.gb)} High speed data`,
     voice: telText(p),
-    speed: unlOpen(p) ? '' : (p.capInfo || '').trim(),
+    speed: hasThrottle(p) ? (p.capInfo || '').trim() : '',
     network: netNames(p).join(', ') || 'Multi network',
     breakout: p.breakouts.length ? p.breakouts.map(c => `${cn(c)} (${c})`).join(', ') : 'Not set',
     validity: p.days + (+p.days === 1 ? ' day' : ' days'),
@@ -389,7 +397,7 @@ const SAMPLE = [
     coverages: [{ code: 'US', networks: [{ name: 'Verizon', types: ['4G', '5G'] }, { name: 'AT&T', types: ['4G', '5G'] }] }]
   })
 ];
-const blankPlan = id => { const p = Object.assign(clone(SAMPLE[3]), { id, name: 'New plan', nameAuto: true, scope: 'country', link: 'https://example.com/plans/new-plan', breakouts: [], coverages: [], telCountry: '', planType: 'data', type: 'fixed', throttle: false, gb: 10, reducedSpeed: null, capAuto: true, days: 30, price: 10, region: 'Asia-Pacific' }); p.capInfo = capText(p); return p; };
+const blankPlan = id => { const p = Object.assign(clone(SAMPLE[3]), { id, name: 'New plan', nameAuto: true, scope: 'country', link: 'https://example.com/plans/new-plan', breakouts: [], coverages: [], telCountry: '', planType: 'data', type: 'fixed', throttle: false, gb: 10, reducedSpeed: null, capAuto: true, days: 30, price: 10, region: '' }); p.capInfo = capText(p); return p; };
 
 let PLANS = load();
 function load() { try { const p = JSON.parse(localStorage.getItem('pm_plans_v5') || 'null'); if (Array.isArray(p) && p.length) return p; } catch (e) {} return clone(SAMPLE); }
@@ -403,7 +411,7 @@ $('telCountry').innerHTML = '<option value="">Select number country…</option>'
 function fillForm() {
   const p = draft;
   $('name').value = p.name; $('vendor').value = p.vendor; $('apn').value = p.apn; $('link').value = p.link; $('link').classList.remove('bad');
-  $('region').value = p.region; $('gb').value = p.gb; $('days').value = p.days; $('price').value = p.price; $('vStart').value = p.vStart;
+  $('region').value = p.region || ''; $('gb').value = p.gb; $('days').value = p.days; $('price').value = p.price; $('vStart').value = p.vStart;
   $('telCountry').value = p.telCountry || ''; $('telCountry').classList.remove('bad');
   $('vIn').checked = !!p.voiceIn; $('vOut').checked = !!p.voiceOut; $('sIn').checked = !!p.smsIn; $('sOut').checked = !!p.smsOut;
   $('rs').value = p.reducedSpeed == null ? '' : p.reducedSpeed; $('capInfo').value = p.capInfo || '';
@@ -421,10 +429,10 @@ function paintSegs() {
   on('#scopeSeg', b => b.dataset.s === draft.scope);
   const reg = draft.scope === 'region';
   $('cLabel').innerHTML = reg ? 'Add another country <em>(optional)</em>' : 'Country <em>(operators fill in automatically)</em> <span class="req">*</span>';
-  $('cAll').hidden = !reg; $('cAll').textContent = `Reset to ${draft.region} countries`;
+  $('cAll').hidden = !reg; $('cAll').textContent = `Reset to ${draft.region || 'region'} countries`;
   $('thrWrap').hidden = draft.type !== 'unlimited';
   $('gbWrap').hidden = unlOpen(draft);
-  $('rsBox').hidden = unlOpen(draft);
+  $('rsBox').hidden = !hasThrottle(draft);
   $('gbLabel').innerHTML = draft.type === 'daypass' ? 'Daily data cap (GB) <em>(dataCap)</em>' : draft.type === 'unlimited' ? 'Full-speed data per day before throttle (GB) <em>(dataCap)</em>' : 'Data (GB) <em>(dataCap)</em>';
   $('telWrap').hidden = $('telChecks').hidden = draft.planType !== 'data-voice';
   $('apnHint').textContent = `· ${VENDORS[draft.vendor].name} default: ${VENDORS[draft.vendor].apn}`;
@@ -447,7 +455,7 @@ function renderCov() {
   const free = regionCountries(draft.region).filter(c => single || !coverCodes(draft).includes(c));
   const opt = c => `<option value="${c}">${esc(cn(c))} (${c})</option>`;
   const withOps = free.filter(c => cat[c]), others = free.filter(c => !cat[c]);
-  $('cSel').innerHTML = `<option value="">${single ? 'Select a country in ' + esc(draft.region) : 'Add a country'}…</option>`
+  $('cSel').innerHTML = `<option value="">${single ? 'Select a country' + (draft.region ? ' in ' + esc(draft.region) : '') : 'Add a country'}…</option>`
     + (withOps.length ? `<optgroup label="In the ${esc(VENDORS[draft.vendor].name)} catalog (operators auto-fill)">${withOps.map(opt).join('')}</optgroup>` : '')
     + (others.length ? `<optgroup label="Not in the catalog yet (add operators manually)">${others.map(opt).join('')}</optgroup>` : '');
   if (single) $('cSel').value = coverCodes(draft)[0] || '';
@@ -475,16 +483,14 @@ $('covList').addEventListener('click', e => {
 const renderAdminAI = () => { $('aiAdmin').innerHTML = generateAdditionalInfo(draft); $('apiAdmin').textContent = apiJson([draft]); };
 const isDirty = () => JSON.stringify(draft) !== JSON.stringify(PLANS.find(p => p.id === editId));
 const paintDirty = () => $('dirty').innerHTML = isDirty() ? '<span class="dirty">● Unsaved. The website still shows the old version.</span>' : '<span class="saved">✓ Website is up to date</span>';
-/* plan name suggests itself ("Australia 10GB 30 days") until you type your own name */
 function autoName() {
-  if (!draft.nameAuto || !draft.coverages.length) return;
+  if (!draft.nameAuto || !draft.coverages.length || (draft.scope === 'region' && !draft.region)) return;
   const place = draft.scope === 'region' ? draft.region : cn(draft.coverages[0].code);
   const g = +draft.gb || 0, amt = g < 1 ? Math.round(g * 1024) + 'MB' : r2(g) + 'GB';
   const data = draft.type === 'unlimited' ? 'Unlimited' : draft.type === 'daypass' ? amt + '/day' : amt;
   draft.name = `${place} ${data} ${draft.days} ${+draft.days === 1 ? 'day' : 'days'}`;
   $('name').value = draft.name;
 }
-/* capacityInfo text suggests itself until you type your own */
 function autoCap() { if (draft.capAuto) { draft.capInfo = capText(draft); $('capInfo').value = draft.capInfo; } }
 function changed() { autoName(); autoCap(); renderAdminAI(); paintDirty(); }
 
@@ -517,13 +523,13 @@ $('cAll').onclick = () => { applyRegion(); renderCov(); changed(); };
 $('vendor').onchange = () => {
   const prev = VENDORS[draft.vendor].apn; draft.vendor = $('vendor').value;
   if (!draft.apn || draft.apn === prev) { draft.apn = VENDORS[draft.vendor].apn; $('apn').value = draft.apn; }
-  /* operators and region sets belong to the vendor, so reload them for the new vendor */
   if (draft.scope === 'region') applyRegion(); else draft.coverages = draft.coverages.map(cv => mkCov(draft.vendor, cv.code));
   paintSegs(); renderCov(); changed(); if (draft.coverages.length) toast(`Countries and operators reloaded for ${VENDORS[draft.vendor].name}`);
 };
 document.querySelectorAll('#ptSeg button').forEach(b => b.onclick = () => { draft.planType = b.dataset.p; paintSegs(); changed(); });
 document.querySelectorAll('#typeSeg button').forEach(b => b.onclick = () => {
   draft.type = b.dataset.t;
+  if (draft.type === 'fixed') { draft.reducedSpeed = null; $('rs').value = ''; draft.capAuto = true; }
   if (!(+draft.gb > 0)) { draft.gb = 1; $('gb').value = 1; }
   paintSegs(); changed();
 });
@@ -536,6 +542,7 @@ document.querySelectorAll('#thrSeg button').forEach(b => b.onclick = () => {
   document.querySelectorAll('#' + id + ' button').forEach(b => b.onclick = () => { draft[key] = b.dataset.v === '1'; paintSegs(); changed(); }));
 
 function validate(p) {
+  if (p.scope === 'region' && !p.region) return 'Select a region for this plan';
   if (!p.name.trim()) return 'Plan name is required';
   if (!/^https?:\/\/\S+$/i.test((p.link || '').trim())) { $('link').classList.add('bad'); $('link').focus(); return 'Enter the plan link (a full https:// URL)'; }
   if (!p.breakouts.length) { $('bkSel').classList.add('bad'); $('bkSel').focus(); return 'Add at least one internet breakout country (required)'; }
@@ -546,7 +553,7 @@ function validate(p) {
   }
   if (p.planType === 'data-voice' && !p.telCountry) { $('telCountry').classList.add('bad'); $('telCountry').focus(); return 'Select the number country code for the voice plan'; }
   if (!unlOpen(p) && !(+p.gb > 0)) return 'Enter the data amount in GB (dataCap)';
-  if (p.reducedSpeed !== null && !(p.reducedSpeed > 0)) return 'Reduced speed must be a number of kbps, or empty for cut-off';
+  if (hasThrottle(p) && p.reducedSpeed !== null && !(p.reducedSpeed > 0)) return 'Reduced speed must be a number of kbps, or empty for cut-off';
   if (p.type === 'unlimited' && p.throttle && !(p.reducedSpeed > 0)) return 'Enter the reduced speed (kbps) for the throttled unlimited plan';
   return '';
 }
@@ -571,7 +578,7 @@ $('copyAll').onclick = async () => {
 /* ---------- website ---------- */
 function renderSite() {
   const region = (PLANS.find(p => p.id === viewId) || PLANS[0]).region;
-  $('sTitle').textContent = `${region} eSIM`; $('sSub').textContent = `${PLANS.length} plans`;
+  $('sTitle').textContent = `${region || 'All regions'} eSIM`; $('sSub').textContent = `${PLANS.length} plans`;
   $('cards').innerHTML = PLANS.map(p => {
     const big = unlOpen(p) || p.type === 'unlimited' ? 'Unlimited' : fmtGb(p.gb).replace(/ (GB|MB)/, '<small> $1</small>');
     const badge = p.type === 'unlimited' ? (p.throttle ? `UNLIMITED · ${fmtGb(p.gb)}/day then ${speedLabel(p.reducedSpeed || 0)}` : 'UNLIMITED') : p.type === 'daypass' ? `DAY PASS${p.reducedSpeed > 0 ? ' · then ' + speedLabel(p.reducedSpeed) : ''}` : '';
@@ -588,19 +595,19 @@ function renderSite() {
 }
 function renderDetail() {
   const p = PLANS.find(x => x.id === viewId) || PLANS[0];
-  $('url').textContent = `yourstore.com/esim/${slug(p.region)}/${slug(p.name)}`;
+  $('url').textContent = `yourstore.com/esim/${slug(p.region || 'all')}/${slug(p.name)}`;
   const dataFact = unlOpen(p) ? 'Unlimited' : p.type === 'unlimited' ? `Unlimited (${fmtGb(p.gb)}/day full speed)` : fmtGb(p.gb) + (p.type === 'daypass' ? ' per day' : '');
   const facts = [['Plan type', ptLabel(p)], ['Data', dataFact]];
   if (p.planType === 'data-voice') facts.push(['Number', p.telCountry ? `${cn(p.telCountry)} +${DIAL[p.telCountry]}` : '—'], ['Calls', [p.voiceIn && 'in', p.voiceOut && 'out'].filter(Boolean).join(' / ') || 'none'], ['SMS', [p.smsIn && 'in', p.smsOut && 'out'].filter(Boolean).join(' / ') || 'none']);
   facts.push(['Validity', `${p.days} ${+p.days === 1 ? 'day' : 'days'}`], ['Networks', netNames(p).join(', ') || '—'], ['Internet breakout', p.breakouts.length ? p.breakouts.join(', ') : '—'], ['Countries', p.coverages.length]);
   let speedHtml = '';
-  if (!unlOpen(p)) {
+  if (hasThrottle(p)) {
     const rs = p.reducedSpeed > 0, per = p.type === 'fixed' ? '' : ' / day';
     speedHtml = `<div class="speed"><h4>Your speed</h4><span class="note">${esc((p.capInfo || '').trim() || capText(p))}</span>
       <div class="sbar" role="img" aria-label="${esc(capText(p))}"><div style="width:60%;background:#16a34a">Full speed</div><div style="width:40%;background:${rs ? '#f59e0b' : '#ef4444'}">${rs ? speedLabel(p.reducedSpeed) : 'Cut off'}</div></div>
       <div class="slegend"><div style="border-left:4px solid #16a34a"><b>${fmtGb(p.gb)}${per}</b>at full speed</div><div style="border-left:4px solid ${rs ? '#f59e0b' : '#ef4444'}"><b>${rs ? speedLabel(p.reducedSpeed) : 'Cut off'}</b>${rs ? 'after the cap' : 'connection stops after the cap'}</div></div></div>`;
   }
-  $('detail').innerHTML = `<div class="dhead"><div><h3>${esc(p.name)}</h3><div class="meta">${esc(p.region)} · ${p.coverages.length} ${p.coverages.length === 1 ? 'country' : 'countries'}</div></div>
+  $('detail').innerHTML = `<div class="dhead"><div><h3>${esc(p.name)}</h3><div class="meta">${esc(p.region || 'Any region')} · ${p.coverages.length} ${p.coverages.length === 1 ? 'country' : 'countries'}</div></div>
     <div><div class="pr">$ ${(+p.price).toFixed(2)} <small>USD</small></div><button type="button" class="buy">Buy now</button></div></div>
     <div class="facts">${facts.map(f => `<span class="fact">${f[0]}: <b>${esc(f[1])}</b></span>`).join('')}</div>${speedHtml}<div class="info">${generateAdditionalInfo(p)}</div>
     <details class="apibox"><summary>JSON output for this plan</summary><pre class="json">${esc(apiJson([p]))}</pre></details>`;
@@ -625,7 +632,9 @@ function renderCat(focusCode) {
   if (focusCode) { const btn = $('catList').querySelector(`button[data-act="ao"][data-c="${focusCode}"]`); const inp = btn && btn.closest('.addop').querySelector('input'); if (inp) { inp.focus(); if (inp.scrollIntoView) inp.scrollIntoView({ block: 'nearest' }); } }
 }
 function renderCatRegions() {
-  const v = catV(), r = $('catRegion').value, rv = REGCAT[v] = REGCAT[v] || {}, set = rv[r] = rv[r] || [], cat = CATALOG[v] || {};
+  const v = catV(), r = $('catRegion').value;
+  if (!r) { $('catRegSummary').textContent = 'Select a region to edit its countries'; $('catRegChips').innerHTML = ''; $('catRegSel').innerHTML = '<option value="">Select a region first…</option>'; return; }
+  const rv = REGCAT[v] = REGCAT[v] || {}, set = rv[r] = rv[r] || [], cat = CATALOG[v] || {};
   $('catRegSummary').textContent = `${VENDORS[v].name} · ${r}: ${set.length} ${set.length === 1 ? 'country' : 'countries'}`;
   $('catRegChips').innerHTML = set.length ? set.map(c => `<span class="chip">${esc(cn(c))}<b>${esc(c)}</b>${cat[c] && cat[c].length ? '' : '<em class="warn">no operators</em>'}<button type="button" aria-label="Remove ${esc(cn(c))}" data-c="${c}">×</button></span>`).join('') : '<span class="empty">No countries in this region yet.</span>';
   const free = SORTED.filter(c => !set.includes(c)), opt = c => `<option value="${c}">${esc(cn(c))} (${c})</option>`;
@@ -638,12 +647,13 @@ $('catVendor').onchange = () => renderCat();
 $('catRegion').onchange = () => renderCat();
 document.querySelectorAll('#catSeg button').forEach(b => b.onclick = () => { catMode = b.dataset.m; renderCat(); });
 $('catSel').onchange = () => { const c = $('catSel').value; if (c) { CATALOG[catV()][c] = []; persistCatalog(); renderCat(c); } };
-$('catRegSel').onchange = () => { const c = $('catRegSel').value; if (c) { REGCAT[catV()][$('catRegion').value].push(c); persistRegCat(); renderCat(); } };
+$('catRegSel').onchange = () => { const c = $('catRegSel').value, r = $('catRegion').value; if (c && r) { REGCAT[catV()][r].push(c); persistRegCat(); renderCat(); } };
 $('catRegChips').addEventListener('click', e => {
   const b = e.target.closest('button[data-c]'); if (!b) return;
-  const v = catV(), r = $('catRegion').value; REGCAT[v][r] = REGCAT[v][r].filter(c => c !== b.dataset.c); persistRegCat(); renderCat();
+  const v = catV(), r = $('catRegion').value; if (!r) return;
+  REGCAT[v][r] = REGCAT[v][r].filter(c => c !== b.dataset.c); persistRegCat(); renderCat();
 });
-$('catRegReset').onclick = () => { const v = catV(), r = $('catRegion').value; REGCAT[v][r] = clone(REGION_SETS[r] || []); persistRegCat(); renderCat(); toast(`${r} reset to its default countries`); };
+$('catRegReset').onclick = () => { const v = catV(), r = $('catRegion').value; if (!r) return; REGCAT[v][r] = clone(REGION_SETS[r] || []); persistRegCat(); renderCat(); toast(`${r} reset to its default countries`); };
 $('catList').addEventListener('click', e => {
   const b = e.target.closest('button[data-act]'); if (!b) return;
   const cat = CATALOG[catV()], code = b.dataset.c, act = b.dataset.act;
