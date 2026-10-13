@@ -116,8 +116,8 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
         <div class="cpick"><select id="bkSel"></select></div>
         <div class="chips" id="bkChips"></div></div>
 
-      <div class="f"><label for="region">Region <em>(website only)</em></label><select id="region"><option>Asia-Pacific</option><option>Europe</option><option>Middle East</option><option>Africa</option><option>North America</option><option>South Latin America</option><option>Eurasia</option><option>Global</option></select></div>
-      <div class="f"><label for="days">Validity (days) <em>(validity)</em></label><input id="days" type="number" min="1"></div>
+      <div class="f"><label for="region">Region</label><select id="region"><option>Asia-Pacific</option><option>Europe</option><option>Middle East</option><option>Africa</option><option>North America</option><option>South Latin America</option><option>Eurasia</option><option>Global</option></select></div>
+      <div class="f"><label for="cSel">Country <em>(operators fill in automatically)</em> <span class="req">*</span></label><select id="cSel"></select></div>
 
       <div class="f full"><label>Plan type</label><div class="seg" id="ptSeg"><button type="button" data-p="data">Data</button><button type="button" data-p="data-voice">Data + Voice</button></div></div>
       <div class="f full" id="telWrap"><label for="telCountry">Number country code <em>(telephony)</em> <span class="req">*</span></label><select id="telCountry"></select><span class="hint">Country of the phone number that comes with the plan.</span></div>
@@ -126,6 +126,7 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
 
       <div class="f full"><label>Data allowance</label><div class="seg" id="typeSeg"><button type="button" data-t="unlimited">Unlimited</button><button type="button" data-t="fixed">Fixed GB</button><button type="button" data-t="daypass">Day Pass</button></div></div>
       <div class="f" id="gbWrap"><label for="gb" id="gbLabel">Data (GB)</label><input id="gb" type="number" min="0.1" step="0.1"></div>
+      <div class="f"><label for="days">Validity (days) <em>(validity)</em></label><input id="days" type="number" min="1"></div>
       <div class="f"><label for="price">Selling price (USD) <em>(prices.USD)</em></label><input id="price" type="number" min="0" step="0.01"></div>
       <div class="f"><label for="vStart">Validity starts <em>(website only)</em></label><select id="vStart"><option value="first">From first network connection</option><option value="install">From eSIM installation</option></select></div>
       <div class="f"><label>Tethering <em>(tethering)</em></label><div class="seg" id="hsSeg"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button></div></div>
@@ -138,8 +139,8 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
       <div id="stepRows"></div>
       <div class="actions"><button type="button" class="btn ghost" id="stepAdd" style="padding:5px 10px">+ Add throttle step</button><button type="button" class="btn ghost" id="stepReset" style="padding:5px 10px">Reset throttling</button></div>
     </div>
-    <div class="f full"><label for="cSel">Coverage <em>(coverages)</em>: pick a country from this vendor's catalog and its operators fill in automatically <span class="req">*</span></label>
-      <div class="cpick"><select id="cSel"></select><button type="button" class="btn ghost" id="cAll">+ Add all catalog countries</button></div>
+    <div class="f full"><label>Coverage <em>(coverages)</em>: the countries you pick above, with operators from the vendor catalog <span class="req">*</span></label>
+      <div class="cpick"><button type="button" class="btn ghost" id="cAll">+ Add all catalog countries</button></div>
       <div class="cov-list" id="covList"></div></div>
     <div class="actions"><button type="button" class="btn" id="save">Save plan → website</button><button type="button" class="btn ghost" id="dup">Duplicate</button><button type="button" class="btn ghost" id="del">Delete</button><button type="button" class="btn ghost" id="copyAll">Copy all plans JSON</button><span id="dirty"></span></div>
     <details class="ai" open><summary>JSON output (matches the API sample)</summary><pre class="json" id="apiAdmin"></pre></details>
@@ -192,6 +193,18 @@ const TELC = ALLC.filter(c => DIAL[c]).sort(byName);
 const APAC = 'BD CN IN ID JP KZ KG MY NP PH SG KR TW TH UZ'.split(' ');
 const SETS = { 'Asia-Pacific (15)': APAC, 'China · Korea · Japan': ['CN','KR','JP'], 'Nordic Summer': ['DK','FI','IS','NO','SE'], 'Eurasia': ['AM','AZ','GE','KZ','TR'], 'Middle East': ['CY','EG','IL','KW','QA','SA','AE'], 'North America': ['US','CA','MX'], 'Western Europe': ['GB','DE','FR','ES','IT'] };
 const TYPES = ['3G', '4G', '5G'];
+/* which countries belong to each region (the Country dropdown follows the Region dropdown; "Global" shows all) */
+const REGIONS = {
+  'Asia-Pacific': 'AF AS AU BD BN BT CC CK CN CX FJ FM GU HK ID IN JP KH KI KR LA LK MH MM MN MO MP MV MY NC NF NP NR NU NZ PF PG PH PK PN PW SB SG TH TK TL TO TV TW VN VU WF WS',
+  'Europe': 'AD AL AT AX BA BE BG BY CH CZ DE DK EE ES FI FO FR GB GG GI GR HR HU IE IM IS IT JE LI LT LU LV MC MD ME MK MT NL NO PL PT RO RS SE SI SJ SK SM UA VA XK',
+  'Middle East': 'AE BH CY EG IL IQ IR JO KW LB OM PS QA SA SY YE',
+  'Africa': 'AO BF BI BJ BW CD CF CG CI CM CV DJ DZ EH ER ET GA GH GM GN GQ GW KE KM LR LS LY MA MG ML MR MU MW MZ NA NE NG RE RW SC SD SH SL SN SO SS ST SZ TD TG TN TZ UG YT ZA ZM ZW',
+  'North America': 'BM CA GL MX PM US PR VI AG AI AW BB BL BQ BS BZ CR CU CW DM DO GD GP GT HN HT JM KN KY LC MF MQ MS NI PA SV SX TC TT VC VG',
+  'South Latin America': 'AR BO BR CL CO EC FK GF GY PE PY SR UY VE',
+  'Eurasia': 'AM AZ GE KG KZ RU TJ TM TR UZ'
+};
+const REGION_OF = {}; Object.keys(REGIONS).forEach(r => REGIONS[r].split(' ').forEach(c => { REGION_OF[c] = r; }));
+const regionCountries = r => r === 'Global' ? SORTED : SORTED.filter(c => REGION_OF[c] === r);
 
 /* ---------- starting data only: edit the real catalog in the "Vendor catalog" tab ---------- */
 const OPERATORS = {
@@ -206,13 +219,22 @@ const OPERATORS = {
 };
 /* editable vendor catalog: { vendor: { CC: [{ name, types }] } }, saved in this browser */
 function loadCatalog() {
-  try { const c = JSON.parse(localStorage.getItem('pm_catalog_v1') || 'null'); if (c && c.telco && c.rombty) return c; } catch (e) {}
+  try {
+    let c = JSON.parse(localStorage.getItem('pm_catalog_v2') || 'null');
+    if (!(c && c.telco && c.rombty)) {
+      /* earlier version: keep what was entered, and turn 4G+5G entries into 3G+4G+5G (the new default) */
+      c = JSON.parse(localStorage.getItem('pm_catalog_v1') || 'null');
+      if (c && c.telco && c.rombty) Object.values(c).forEach(v => Object.values(v).forEach(list => list.forEach(n => { if (n.types.join() === '4G,5G') n.types = ['3G', '4G', '5G']; })));
+      else c = null;
+    }
+    if (c) return c;
+  } catch (e) {}
   const c = {};
-  Object.keys(OPERATORS).forEach(v => { c[v] = {}; Object.keys(OPERATORS[v]).forEach(cc => { c[v][cc] = OPERATORS[v][cc].map(n => ({ name: n, types: ['4G', '5G'] })); }); });
+  Object.keys(OPERATORS).forEach(v => { c[v] = {}; Object.keys(OPERATORS[v]).forEach(cc => { c[v][cc] = OPERATORS[v][cc].map(n => ({ name: n, types: ['3G', '4G', '5G'] })); }); });
   return c;
 }
 let CATALOG = loadCatalog();
-function persistCatalog() { try { localStorage.setItem('pm_catalog_v1', JSON.stringify(CATALOG)); } catch (e) {} }
+function persistCatalog() { try { localStorage.setItem('pm_catalog_v2', JSON.stringify(CATALOG)); } catch (e) {} }
 const catCountries = v => Object.keys(CATALOG[v] || {}).sort(byName);
 const opNames = (vendor, cc) => ((CATALOG[vendor] || {})[cc] || []).map(n => n.name);
 const mkCov = (vendor, code) => ({ code, networks: (((CATALOG[vendor] || {})[code]) || []).map(n => ({ name: n.name, types: [...n.types] })) });
@@ -363,7 +385,7 @@ function paintSegs() {
 function paintList() {
   $('plist').innerHTML = PLANS.map(p => `<button type="button" class="pbtn ${p.id === editId ? 'on' : ''}" data-id="${p.id}">${esc(p.name)}<small>${VENDORS[p.vendor].name} · ${ptLabel(p)} · ${p.type === 'daypass' ? 'Day Pass' : p.type === 'unlimited' ? 'Unlimited' : fmtGb(p.gb)}</small></button>`).join('') + '<button type="button" class="pbtn new" id="newPlan">+ New plan</button>';
   $('plist').querySelectorAll('.pbtn[data-id]').forEach(b => b.onclick = () => openPlan(+b.dataset.id));
-  $('newPlan').onclick = () => { const id = Math.max(...PLANS.map(p => p.id)) + 1; PLANS.push({ ...clone(SAMPLE[0]), id, name: 'New plan', link: 'https://example.com/plans/new-plan', breakouts: [], coverages: [], telCountry: '' }); persist(); openPlan(id); renderSite(); };
+  $('newPlan').onclick = () => { const id = Math.max(...PLANS.map(p => p.id)) + 1; PLANS.push({ ...clone(SAMPLE[0]), id, name: 'New plan', nameAuto: true, link: 'https://example.com/plans/new-plan', breakouts: [], coverages: [], telCountry: '' }); persist(); openPlan(id); renderSite(); };
 }
 function openPlan(id) { editId = id; viewId = id; draft = clone(PLANS.find(p => p.id === id)); fillForm(); if ($('cards').childElementCount) renderSite(); }
 
@@ -373,8 +395,12 @@ function renderBreakouts() {
   $('bkSel').innerHTML = countryOpts('Add breakout country…', SORTED.filter(c => !draft.breakouts.includes(c)));
 }
 function renderCov() {
-  const inCat = catCountries(draft.vendor);
-  $('cSel').innerHTML = countryOpts(inCat.length ? `Add a country from the ${VENDORS[draft.vendor].name} catalog…` : 'No countries yet: add them in the Vendor catalog tab', inCat.filter(c => !coverCodes(draft).includes(c)));
+  const free = regionCountries(draft.region).filter(c => !coverCodes(draft).includes(c)), cat = CATALOG[draft.vendor] || {};
+  const opt = c => `<option value="${c}">${esc(cn(c))} (${c})</option>`;
+  const withOps = free.filter(c => cat[c]), others = free.filter(c => !cat[c]);
+  $('cSel').innerHTML = `<option value="">Select a country in ${esc(draft.region)}…</option>`
+    + (withOps.length ? `<optgroup label="In the ${esc(VENDORS[draft.vendor].name)} catalog (operators auto-fill)">${withOps.map(opt).join('')}</optgroup>` : '')
+    + (others.length ? `<optgroup label="Not in the catalog yet (add operators manually)">${others.map(opt).join('')}</optgroup>` : '');
   $('covList').innerHTML = draft.coverages.length ? draft.coverages.map((cv, ci) => {
     const known = opNames(draft.vendor, cv.code).filter(n => !cv.networks.some(x => x.name === n));
     const nets = cv.networks.length ? cv.networks.map((n, ni) => `<span class="net"><b>${esc(n.name)}</b>${TYPES.map(t => `<button type="button" class="ty ${n.types.includes(t) ? 'on' : ''}" data-act="ty" data-ci="${ci}" data-ni="${ni}" data-t="${t}">${t}</button>`).join('')}<button type="button" class="x" data-act="rn" data-ci="${ci}" data-ni="${ni}" aria-label="Remove ${esc(n.name)}">×</button></span>`).join('') : `<span class="empty">${opNames(draft.vendor, cv.code).length ? 'No operators selected.' : `No known ${VENDORS[draft.vendor].name} operators for ${esc(cn(cv.code))}. Add one manually.`}</span>`;
@@ -392,7 +418,7 @@ $('covList').addEventListener('click', e => {
   else if (act === 'ao') {
     const box = b.closest('.addop'), v = (box.querySelector('input').value.trim() || box.querySelector('select').value).trim();
     if (!v) return;
-    if (!cv.networks.some(n => n.name.toLowerCase() === v.toLowerCase())) cv.networks.push({ name: v, types: ['4G', '5G'] });
+    if (!cv.networks.some(n => n.name.toLowerCase() === v.toLowerCase())) cv.networks.push({ name: v, types: ['3G', '4G', '5G'] });
   }
   renderCov(); changed();
 });
@@ -420,11 +446,21 @@ function renderSteps() {
 const renderAdminAI = () => { $('aiAdmin').innerHTML = generateAdditionalInfo(draft); $('apiAdmin').textContent = apiJson([draft]); };
 const isDirty = () => JSON.stringify(draft) !== JSON.stringify(PLANS.find(p => p.id === editId));
 const paintDirty = () => $('dirty').innerHTML = isDirty() ? '<span class="dirty">● Unsaved. The website still shows the old version.</span>' : '<span class="saved">✓ Website is up to date</span>';
-function changed() { renderAdminAI(); paintDirty(); }
+/* plan name suggests itself ("Australia 10GB 30 days") until you type your own name */
+function autoName() {
+  if (!draft.nameAuto || !draft.coverages.length) return;
+  const place = draft.coverages.length === 1 ? cn(draft.coverages[0].code) : draft.region;
+  const g = +draft.gb || 0, amt = g < 1 ? Math.round(g * 1024) + 'MB' : r1(g) + 'GB';
+  const data = draft.type === 'unlimited' ? 'Unlimited' : draft.type === 'daypass' ? amt + '/day' : amt;
+  draft.name = `${place} ${data} ${draft.days} ${+draft.days === 1 ? 'day' : 'days'}`;
+  $('name').value = draft.name;
+}
+function changed() { autoName(); renderAdminAI(); paintDirty(); }
 
 const bind = (id, key, num) => $(id).addEventListener('input', () => { draft[key] = num ? +$(id).value : $(id).value; if (id === 'gb') renderSteps(); if (id === 'link') $('link').classList.remove('bad'); changed(); });
+$('name').addEventListener('input', () => { draft.nameAuto = false; });
 bind('name', 'name'); bind('apn', 'apn'); bind('link', 'link'); bind('gb', 'gb', true); bind('days', 'days', true); bind('price', 'price', true); bind('voiceMin', 'voiceMin', true); bind('sms', 'sms', true);
-$('region').onchange = () => { draft.region = $('region').value; changed(); };
+$('region').onchange = () => { draft.region = $('region').value; renderCov(); changed(); };
 $('vStart').onchange = () => { draft.vStart = $('vStart').value; changed(); };
 $('telCountry').onchange = () => { draft.telCountry = $('telCountry').value; $('telCountry').classList.toggle('bad', !draft.telCountry); changed(); };
 $('bkSel').onchange = () => { const v = $('bkSel').value; if (v && !draft.breakouts.includes(v)) { draft.breakouts.push(v); renderBreakouts(); changed(); } };
@@ -553,7 +589,7 @@ $('catList').addEventListener('click', e => {
   else if (act === 'ty') { const n = cat[code][+b.dataset.ni], t = b.dataset.t; n.types = n.types.includes(t) ? n.types.filter(x => x !== t) : TYPES.filter(x => x === t || n.types.includes(x)); }
   else if (act === 'ao') {
     const inp = b.closest('.addop').querySelector('input');
-    inp.value.split(',').map(s => s.trim()).filter(Boolean).forEach(name => { if (!cat[code].some(n => n.name.toLowerCase() === name.toLowerCase())) cat[code].push({ name, types: ['4G', '5G'] }); });
+    inp.value.split(',').map(s => s.trim()).filter(Boolean).forEach(name => { if (!cat[code].some(n => n.name.toLowerCase() === name.toLowerCase())) cat[code].push({ name, types: ['3G', '4G', '5G'] }); });
   }
   persistCatalog(); renderCat(act === 'ao' ? code : undefined);
 });
