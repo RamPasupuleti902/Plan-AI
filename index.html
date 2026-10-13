@@ -93,12 +93,15 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
 .slegend{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
 .slegend div{border-radius:10px;padding:8px 10px;background:#f7f8fb;font-size:13px}.slegend b{display:block;font-size:17px}
 .apibox{border:1px solid var(--line);border-radius:10px;background:#fff}.apibox summary{cursor:pointer;padding:8px 12px;font-weight:600}
+.tabs{display:flex;gap:6px}.tab{border:1px solid rgba(255,255,255,.35);background:transparent;color:#c9d0f5;border-radius:6px;padding:5px 14px;font-size:12.5px}
+.tab.on{background:#fff;color:#1b2559;font-weight:600}
+.catwrap{padding:16px;max-width:860px;margin:0 auto}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 14px;border-radius:8px;z-index:9}
 </style>
 </head>
 <body>
-<div class="top"><h1>Plan manager → website</h1><span>Edit a plan on the left and click Save. The website and the JSON output update from the same data.</span></div>
-<div class="layout">
+<div class="top"><h1>Plan manager → website</h1><nav class="tabs" aria-label="Pages"><button type="button" class="tab on" data-v="plans">Plans</button><button type="button" class="tab" data-v="catalog">Vendor catalog</button></nav><span id="topHint">Edit a plan on the left and click Save. The website and the JSON output update from the same data.</span></div>
+<div class="layout" id="plansView">
 <section aria-label="Admin plan editor">
   <div class="pt">Admin · Update Plan</div>
   <div class="admin">
@@ -135,8 +138,8 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
       <div id="stepRows"></div>
       <div class="actions"><button type="button" class="btn ghost" id="stepAdd" style="padding:5px 10px">+ Add throttle step</button><button type="button" class="btn ghost" id="stepReset" style="padding:5px 10px">Reset throttling</button></div>
     </div>
-    <div class="f full"><label for="cSel">Coverage <em>(coverages)</em>: pick a country and its operators are filled in for the selected supplier <span class="req">*</span></label>
-      <div class="cpick"><select id="cSel"></select><select id="cPreset" aria-label="Add a set of countries"><option value="">Add a set…</option></select></div>
+    <div class="f full"><label for="cSel">Coverage <em>(coverages)</em>: pick a country from this vendor's catalog and its operators fill in automatically <span class="req">*</span></label>
+      <div class="cpick"><select id="cSel"></select><button type="button" class="btn ghost" id="cAll">+ Add all catalog countries</button></div>
       <div class="cov-list" id="covList"></div></div>
     <div class="actions"><button type="button" class="btn" id="save">Save plan → website</button><button type="button" class="btn ghost" id="dup">Duplicate</button><button type="button" class="btn ghost" id="del">Delete</button><button type="button" class="btn ghost" id="copyAll">Copy all plans JSON</button><span id="dirty"></span></div>
     <details class="ai" open><summary>JSON output (matches the API sample)</summary><pre class="json" id="apiAdmin"></pre></details>
@@ -151,6 +154,18 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
     <div class="sbody"><div class="stitle"><h2 id="sTitle"></h2><span id="sSub"></span></div><div class="cards" id="cards"></div><div class="detail" id="detail"></div></div>
   </div>
 </section>
+</div>
+<div class="catwrap" id="catView" hidden>
+  <div class="pt">Admin · Vendor catalog</div>
+  <div class="admin">
+    <div class="fields">
+      <div class="f"><label for="catVendor">Vendor</label><select id="catVendor"><option value="telco">Telco Vision (TEL VSN)</option><option value="rombty">Rombty</option></select></div>
+      <div class="f"><label for="catSel">Add a country to this vendor</label><select id="catSel"></select></div>
+    </div>
+    <div class="actions"><span class="hint" id="catSummary"></span><button type="button" class="btn ghost" id="catClear" style="margin-left:auto">Clear this vendor</button></div>
+    <span class="hint">Enter every country this vendor covers and its operators (type several at once, separated by commas). On the Plans page, picking a country for this vendor fills in these operators automatically. Changes save in this browser.</span>
+    <div class="cov-list" id="catList" style="max-height:none"></div>
+  </div>
 </div>
 <script>
 (() => {
@@ -178,8 +193,7 @@ const APAC = 'BD CN IN ID JP KZ KG MY NP PH SG KR TW TH UZ'.split(' ');
 const SETS = { 'Asia-Pacific (15)': APAC, 'China · Korea · Japan': ['CN','KR','JP'], 'Nordic Summer': ['DK','FI','IS','NO','SE'], 'Eurasia': ['AM','AZ','GE','KZ','TR'], 'Middle East': ['CY','EG','IL','KW','QA','SA','AE'], 'North America': ['US','CA','MX'], 'Western Europe': ['GB','DE','FR','ES','IT'] };
 const TYPES = ['3G', '4G', '5G'];
 
-/* ---------- OPERATORS per supplier → country (REPLACE with your real supplier data) ----------
-   Choosing a country in "Coverage" auto-fills these as that country's networks. */
+/* ---------- starting data only: edit the real catalog in the "Vendor catalog" tab ---------- */
 const OPERATORS = {
   telco: { US: ['T-Mobile US', 'AT&T'], CA: ['Rogers', 'Bell'], MX: ['Telcel', 'AT&T Mexico'], GB: ['EE', 'Vodafone UK', 'Three UK'], DE: ['Telekom DE', 'Vodafone DE'], FR: ['Orange', 'SFR'], ES: ['Movistar', 'Orange Spain'], IT: ['TIM', 'Vodafone IT'],
     SG: ['Singtel', 'StarHub'], JP: ['NTT Docomo', 'SoftBank'], KR: ['SK Telecom', 'KT'], TH: ['AIS', 'True Move H'], MY: ['Maxis', 'CelcomDigi'], ID: ['Telkomsel', 'Indosat'], IN: ['Airtel', 'Jio'], CN: ['China Unicom', 'China Mobile'], HK: ['CSL', '3 HK'], TW: ['Chunghwa', 'Taiwan Mobile'], PH: ['Globe', 'Smart'], VN: ['Viettel', 'Vinaphone'],
@@ -190,8 +204,18 @@ const OPERATORS = {
     BD: ['Grameenphone', 'Banglalink'], KZ: ['Beeline KZ', 'Tele2 KZ'], KG: ['O!', 'MegaCom'], NP: ['Ncell', 'Nepal Telecom'], UZ: ['Ucell', 'Mobiuz'], AU: ['Optus', 'Telstra'], AE: ['du', 'e&'], TR: ['Turkcell', 'Turk Telekom'],
     DK: ['Telenor DK', '3 DK'], FI: ['Telia FI', 'Elisa'], IS: ['Siminn', 'Vodafone IS'], NO: ['Telia NO', 'Telenor NO'], SE: ['Tele2', 'Telia SE'] }
 };
-const opNames = (vendor, cc) => (OPERATORS[vendor] && OPERATORS[vendor][cc]) || [];
-const mkCov = (vendor, code) => ({ code, networks: opNames(vendor, code).map(n => ({ name: n, types: ['4G', '5G'] })) });
+/* editable vendor catalog: { vendor: { CC: [{ name, types }] } }, saved in this browser */
+function loadCatalog() {
+  try { const c = JSON.parse(localStorage.getItem('pm_catalog_v1') || 'null'); if (c && c.telco && c.rombty) return c; } catch (e) {}
+  const c = {};
+  Object.keys(OPERATORS).forEach(v => { c[v] = {}; Object.keys(OPERATORS[v]).forEach(cc => { c[v][cc] = OPERATORS[v][cc].map(n => ({ name: n, types: ['4G', '5G'] })); }); });
+  return c;
+}
+let CATALOG = loadCatalog();
+function persistCatalog() { try { localStorage.setItem('pm_catalog_v1', JSON.stringify(CATALOG)); } catch (e) {} }
+const catCountries = v => Object.keys(CATALOG[v] || {}).sort(byName);
+const opNames = (vendor, cc) => ((CATALOG[vendor] || {})[cc] || []).map(n => n.name);
+const mkCov = (vendor, code) => ({ code, networks: (((CATALOG[vendor] || {})[code]) || []).map(n => ({ name: n.name, types: [...n.types] })) });
 
 const VENDORS = {
   telco: { name: 'Telco Vision', apn: 'plus', template: `# Package Details:
@@ -314,7 +338,6 @@ function generateAdditionalInfo(p) {
 /* ---------- admin ---------- */
 const countryOpts = (ph, list) => `<option value="">${ph}</option>` + list.map(c => `<option value="${c}">${esc(cn(c))} (${c})</option>`).join('');
 $('telCountry').innerHTML = '<option value="">Select number country…</option>' + TELC.map(c => `<option value="${c}">${esc(cn(c))} (+${DIAL[c]})</option>`).join('');
-$('cPreset').innerHTML += Object.keys(SETS).map(k => `<option>${esc(k)}</option>`).join('');
 
 function fillForm() {
   const p = draft;
@@ -350,7 +373,8 @@ function renderBreakouts() {
   $('bkSel').innerHTML = countryOpts('Add breakout country…', SORTED.filter(c => !draft.breakouts.includes(c)));
 }
 function renderCov() {
-  $('cSel').innerHTML = countryOpts('Add a country (operators fill in automatically)…', SORTED.filter(c => !coverCodes(draft).includes(c)));
+  const inCat = catCountries(draft.vendor);
+  $('cSel').innerHTML = countryOpts(inCat.length ? `Add a country from the ${VENDORS[draft.vendor].name} catalog…` : 'No countries yet: add them in the Vendor catalog tab', inCat.filter(c => !coverCodes(draft).includes(c)));
   $('covList').innerHTML = draft.coverages.length ? draft.coverages.map((cv, ci) => {
     const known = opNames(draft.vendor, cv.code).filter(n => !cv.networks.some(x => x.name === n));
     const nets = cv.networks.length ? cv.networks.map((n, ni) => `<span class="net"><b>${esc(n.name)}</b>${TYPES.map(t => `<button type="button" class="ty ${n.types.includes(t) ? 'on' : ''}" data-act="ty" data-ci="${ci}" data-ni="${ni}" data-t="${t}">${t}</button>`).join('')}<button type="button" class="x" data-act="rn" data-ci="${ci}" data-ni="${ni}" aria-label="Remove ${esc(n.name)}">×</button></span>`).join('') : `<span class="empty">${opNames(draft.vendor, cv.code).length ? 'No operators selected.' : `No known ${VENDORS[draft.vendor].name} operators for ${esc(cn(cv.code))}. Add one manually.`}</span>`;
@@ -407,7 +431,7 @@ $('bkSel').onchange = () => { const v = $('bkSel').value; if (v && !draft.breako
 /* pick a country → coverage entry with that supplier's operators filled in automatically */
 const addCountry = code => { if (code && !coverCodes(draft).includes(code)) draft.coverages.push(mkCov(draft.vendor, code)); };
 $('cSel').onchange = () => { addCountry($('cSel').value); renderCov(); changed(); };
-$('cPreset').onchange = () => { const v = $('cPreset').value; if (v) { SETS[v].forEach(addCountry); $('cPreset').value = ''; renderCov(); changed(); } };
+$('cAll').onclick = () => { catCountries(draft.vendor).forEach(addCountry); renderCov(); changed(); };
 $('vendor').onchange = () => {
   const prev = VENDORS[draft.vendor].apn; draft.vendor = $('vendor').value;
   if (!draft.apn || draft.apn === prev) { draft.apn = VENDORS[draft.vendor].apn; $('apn').value = draft.apn; }
@@ -506,6 +530,47 @@ function renderDetail() {
     <details class="apibox"><summary>JSON output for this plan</summary><pre class="json">${esc(apiJson([p]))}</pre></details>`;
 }
 function toast(m) { let t = document.querySelector('.toast'); if (!t) { t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); } t.textContent = m; t.hidden = false; clearTimeout(t._h); t._h = setTimeout(() => t.hidden = true, 2600); }
+
+/* ---------- vendor catalog page ---------- */
+const catV = () => $('catVendor').value;
+function renderCat(focusCode) {
+  const v = catV(), cat = CATALOG[v] = CATALOG[v] || {}, codes = catCountries(v);
+  $('catSel').innerHTML = countryOpts('Add a country…', SORTED.filter(c => !cat[c]));
+  $('catSummary').textContent = `${VENDORS[v].name}: ${codes.length} countries · ${codes.reduce((s, c) => s + cat[c].length, 0)} operators`;
+  $('catList').innerHTML = codes.length ? codes.map(code => {
+    const nets = cat[code].length ? cat[code].map((n, ni) => `<span class="net"><b>${esc(n.name)}</b>${TYPES.map(t => `<button type="button" class="ty ${n.types.includes(t) ? 'on' : ''}" data-act="ty" data-c="${code}" data-ni="${ni}" data-t="${t}">${t}</button>`).join('')}<button type="button" class="x" data-act="rn" data-c="${code}" data-ni="${ni}" aria-label="Remove ${esc(n.name)}">×</button></span>`).join('') : '<span class="empty">No operators yet. Add them below.</span>';
+    return `<div class="cov"><div class="covh"><b>${esc(cn(code))}</b><span class="code">${esc(code)}</span><button type="button" class="x" data-act="rc" data-c="${code}" aria-label="Remove ${esc(cn(code))}">×</button></div><div class="nets">${nets}</div><div class="addop"><input placeholder="Operator names, separated by commas" aria-label="Operator names"><button type="button" class="btn ghost" data-act="ao" data-c="${code}">+ Add</button></div></div>`;
+  }).join('') : '<div class="empty">No countries for this vendor yet. Add a country above, then its operators.</div>';
+  if (focusCode) { const btn = $('catList').querySelector(`button[data-act="ao"][data-c="${focusCode}"]`); const inp = btn && btn.closest('.addop').querySelector('input'); if (inp) { inp.focus(); if (inp.scrollIntoView) inp.scrollIntoView({ block: 'nearest' }); } }
+}
+$('catVendor').onchange = () => renderCat();
+$('catSel').onchange = () => { const c = $('catSel').value; if (c) { CATALOG[catV()][c] = []; persistCatalog(); renderCat(c); } };
+$('catList').addEventListener('click', e => {
+  const b = e.target.closest('button[data-act]'); if (!b) return;
+  const cat = CATALOG[catV()], code = b.dataset.c, act = b.dataset.act;
+  if (act === 'rc') delete cat[code];
+  else if (act === 'rn') cat[code].splice(+b.dataset.ni, 1);
+  else if (act === 'ty') { const n = cat[code][+b.dataset.ni], t = b.dataset.t; n.types = n.types.includes(t) ? n.types.filter(x => x !== t) : TYPES.filter(x => x === t || n.types.includes(x)); }
+  else if (act === 'ao') {
+    const inp = b.closest('.addop').querySelector('input');
+    inp.value.split(',').map(s => s.trim()).filter(Boolean).forEach(name => { if (!cat[code].some(n => n.name.toLowerCase() === name.toLowerCase())) cat[code].push({ name, types: ['4G', '5G'] }); });
+  }
+  persistCatalog(); renderCat(act === 'ao' ? code : undefined);
+});
+$('catList').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); e.target.closest('.addop').querySelector('button').click(); } });
+let clearArm = 0;
+$('catClear').onclick = () => {
+  if (!clearArm) { $('catClear').textContent = 'Click again to clear'; clearArm = setTimeout(() => { clearArm = 0; $('catClear').textContent = 'Clear this vendor'; }, 3000); return; }
+  clearTimeout(clearArm); clearArm = 0; $('catClear').textContent = 'Clear this vendor';
+  CATALOG[catV()] = {}; persistCatalog(); renderCat(); toast(`${VENDORS[catV()].name} catalog cleared`);
+};
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
+  const cat = t.dataset.v === 'catalog';
+  document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t));
+  $('plansView').hidden = cat; $('catView').hidden = !cat;
+  $('topHint').textContent = cat ? 'Enter each vendor\'s countries and operators once. The Plans page uses them automatically.' : 'Edit a plan on the left and click Save. The website and the JSON output update from the same data.';
+  if (cat) { $('catVendor').value = draft.vendor; renderCat(); } else renderCov();
+});
 
 fillForm(); renderSite();
 })();
