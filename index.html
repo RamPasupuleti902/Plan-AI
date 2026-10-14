@@ -611,6 +611,8 @@ function paintSegs() {
   $('bkReq').hidden = draft.type === 'fixed' || draft.scope !== 'region';
   $('gbLabel').innerHTML = draft.type === 'daypass' ? 'Daily data cap (GB) <em>(dataCap)</em>' : draft.type === 'unlimited' ? 'Full-speed data per day before throttle (GB) <em>(dataCap)</em>' : 'Data (GB) <em>(dataCap)</em>';
   $('telWrap').hidden = $('telChecks').hidden = draft.planType !== 'data-voice'; $('voiceMinutesWrap').hidden = draft.planType !== 'data-voice' || draft.voiceMinutesType !== 'limited';
+  $('voiceTextInput').disabled = draft.planType !== 'data-voice' || draft.voiceMinutesType !== 'limited';
+  $('smsTextInput').disabled = draft.planType !== 'data-voice' || !(draft.smsIn || draft.smsOut);
   $('apnHint').textContent = `· ${VENDORS[draft.vendor].name} default: ${VENDORS[draft.vendor].apn}`;
 }
 function paintList() {
@@ -696,7 +698,7 @@ $('voiceMinutesType').onchange = () => { draft.voiceMinutesType = $('voiceMinute
 $('voiceMinutes').addEventListener('input', () => { const v = $('voiceMinutes').value.trim(); draft.voiceMinutes = v === '' ? null : Math.max(0, Math.floor(+v)); changed(); });
 $('voiceTextInput').addEventListener('input', () => { draft.voiceText = $('voiceTextInput').value; changed(); });
 $('smsTextInput').addEventListener('input', () => { draft.smsText = $('smsTextInput').value; changed(); });
-[['vIn', 'voiceIn'], ['vOut', 'voiceOut'], ['sIn', 'smsIn'], ['sOut', 'smsOut']].forEach(([id, k]) => $(id).addEventListener('change', () => { draft[k] = $(id).checked; changed(); }));
+[['vIn', 'voiceIn'], ['vOut', 'voiceOut'], ['sIn', 'smsIn'], ['sOut', 'smsOut']].forEach(([id, k]) => $(id).addEventListener('change', () => { draft[k] = $(id).checked; paintSegs(); changed(); }));
 
 const applyRegion = () => { draft.coverages = regionSet(draft.region, draft.vendor).map(c => mkCov(draft.vendor, c)); };
 $('region').onchange = () => { $('region').classList.remove('bad'); draft.region = $('region').value; if (draft.scope === 'region') applyRegion(); paintSegs(); renderCov(); changed(); };
