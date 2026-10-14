@@ -172,7 +172,7 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
         <div class="f full" id="telWrap"><label for="telCountry">Number country code <em>(telephony.dialingCode)</em> <span class="req">*</span></label><select id="telCountry"></select></div>
         <div class="f full" id="telChecks"><label>Voice &amp; SMS capabilities <em>(telephony.voice / telephony.sms)</em></label>
           <div class="checks"><label><input type="checkbox" id="vIn"> Voice: receive calls (inbound)</label><label><input type="checkbox" id="vOut"> Voice: make calls (outbound)</label><label><input type="checkbox" id="sIn"> SMS: receive (inbound)</label><label><input type="checkbox" id="sOut"> SMS: send (outbound)</label></div>
-          <div class="fields" style="margin-top:10px"><div class="f"><label for="voiceMinutesType">Voice minutes</label><select id="voiceMinutesType"><option value="not-included">Not included</option><option value="limited">Limited minutes</option><option value="unlimited">Unlimited minutes</option></select></div><div class="f" id="voiceMinutesWrap"><label for="voiceMinutes">Number of minutes</label><input id="voiceMinutes" type="number" min="1" step="1" placeholder="e.g. 100"></div></div></div>
+          <div class="fields" style="margin-top:10px"><div class="f"><label for="voiceMinutesType">Voice minutes</label><select id="voiceMinutesType"><option value="not-included">Not included</option><option value="limited">Limited minutes</option><option value="unlimited">Unlimited minutes</option></select></div><div class="f" id="voiceMinutesWrap"><label for="voiceMinutes">Number of minutes</label><input id="voiceMinutes" type="number" min="1" step="1" placeholder="e.g. 100"></div><div class="f"><label for="voiceTextInput">Voice text (JSON: voiceText)</label><input id="voiceTextInput" type="text" placeholder="e.g. Receive calls, Make calls"></div><div class="f"><label for="smsTextInput">SMS text (JSON: smsText)</label><input id="smsTextInput" type="text" placeholder="e.g. Receive SMS, Send SMS"></div></div></div>
       </div></div>
 
     <div class="sec"><div class="st"><i>4</i>Data allowance</div>
@@ -469,8 +469,8 @@ function toApi(p) {
   out.telephony = p.planType === 'data-voice'
     ? {
         dialingCode: DIAL[p.telCountry] ? '+' + DIAL[p.telCountry] : null,
-        voiceText: [p.voiceIn && 'Receive calls (inbound)', p.voiceOut && 'Make calls (outbound)'].filter(Boolean).join(', ') || 'Not included',
-        smsText: [p.smsIn && 'Receive SMS (inbound)', p.smsOut && 'Send SMS (outbound)'].filter(Boolean).join(', ') || 'Not included',
+        voiceText: (p.voiceText || '').trim() || ([p.voiceIn && 'Receive calls (inbound)', p.voiceOut && 'Make calls (outbound)'].filter(Boolean).join(', ') || 'Not included'),
+        smsText: (p.smsText || '').trim() || ([p.smsIn && 'Receive SMS (inbound)', p.smsOut && 'Send SMS (outbound)'].filter(Boolean).join(', ') || 'Not included'),
         sms: { inbound: !!p.smsIn, outbound: !!p.smsOut },
         voice: {
           inbound: !!p.voiceIn,
@@ -544,7 +544,7 @@ const SAMPLE = [
     coverages: [{ code: 'US', networks: [{ name: 'Verizon', types: ['4G', '5G'] }, { name: 'AT&T', types: ['4G', '5G'] }] }]
   })
 ];
-const blankPlan = id => { const p = Object.assign(clone(SAMPLE[3]), { id, name: 'New plan', productCode: '', parentalPlan: false, voiceMinutesType: 'not-included', voiceMinutes: null, planFor: '', planSource: '', networkType: 'local', localBreakouts: 'no', localBreakoutCountry: '', stockPlan: '', nameAuto: true, scope: 'country', link: 'https://example.com/plans/new-plan', breakouts: [], coverages: [], telCountry: '', planType: 'data', type: 'fixed', throttle: false, gb: 10, reducedSpeed: null, capAuto: true, days: 30, price: 10, region: '' }); p.capInfo = capText(p); return p; };
+const blankPlan = id => { const p = Object.assign(clone(SAMPLE[3]), { id, name: 'New plan', productCode: '', parentalPlan: false, voiceMinutesType: 'not-included', voiceMinutes: null, planFor: '', planSource: '', networkType: 'local', localBreakouts: 'no', localBreakoutCountry: '', stockPlan: '', nameAuto: true, scope: 'country', link: 'https://example.com/plans/new-plan', breakouts: [], coverages: [], telCountry: '', planType: 'data', voiceText: '', smsText: '', type: 'fixed', throttle: false, gb: 10, reducedSpeed: null, capAuto: true, days: 30, price: 10, region: '' }); p.capInfo = capText(p); return p; };
 
 let PLANS = load();
 /* plans saved earlier may still use the old "Asia-Pacific" name */
@@ -578,7 +578,7 @@ function paintLocalBreakoutFields() {
 }
 function fillForm() {
   const p = draft;
-  $('productCode').value = p.productCode || ''; $('parentalPlan').value = p.parentalPlan ? 'yes' : 'no'; $('voiceMinutesType').value = p.voiceMinutesType || 'not-included'; $('voiceMinutes').value = p.voiceMinutes || ''; $('voiceMinutesWrap').hidden = $('voiceMinutesType').value !== 'limited'; $('planFor').value = p.planFor || ''; $('planSource').value = p.planSource || ''; $('networkType').value = p.networkType || 'local'; $('localBreakouts').value = p.localBreakouts || 'no'; $('localBreakoutCountry').value = p.localBreakoutCountry || ''; $('name').value = p.name; $('vendor').value = p.vendor; $('apn').value = p.apn; $('link').value = p.link; $('link').classList.remove('bad');
+  $('productCode').value = p.productCode || ''; $('parentalPlan').value = p.parentalPlan ? 'yes' : 'no'; $('voiceMinutesType').value = p.voiceMinutesType || 'not-included'; $('voiceMinutes').value = p.voiceMinutes || ''; $('voiceTextInput').value = p.voiceText || ''; $('smsTextInput').value = p.smsText || ''; $('voiceMinutesWrap').hidden = $('voiceMinutesType').value !== 'limited'; $('planFor').value = p.planFor || ''; $('planSource').value = p.planSource || ''; $('networkType').value = p.networkType || 'local'; $('localBreakouts').value = p.localBreakouts || 'no'; $('localBreakoutCountry').value = p.localBreakoutCountry || ''; $('name').value = p.name; $('vendor').value = p.vendor; $('apn').value = p.apn; $('link').value = p.link; $('link').classList.remove('bad');
   $('region').value = p.region || ''; $('gb').value = p.gb; $('days').value = p.days; $('price').value = p.price; $('vStart').value = p.vStart;
   $('telCountry').value = p.telCountry || ''; $('telCountry').classList.remove('bad');
   $('vIn').checked = !!p.voiceIn; $('vOut').checked = !!p.voiceOut; $('sIn').checked = !!p.smsIn; $('sOut').checked = !!p.smsOut;
@@ -694,6 +694,8 @@ $('subPer').onchange = () => { draft.subPer = $('subPer').value; changed(); };
 $('parentalPlan').onchange = () => { draft.parentalPlan = $('parentalPlan').value === 'yes'; changed(); };
 $('voiceMinutesType').onchange = () => { draft.voiceMinutesType = $('voiceMinutesType').value; if (draft.voiceMinutesType !== 'limited') draft.voiceMinutes = null; $('voiceMinutes').value = draft.voiceMinutes || ''; paintSegs(); changed(); };
 $('voiceMinutes').addEventListener('input', () => { const v = $('voiceMinutes').value.trim(); draft.voiceMinutes = v === '' ? null : Math.max(0, Math.floor(+v)); changed(); });
+$('voiceTextInput').addEventListener('input', () => { draft.voiceText = $('voiceTextInput').value; changed(); });
+$('smsTextInput').addEventListener('input', () => { draft.smsText = $('smsTextInput').value; changed(); });
 [['vIn', 'voiceIn'], ['vOut', 'voiceOut'], ['sIn', 'smsIn'], ['sOut', 'smsOut']].forEach(([id, k]) => $(id).addEventListener('change', () => { draft[k] = $(id).checked; changed(); }));
 
 const applyRegion = () => { draft.coverages = regionSet(draft.region, draft.vendor).map(c => mkCov(draft.vendor, c)); };
@@ -790,7 +792,7 @@ $('copyAll').onclick = async () => {
 
 /* ---------- apply the latest schema to plans saved earlier ---------- */
 function normalizePlan(p) {
-  const d = { productCode: '', parentalPlan: false, voiceMinutesType: 'not-included', voiceMinutes: null, planFor: '', planSource: '', networkType: 'local', localBreakouts: 'no', localBreakoutCountry: '', stockPlan: '', vendor: 'telco', scope: 'country', planType: 'data', type: 'fixed', throttle: false, gb: 1, reducedSpeed: null, capInfo: '', capAuto: true, days: 1, price: 0, vStart: 'first', hotspot: true, topup: true, subscription: false, ekyc: false, breakouts: [], coverages: [], region: '', telCountry: '', voiceIn: true, voiceOut: true, smsIn: true, smsOut: true, apn: '', link: '', nameAuto: false, maxSpeed: null, priceInfo: '', hasAds: false, newUserOnly: false, payAsYouGo: false, promoEnabled: false, subPer: 'month' };
+  const d = { productCode: '', parentalPlan: false, voiceMinutesType: 'not-included', voiceMinutes: null, planFor: '', planSource: '', networkType: 'local', localBreakouts: 'no', localBreakoutCountry: '', stockPlan: '', vendor: 'telco', scope: 'country', planType: 'data', voiceText: '', smsText: '', type: 'fixed', throttle: false, gb: 1, reducedSpeed: null, capInfo: '', capAuto: true, days: 1, price: 0, vStart: 'first', hotspot: true, topup: true, subscription: false, ekyc: false, breakouts: [], coverages: [], region: '', telCountry: '', voiceIn: true, voiceOut: true, smsIn: true, smsOut: true, apn: '', link: '', nameAuto: false, maxSpeed: null, priceInfo: '', hasAds: false, newUserOnly: false, payAsYouGo: false, promoEnabled: false, subPer: 'month' };
   Object.keys(d).forEach(k => { if (p[k] === undefined) p[k] = d[k]; });
   if (p.capPer === undefined) p.capPer = capPerOf(p);
   if (!VENDORS[p.vendor]) p.vendor = 'telco';
