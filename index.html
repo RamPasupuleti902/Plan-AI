@@ -405,7 +405,7 @@ const VENDORS = {
 - APN: {{apn}}
 - 24/7 customer support
 
-# Coverage ({{countryCount}} countries):
+# Coverage:
 - {{countries}}` }
 };
 
@@ -464,7 +464,7 @@ function generateAdditionalInfo(p) {
     breakout: p.breakouts.map(cn).join(', '),
     validity: p.days + (+p.days === 1 ? ' day' : ' days'),
     validityStart: p.vStart === 'install' ? 'from eSIM installation' : 'from first network connection',
-    apn: p.apn, countries: p.scope === 'region' ? `${p.region || 'Region'} region${p.vendor === 'rombty' ? '' : ` (${codes.length} countries)`}` : codes.map(cn).join(', '), countryCount: codes.length
+    apn: p.apn, countries: p.scope === 'region' ? `${p.region || 'Region'} region · Multi networks` : codes.map(cn).join(', '), countryCount: codes.length
   };
   const flags = { breakout: p.breakouts.length > 0, hotspot: p.hotspot, topup: p.topup, speed: !!vars.speed, voice: p.planType === 'data-voice' };
   const sections = []; let cur = null;
@@ -540,7 +540,7 @@ function paintSegs() {
   $('thrWrap').hidden = draft.type !== 'unlimited';
   $('gbWrap').hidden = unlOpen(draft);
   $('rsBox').hidden = !hasThrottle(draft);
-  $('bkReq').hidden = draft.type === 'fixed';
+  $('bkReq').hidden = draft.type === 'fixed' || draft.scope !== 'region';
   $('gbLabel').innerHTML = draft.type === 'daypass' ? 'Daily data cap (GB) <em>(dataCap)</em>' : draft.type === 'unlimited' ? 'Full-speed data per day before throttle (GB) <em>(dataCap)</em>' : 'Data (GB) <em>(dataCap)</em>';
   $('telWrap').hidden = $('telChecks').hidden = draft.planType !== 'data-voice';
   $('apnHint').textContent = `· ${VENDORS[draft.vendor].name} default: ${VENDORS[draft.vendor].apn}`;
@@ -619,8 +619,8 @@ const applyRegion = () => { draft.coverages = regionSet(draft.region, draft.vend
 $('region').onchange = () => { $('region').classList.remove('bad'); draft.region = $('region').value; if (draft.scope === 'region') applyRegion(); paintSegs(); renderCov(); changed(); };
 document.querySelectorAll('#scopeSeg button').forEach(b => b.onclick = () => {
   draft.scope = b.dataset.s;
-  if (draft.scope === 'region') { if (draft.region) applyRegion(); else draft.coverages = []; } else draft.coverages = draft.coverages.slice(0, 1);
-  paintSegs(); renderCov(); changed();
+  if (draft.scope === 'region') { if (draft.region) applyRegion(); else draft.coverages = []; } else { draft.coverages = draft.coverages.slice(0, 1); draft.breakouts = []; }
+  paintSegs(); renderBreakouts(); renderCov(); changed();
   if (draft.scope === 'region' && !draft.region) { $('region').focus(); toast('Now choose a region and its countries are mapped automatically'); }
 });
 $('vStart').onchange = () => { draft.vStart = $('vStart').value; changed(); };
@@ -670,7 +670,7 @@ function validate(p) {
   if (p.scope === 'region' && !p.region) return 'Select a region for this plan';
   if (!p.name.trim()) return 'Plan name is required';
   if (!/^https?:\/\/\S+$/i.test((p.link || '').trim())) { $('link').classList.add('bad'); $('link').focus(); return 'Enter the plan link (a full https:// URL)'; }
-  if (!p.breakouts.length && p.type !== 'fixed') { $('bkSel').classList.add('bad'); $('bkSel').focus(); return 'Add at least one internet breakout country (required)'; }
+  if (p.scope === 'region' && !p.breakouts.length && p.type !== 'fixed') { $('bkSel').classList.add('bad'); $('bkSel').focus(); return 'Add at least one internet breakout country (required)'; }
   if (!p.coverages.length) { $('cSel').focus(); return 'Pick a country (or a region) for the coverage'; }
   for (const cv of p.coverages) {
     if (!cv.networks.length) return `Add at least one operator for ${cn(cv.code)}`;
@@ -808,7 +808,7 @@ function renderDetail() {
   }
   $('detail').innerHTML = `<div class="dhead"><div><h3>${esc(p.name)}</h3><div class="meta">${esc(p.region || 'Any region')} · ${p.coverages.length} ${p.coverages.length === 1 ? 'country' : 'countries'}</div></div>
     <div><div class="pr">$ ${(+p.price).toFixed(2)} <small>USD</small></div><button type="button" class="buy">Buy now</button></div></div>
-    <div class="facts">${facts.map(f => `<span class="fact">${f[0]}: <b>${esc(f[1])}</b></span>`).join('')}</div>${speedHtml}${p.coverages.length ? `<details class="apibox"><summary>Countries covered (${p.coverages.length})</summary><div class="cflags" style="padding:4px 12px 14px">${[...p.coverages].sort((a, b) => byName(a.code, b.code)).map(cv => `<span class="cflag">${flag(cv.code)}${esc(cn(cv.code))}</span>`).join('')}</div></details>` : ''}<div class="info">${generateAdditionalInfo(p)}</div>
+    <div class="facts">${facts.map(f => `<span class="fact">${f[0]}: <b>${esc(f[1])}</b></span>`).join('')}</div>${speedHtml}${p.coverages.length ? `<details class="apibox"><summary>Countries covered (${p.coverages.length})</summary><div class="cflags" style="padding:4px 12px 14px;max-height:260px;overflow:auto">${[...p.coverages].sort((a, b) => byName(a.code, b.code)).map(cv => `<span class="cflag">${flag(cv.code)}${esc(cn(cv.code))}</span>`).join('')}</div></details>` : ''}<div class="info">${generateAdditionalInfo(p)}</div>
     <details class="apibox"><summary>JSON output for this plan</summary><pre class="json">${esc(apiJson([p]))}</pre></details>`;
 }
 function toast(m) { let t = document.querySelector('.toast'); if (!t) { t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); } t.textContent = m; t.hidden = false; clearTimeout(t._h); t._h = setTimeout(() => t.hidden = true, 2600); }
