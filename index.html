@@ -141,7 +141,7 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
     <div class="plist" id="plist"></div>
     <div class="sec"><div class="st"><i>1</i>Basics</div>
       <div class="fields">
-        <div class="f full"><label for="name">Plan name <em>(planName)</em></label><input id="name"></div>
+        <div class="f full"><label for="name">Plan name <em>(planName)</em></label><input id="name" maxlength="100"></div>
         <div class="f"><label for="vendor">Supplier / vendor</label><select id="vendor"><option value="telco">Telco Vision (TEL VSN)</option><option value="rombty">Rombty</option></select></div>
         <div class="f"><label for="apn">APN <em id="apnHint"></em></label><input id="apn"></div>
         <div class="f full"><label for="link">Plan link <em>(link)</em> <span class="req">*</span></label><input id="link" type="url" placeholder="https://example.com/plans/usa-10gb"></div>
@@ -173,6 +173,8 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
         <div class="f full"><div class="seg" id="typeSeg"><button type="button" data-t="fixed">Fixed GB</button><button type="button" data-t="daypass">Day Pass (daily cap)</button><button type="button" data-t="unlimited">Unlimited</button></div></div>
         <div class="f full" id="thrWrap"><label>Throttle this unlimited plan?</label><div class="seg" id="thrSeg"><button type="button" data-v="0">No, truly unlimited</button><button type="button" data-v="1">Yes, throttle after a daily cap</button></div></div>
         <div class="f" id="gbWrap"><label for="gb" id="gbLabel">Data (GB)</label><input id="gb" type="number" min="0.1" step="0.1"></div>
+        <div class="f" id="perWrap"><label for="perSel">Data cap period <em>(dataCapPer)</em></label><select id="perSel"><option value="">Not period-based (null)</option><option value="day">Per day</option><option value="week">Per week</option><option value="month">Per month</option></select></div>
+        <div class="f full"><label for="ms">Max speed in kbps <em>(maxSpeed)</em></label><input id="ms" type="number" min="1" step="1" placeholder="Leave empty if speed is not restricted (null)"></div>
       </div>
       <div class="tiers" id="rsBox">
         <h3>Throttling after the cap <span>(reducedSpeed, capacityInfo)</span></h3>
@@ -187,6 +189,7 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
         <div class="f"><label for="days">Validity (days) <em>(validity)</em></label><input id="days" type="number" min="1"></div>
         <div class="f"><label for="price">Selling price (USD) <em>(prices.USD)</em></label><input id="price" type="number" min="0" step="0.01"></div>
         <div class="f full"><label for="vStart">Validity starts <em>(website only)</em></label><select id="vStart"><option value="first">From first network connection</option><option value="install">From eSIM installation</option></select></div>
+        <div class="f full"><label for="priceInfo">Price info <em>(priceInfo)</em></label><input id="priceInfo" placeholder="Optional notes about pricing"></div>
       </div></div>
 
     <div class="sec"><div class="st"><i>6</i>Options</div>
@@ -195,6 +198,11 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
         <div class="f"><label>Top up <em>(canTopUp)</em></label><div class="seg" id="tuSeg"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button></div></div>
         <div class="f"><label>Subscription <em>(subscription)</em></label><div class="seg" id="subSeg"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button></div></div>
         <div class="f"><label>eKYC <em>(eKYC)</em></label><div class="seg" id="kycSeg"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button></div></div>
+        <div class="f"><label>Has ads <em>(hasAds)</em></label><div class="seg" id="adsSeg"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button></div></div>
+        <div class="f"><label>Pay as you go <em>(payAsYouGo)</em></label><div class="seg" id="paygSeg"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button></div></div>
+        <div class="f"><label>New users only <em>(newUserOnly)</em></label><div class="seg" id="newSeg"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button></div></div>
+        <div class="f"><label>Promo codes <em>(promoEnabled)</em></label><div class="seg" id="promoSeg"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No</button></div></div>
+        <div class="f" id="subPerWrap"><label for="subPer">Renewal period <em>(subscriptionPeriod)</em></label><select id="subPer"><option value="month">Monthly</option><option value="week">Weekly</option></select></div>
       </div></div>
 
     <div class="actions"><button type="button" class="btn" id="save">Save plan → website</button><button type="button" class="btn ghost" id="dup">Duplicate</button><button type="button" class="btn ghost" id="del">Delete</button><button type="button" class="btn ghost" id="copyAll">Copy all plans JSON</button><button type="button" class="btn ghost" id="migrate" title="Update every saved plan to the latest rules">Apply latest schema to all plans</button><span id="dirty"></span></div>
@@ -412,6 +420,7 @@ const VENDORS = {
 /* ---------- helpers ---------- */
 const fmtGb = gb => { gb = +gb || 0; return gb < 1 ? Math.round(gb * 1024) + ' MB' : r2(gb) + ' GB'; };
 const ptLabel = p => p.planType === 'data-voice' ? 'Data + Voice' : 'Data';
+const capPerOf = p => p.capPer !== undefined ? p.capPer : (p.type !== 'fixed' && !(p.type === 'unlimited' && !p.throttle) ? 'day' : '');
 const unlOpen = p => p.type === 'unlimited' && !p.throttle;          /* truly unlimited: dataCap 0, no throttle */
 const hasThrottle = p => p.type !== 'fixed' && !unlOpen(p);          /* only Day Pass and throttled Unlimited */
 const netNames = p => [...new Set(p.coverages.flatMap(cv => cv.networks.map(n => n.name)))];
@@ -433,28 +442,38 @@ function toApi(p) {
     planName: p.name,
     validity: +p.days,
     dataCap: unlOpen(p) ? 0 : r2(+p.gb || 0),
-    dataUnit: 'GB'
+    dataUnit: 'GB',
+    dataCapPer: unlOpen(p) ? null : (capPerOf(p) || null)
   };
   if (hasThrottle(p)) {
     const info = (p.capInfo || '').trim();
     out.reducedSpeed = p.reducedSpeed > 0 ? Math.round(p.reducedSpeed) : null;
     out.capacityInfo = info || null;
   }
+  out.maxSpeed = p.maxSpeed > 0 ? Math.round(p.maxSpeed) : null;
   out.prices = { USD: +(+p.price || 0) };
-  out.link = p.link;
+  if ((p.priceInfo || '').trim()) out.priceInfo = p.priceInfo.trim();
+  out.link = (p.link || '').trim() || null;
+  out.additionalInfo = additionalText(p);
+  out.validityInfo = 'Validity starts ' + (p.vStart === 'install' ? 'from eSIM installation' : 'from first network connection');
   out.telephony = p.planType === 'data-voice'
     ? { dialingCode: DIAL[p.telCountry] ? '+' + DIAL[p.telCountry] : null, sms: { inbound: !!p.smsIn, outbound: !!p.smsOut }, voice: { inbound: !!p.voiceIn, outbound: !!p.voiceOut } }
     : null;
   out.subscription = !!p.subscription;
+  if (p.subscription) out.subscriptionPeriod = p.subPer || 'month';
   out.canTopUp = !!p.topup;
   out.eKYC = !!p.ekyc;
+  out.hasAds = !!p.hasAds;
+  out.newUserOnly = !!p.newUserOnly;
+  out.payAsYouGo = !!p.payAsYouGo;
+  out.promoEnabled = !!p.promoEnabled;
   out.tethering = !!p.hotspot;
   out.internetBreakouts = p.breakouts.map(c => ({ country: c }));
   out.coverages = p.coverages.map(cv => ({ code: cv.code, networks: cv.networks.map(n => ({ name: n.name, types: [...n.types] })) }));
   return out;
 }
 const apiJson = list => JSON.stringify(list.map(toApi), null, 2);
-function generateAdditionalInfo(p) {
+function additionalSections(p) {
   const codes = [...coverCodes(p)].sort(byName);
   const vars = {
     data: unlOpen(p) ? 'Unlimited High speed data' : p.type === 'unlimited' ? `Unlimited data (${fmtGb(p.gb)} per day at full speed)` : p.type === 'daypass' ? `${fmtGb(p.gb)} High speed data per day` : `${fmtGb(p.gb)} High speed data`,
@@ -476,7 +495,12 @@ function generateAdditionalInfo(p) {
     if (!cur) { cur = { title: '', items: [] }; sections.push(cur); }
     cur.items.push(fill(line.replace(/^[-*•]\s*/, '')));
   });
-  return sections.map(s => (s.title ? `<p>${esc(s.title)}</p>` : '') + `<ul>${s.items.map(i => `<li>${esc(i)}</li>`).join('')}</ul>`).join('');
+  return sections;
+}
+/* additionalInfo for the endpoint: plain text, one item per line */
+const additionalText = p => additionalSections(p).flatMap(s => s.items).join('\n');
+function generateAdditionalInfo(p) {
+  return additionalSections(p).map(s => (s.title ? `<p>${esc(s.title)}</p>` : '') + `<ul>${s.items.map(i => `<li>${esc(i)}</li>`).join('')}</ul>`).join('');
 }
 
 /* ---------- sample plans ---------- */
@@ -485,7 +509,7 @@ const mk = (id, name, vendor, type, gb, days, price, codes, planType, extra) => 
     id, name, nameAuto: false, vendor, scope: 'country', apn: VENDORS[vendor].apn, link: `https://example.com/plans/${slug(name)}`, breakouts: [], region: 'Asia Pacific',
     planType: planType || 'data', telCountry: '', voiceIn: true, voiceOut: true, smsIn: true, smsOut: true,
     type, throttle: false, gb, reducedSpeed: null, capInfo: '', capAuto: true, days, price, vStart: 'first',
-    hotspot: true, topup: true, subscription: false, ekyc: false, coverages: codes.map(c => mkCov(vendor, c))
+    hotspot: true, topup: true, subscription: false, ekyc: false, maxSpeed: null, priceInfo: '', hasAds: false, newUserOnly: false, payAsYouGo: false, promoEnabled: false, subPer: 'month', coverages: codes.map(c => mkCov(vendor, c))
   }, extra || {});
   p.capInfo = capText(p); return p;
 };
@@ -522,6 +546,7 @@ function fillForm() {
   $('telCountry').value = p.telCountry || ''; $('telCountry').classList.remove('bad');
   $('vIn').checked = !!p.voiceIn; $('vOut').checked = !!p.voiceOut; $('sIn').checked = !!p.smsIn; $('sOut').checked = !!p.smsOut;
   $('rs').value = p.reducedSpeed == null ? '' : p.reducedSpeed; $('capInfo').value = p.capInfo || '';
+  $('ms').value = p.maxSpeed > 0 ? p.maxSpeed : ''; $('priceInfo').value = p.priceInfo || '';
   paintSegs(); renderBreakouts(); renderCov(); renderAdminAI(); paintList(); paintDirty();
 }
 function paintSegs() {
@@ -533,6 +558,12 @@ function paintSegs() {
   on('#tuSeg', b => (b.dataset.v === '1') === draft.topup);
   on('#subSeg', b => (b.dataset.v === '1') === draft.subscription);
   on('#kycSeg', b => (b.dataset.v === '1') === draft.ekyc);
+  on('#adsSeg', b => (b.dataset.v === '1') === !!draft.hasAds);
+  on('#paygSeg', b => (b.dataset.v === '1') === !!draft.payAsYouGo);
+  on('#newSeg', b => (b.dataset.v === '1') === !!draft.newUserOnly);
+  on('#promoSeg', b => (b.dataset.v === '1') === !!draft.promoEnabled);
+  $('perSel').value = capPerOf(draft); $('perWrap').hidden = unlOpen(draft);
+  $('subPer').value = draft.subPer || 'month'; $('subPerWrap').hidden = !draft.subscription;
   on('#scopeSeg', b => b.dataset.s === draft.scope);
   const reg = draft.scope === 'region';
   $('regWrap').hidden = !reg; $('ctyWrap').hidden = reg;
@@ -609,10 +640,13 @@ function changed() { autoName(); autoCap(); renderAdminAI(); paintDirty(); }
 
 const bind = (id, key, num) => $(id).addEventListener('input', () => { draft[key] = num ? +$(id).value : $(id).value; if (id === 'link') $('link').classList.remove('bad'); changed(); });
 $('name').addEventListener('input', () => { draft.nameAuto = false; });
-bind('name', 'name'); bind('apn', 'apn'); bind('link', 'link'); bind('gb', 'gb', true); bind('days', 'days', true); bind('price', 'price', true);
+bind('priceInfo', 'priceInfo'); bind('name', 'name'); bind('apn', 'apn'); bind('link', 'link'); bind('gb', 'gb', true); bind('days', 'days', true); bind('price', 'price', true);
 $('rs').addEventListener('input', () => { const v = $('rs').value.trim(); draft.reducedSpeed = v === '' ? null : Math.round(+v); changed(); });
 $('capInfo').addEventListener('input', () => { draft.capAuto = false; draft.capInfo = $('capInfo').value; changed(); });
 $('capReset').onclick = () => { draft.capAuto = true; changed(); };
+$('ms').addEventListener('input', () => { const v = $('ms').value.trim(); draft.maxSpeed = v === '' ? null : Math.round(+v); changed(); });
+$('perSel').onchange = () => { draft.capPer = $('perSel').value; changed(); };
+$('subPer').onchange = () => { draft.subPer = $('subPer').value; changed(); };
 [['vIn', 'voiceIn'], ['vOut', 'voiceOut'], ['sIn', 'smsIn'], ['sOut', 'smsOut']].forEach(([id, k]) => $(id).addEventListener('change', () => { draft[k] = $(id).checked; changed(); }));
 
 const applyRegion = () => { draft.coverages = regionSet(draft.region, draft.vendor).map(c => mkCov(draft.vendor, c)); };
@@ -654,21 +688,25 @@ $('vendor').onchange = () => {
 document.querySelectorAll('#ptSeg button').forEach(b => b.onclick = () => { draft.planType = b.dataset.p; paintSegs(); changed(); });
 document.querySelectorAll('#typeSeg button').forEach(b => b.onclick = () => {
   draft.type = b.dataset.t;
+  draft.capPer = draft.type === 'fixed' ? '' : 'day';
   if (draft.type === 'fixed') { draft.reducedSpeed = null; $('rs').value = ''; draft.capAuto = true; }
   if (!(+draft.gb > 0)) { draft.gb = 1; $('gb').value = 1; }
   paintSegs(); changed();
 });
 document.querySelectorAll('#thrSeg button').forEach(b => b.onclick = () => {
   draft.throttle = b.dataset.v === '1';
+  if (draft.throttle) draft.capPer = draft.capPer || 'day';
   if (draft.throttle && !(+draft.gb > 0)) { draft.gb = 1; $('gb').value = 1; }
   paintSegs(); changed();
 });
-[['hsSeg', 'hotspot'], ['tuSeg', 'topup'], ['subSeg', 'subscription'], ['kycSeg', 'ekyc']].forEach(([id, key]) =>
+[['hsSeg', 'hotspot'], ['tuSeg', 'topup'], ['subSeg', 'subscription'], ['kycSeg', 'ekyc'], ['adsSeg', 'hasAds'], ['paygSeg', 'payAsYouGo'], ['newSeg', 'newUserOnly'], ['promoSeg', 'promoEnabled']].forEach(([id, key]) =>
   document.querySelectorAll('#' + id + ' button').forEach(b => b.onclick = () => { draft[key] = b.dataset.v === '1'; paintSegs(); changed(); }));
 
 function validate(p) {
   if (p.scope === 'region' && !p.region) return 'Select a region for this plan';
   if (!p.name.trim()) return 'Plan name is required';
+  if (p.name.length > 100) return 'Plan name must be 100 characters or fewer';
+  if (p.maxSpeed != null && !(p.maxSpeed > 0)) return 'Max speed must be a number of kbps, or empty for no limit';
   if (!/^https?:\/\/\S+$/i.test((p.link || '').trim())) { $('link').classList.add('bad'); $('link').focus(); return 'Enter the plan link (a full https:// URL)'; }
   if (p.scope === 'region' && !p.breakouts.length && p.type !== 'fixed') { $('bkSel').classList.add('bad'); $('bkSel').focus(); return 'Add at least one internet breakout country (required)'; }
   if (!p.coverages.length) { $('cSel').focus(); return 'Pick a country (or a region) for the coverage'; }
@@ -702,8 +740,9 @@ $('copyAll').onclick = async () => {
 
 /* ---------- apply the latest schema to plans saved earlier ---------- */
 function normalizePlan(p) {
-  const d = { vendor: 'telco', scope: 'country', planType: 'data', type: 'fixed', throttle: false, gb: 1, reducedSpeed: null, capInfo: '', capAuto: true, days: 1, price: 0, vStart: 'first', hotspot: true, topup: true, subscription: false, ekyc: false, breakouts: [], coverages: [], region: '', telCountry: '', voiceIn: true, voiceOut: true, smsIn: true, smsOut: true, apn: '', link: '', nameAuto: false };
+  const d = { vendor: 'telco', scope: 'country', planType: 'data', type: 'fixed', throttle: false, gb: 1, reducedSpeed: null, capInfo: '', capAuto: true, days: 1, price: 0, vStart: 'first', hotspot: true, topup: true, subscription: false, ekyc: false, breakouts: [], coverages: [], region: '', telCountry: '', voiceIn: true, voiceOut: true, smsIn: true, smsOut: true, apn: '', link: '', nameAuto: false, maxSpeed: null, priceInfo: '', hasAds: false, newUserOnly: false, payAsYouGo: false, promoEnabled: false, subPer: 'month' };
   Object.keys(d).forEach(k => { if (p[k] === undefined) p[k] = d[k]; });
+  if (p.capPer === undefined) p.capPer = capPerOf(p);
   if (!VENDORS[p.vendor]) p.vendor = 'telco';
   if (!p.apn) p.apn = VENDORS[p.vendor].apn;
   if (p.type !== 'unlimited') p.throttle = false;
