@@ -150,10 +150,10 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
     <div class="sec"><div class="st"><i>2</i>Coverage</div>
       <div class="fields">
         <div class="f full"><label>Plan is for</label><div class="seg" id="scopeSeg"><button type="button" data-s="country">A country</button><button type="button" data-s="region">A region</button></div></div>
-        <div class="f"><label for="region">Region</label><select id="region"></select></div>
-        <div class="f"><label for="cSel" id="cLabel">Country</label><select id="cSel"></select></div>
+        <div class="f full" id="regWrap"><label for="region">Region <em>(all its countries are mapped automatically)</em> <span class="req">*</span></label><select id="region"></select></div>
+        <div class="f full" id="ctyWrap"><label for="cSel">Country <em>(operators fill in automatically)</em> <span class="req">*</span></label><select id="cSel"></select></div>
         <div class="f full"><label>Mapped countries and networks <em>(coverages)</em> <span class="req">*</span></label>
-          <div class="cpick"><button type="button" class="btn ghost" id="cAll">Reset to region countries</button></div>
+          <div class="cpick"><select id="cAdd" aria-label="Add another country"></select><button type="button" class="btn ghost" id="cAddBtn">+ Add country</button><button type="button" class="btn ghost" id="cAll">Reset to region countries</button></div>
           <div class="cov-list" id="covList"></div></div>
         <div class="f full"><label for="bkSel">Internet breakout country <em>(internetBreakouts)</em> <span class="req" id="bkReq">*</span></label>
           <div class="cpick"><select id="bkSel"></select></div>
@@ -532,7 +532,7 @@ function paintSegs() {
   on('#kycSeg', b => (b.dataset.v === '1') === draft.ekyc);
   on('#scopeSeg', b => b.dataset.s === draft.scope);
   const reg = draft.scope === 'region';
-  $('cLabel').innerHTML = reg ? 'Add another country <em>(optional)</em>' : 'Country <em>(operators fill in automatically)</em> <span class="req">*</span>';
+  $('regWrap').hidden = !reg; $('ctyWrap').hidden = reg;
   $('cAll').hidden = !reg; $('cAll').textContent = `Reset to ${draft.region || 'region'} countries`;
   $('thrWrap').hidden = draft.type !== 'unlimited';
   $('gbWrap').hidden = unlOpen(draft);
@@ -557,13 +557,16 @@ function renderBreakouts() {
 }
 function renderCov() {
   const single = draft.scope !== 'region', cat = CATALOG[draft.vendor] || {};
-  const free = regionCountries(draft.region).filter(c => single || !coverCodes(draft).includes(c));
   const opt = c => `<option value="${c}">${esc(cn(c))} (${c})</option>`;
-  const withOps = free.filter(c => cat[c]), others = free.filter(c => !cat[c]);
-  $('cSel').innerHTML = `<option value="">${single ? 'Select a country' + (draft.region ? ' in ' + esc(draft.region) : '') : 'Add a country'}…</option>`
-    + (withOps.length ? `<optgroup label="In the ${esc(VENDORS[draft.vendor].name)} catalog (operators auto-fill)">${withOps.map(opt).join('')}</optgroup>` : '')
-    + (others.length ? `<optgroup label="Not in the catalog yet (add operators manually)">${others.map(opt).join('')}</optgroup>` : '');
+  const grouped = (ph, list) => {
+    const withOps = list.filter(c => cat[c]), others = list.filter(c => !cat[c]);
+    return `<option value="">${ph}</option>`
+      + (withOps.length ? `<optgroup label="In the ${esc(VENDORS[draft.vendor].name)} catalog (operators auto-fill)">${withOps.map(opt).join('')}</optgroup>` : '')
+      + (others.length ? `<optgroup label="Not in the catalog yet (add operators manually)">${others.map(opt).join('')}</optgroup>` : '');
+  };
+  $('cSel').innerHTML = grouped('Select a country…', SORTED);
   if (single) $('cSel').value = coverCodes(draft)[0] || '';
+  $('cAdd').innerHTML = grouped('Add another country…', SORTED.filter(c => !coverCodes(draft).includes(c)));
   $('covList').innerHTML = draft.coverages.length ? draft.coverages.map((cv, ci) => {
     const known = opNames(draft.vendor, cv.code).filter(n => !cv.networks.some(x => x.name === n));
     const nets = cv.networks.length ? cv.networks.map((n, ni) => `<span class="net"><b>${esc(n.name)}</b>${TYPES.map(t => `<button type="button" class="ty ${n.types.includes(t) ? 'on' : ''}" data-act="ty" data-ci="${ci}" data-ni="${ni}" data-t="${t}">${t}</button>`).join('')}<button type="button" class="x" data-act="rn" data-ci="${ci}" data-ni="${ni}" aria-label="Remove ${esc(n.name)}">×</button></span>`).join('') : `<span class="empty">${opNames(draft.vendor, cv.code).length ? 'No operators selected.' : `No known ${VENDORS[draft.vendor].name} operators for ${esc(cn(cv.code))}. Add one manually or in the Vendor catalog.`}</span>`;
@@ -580,11 +583,13 @@ $('covList').addEventListener('click', e => {
   else if (act === 'ty') { const n = cv.networks[+b.dataset.ni], t = b.dataset.t; n.types = n.types.includes(t) ? n.types.filter(x => x !== t) : TYPES.filter(x => x === t || n.types.includes(x)); }
   else if (act === 'ao') {
     const box = b.closest('.addop'), v = (box.querySelector('input').value.trim() || box.querySelector('select').value).trim();
-    if (!v) return;
-    if (!cv.networks.some(n => n.name.toLowerCase() === v.toLowerCase())) cv.networks.push({ name: v, types: ['3G', '4G', '5G'] });
+    if (!v) { toast('Type an operator name or choose one from the list first'); return; }
+    if (cv.networks.some(n => n.name.toLowerCase() === v.toLowerCase())) { toast(`${v} is already added for ${cn(cv.code)}`); return; }
+    cv.networks.push({ name: v, types: ['3G', '4G', '5G'] });
   }
   renderCov(); changed();
 });
+$('covList').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); e.target.closest('.addop').querySelector('button').click(); } });
 const renderAdminAI = () => { $('aiAdmin').innerHTML = generateAdditionalInfo(draft); $('apiAdmin').textContent = apiJson([draft]); };
 const isDirty = () => JSON.stringify(draft) !== JSON.stringify(PLANS.find(p => p.id === editId));
 const paintDirty = () => $('dirty').innerHTML = isDirty() ? '<span class="dirty">● Unsaved. The website still shows the old version.</span>' : '<span class="saved">✓ Website is up to date</span>';
@@ -622,8 +627,19 @@ $('bkSel').addEventListener('change', () => $('bkSel').classList.remove('bad'));
 const addCountry = code => { if (code && !coverCodes(draft).includes(code)) draft.coverages.push(mkCov(draft.vendor, code)); };
 $('cSel').onchange = () => {
   const c = $('cSel').value; if (!c) return;
-  if (draft.scope === 'region') addCountry(c); else draft.coverages = [mkCov(draft.vendor, c)];
+  if (draft.scope === 'region') addCountry(c); else setMain(c);
   renderCov(); changed();
+};
+/* country plan: the Country dropdown sets the main (first) country; other countries already added stay mapped */
+function setMain(c) {
+  const i = coverCodes(draft).indexOf(c);
+  if (i > 0) draft.coverages.unshift(draft.coverages.splice(i, 1)[0]);
+  else if (i === -1) { if (draft.coverages.length) draft.coverages[0] = mkCov(draft.vendor, c); else draft.coverages.push(mkCov(draft.vendor, c)); }
+}
+$('cAddBtn').onclick = () => {
+  const c = $('cAdd').value;
+  if (!c) { toast('Pick a country in the list first, then click + Add country'); return; }
+  addCountry(c); renderCov(); changed(); toast(`${cn(c)} added to the mapping`);
 };
 $('cAll').onclick = () => { applyRegion(); renderCov(); changed(); };
 $('vendor').onchange = () => {
@@ -711,13 +727,15 @@ $('migrate').onclick = () => {
 let siteTab = 'local', siteSel = null;
 const WTABS = [['local', '📍', 'Local'], ['regional', '📖', 'Regional'], ['global', '🌐', 'Global']];
 const SHORT = { US: 'USA', GB: 'UK', AE: 'UAE' }, ALIAS = { US: 'united states america', GB: 'united kingdom britain england', AE: 'united arab emirates' };
-const planGroup = p => p.scope === 'region'
-  ? (p.region === 'Global' ? { tab: 'global', key: 'Global' } : { tab: 'regional', key: p.region || '_none' })
-  : { tab: 'local', key: (p.coverages[0] && p.coverages[0].code) || '_none' };
+const planGroups = p => p.scope === 'region'
+  ? [p.region === 'Global' ? { tab: 'global', key: 'Global' } : { tab: 'regional', key: p.region || '_none' }]
+  : (p.coverages.length ? p.coverages.map(cv => ({ tab: 'local', key: cv.code })) : [{ tab: 'local', key: '_none' }]);
+const planGroup = p => planGroups(p)[0];
+const inGroup = (p, tab, key) => planGroups(p).some(g => g.tab === tab && g.key === key);
 const groupLabel = (tab, key) => key === '_none' ? 'Unassigned' : tab === 'local' ? (SHORT[key] || cn(key)) : key;
-const planLabel = p => { const g = planGroup(p); return groupLabel(g.tab, g.key); };
-const groupPlans = () => PLANS.filter(p => { const g = planGroup(p); return g.tab === siteTab && g.key === siteSel; });
-function focusPlan(id) { const p = PLANS.find(x => x.id === id); if (!p) return; const g = planGroup(p); siteTab = g.tab; siteSel = g.key; $('wsearch').value = ''; }
+const planLabel = p => { const g = planGroups(p).find(x => x.tab === siteTab && x.key === siteSel) || planGroup(p); return groupLabel(g.tab, g.key); };
+const groupPlans = () => PLANS.filter(p => inGroup(p, siteTab, siteSel));
+function focusPlan(id) { const p = PLANS.find(x => x.id === id); if (!p) return; $('wsearch').value = ''; if (siteSel !== null && inGroup(p, siteTab, siteSel)) return; const g = planGroup(p); siteTab = g.tab; siteSel = g.key; }
 
 function renderTabs() {
   $('wtabs').innerHTML = WTABS.map(t => `<button type="button" class="wtab ${t[0] === siteTab ? 'on' : ''}" data-t="${t[0]}"><span aria-hidden="true">${t[1]}</span>${t[2]}</button>`).join('');
@@ -725,7 +743,7 @@ function renderTabs() {
 }
 function renderGrid() {
   const local = siteTab === 'local', q = $('wsearch').value.trim().toLowerCase(), groups = {};
-  PLANS.forEach(p => { const g = planGroup(p); if (g.tab !== siteTab || g.key === '_none') return; const o = groups[g.key] = groups[g.key] || { key: g.key, n: 0, min: Infinity }; o.n++; o.min = Math.min(o.min, +p.price || 0); });
+  PLANS.forEach(p => planGroups(p).forEach(g => { if (g.tab !== siteTab || g.key === '_none') return; const o = groups[g.key] = groups[g.key] || { key: g.key, n: 0, min: Infinity }; o.n++; o.min = Math.min(o.min, +p.price || 0); }));
   const all = Object.values(groups).sort((a, b) => groupLabel(siteTab, a.key).localeCompare(groupLabel(siteTab, b.key)));
   const list = all.filter(g => !q || (groupLabel(siteTab, g.key) + ' ' + cn(g.key) + ' ' + g.key + ' ' + (ALIAS[g.key] || '')).toLowerCase().includes(q));
   $('sTitle').textContent = local ? 'Choose a country' : 'Choose a region';
