@@ -142,6 +142,12 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
     <div class="plist" id="plist"></div>
     <div class="sec"><div class="st"><i>1</i>Basics</div>
       <div class="fields">
+        <div class="f"><label for="planFor">Plan For</label><select id="planFor"><option value="">Select…</option><option value="online">Online</option><option value="offline">Offline</option><option value="blankstock">Blankstock</option><option value="partner">Partner</option><option value="esimcard">eSIMcard</option></select></div>
+        <div class="f"><label for="planSource">Plan source</label><select id="planSource"><option value="">Select source…</option><option value="online">Online</option><option value="offline">Offline</option><option value="blankstock">Blankstock</option><option value="partner">Partner</option><option value="esimcard">eSIMcard</option></select></div>
+        <div class="f"><label for="networkType">Type</label><select id="networkType"><option value="local">Local</option><option value="roaming">Roaming</option></select></div>
+        <div class="f"><label for="localBreakouts">Local breakouts</label><select id="localBreakouts"><option value="no">No</option><option value="yes">Yes</option></select></div>
+        <div class="f full" id="localBreakoutCountryWrap" hidden><label for="localBreakoutCountry">Local breakout country code</label><select id="localBreakoutCountry"></select></div>
+        <div class="f full"><label for="stockPlan">Select stock plan</label><select id="stockPlan"><option value="">Select stock plan…</option></select></div>
         <div class="f full"><label for="name">Plan name <em>(planName)</em></label><input id="name" maxlength="100"></div>
         <div class="f"><label for="vendor">Supplier / vendor</label><select id="vendor"><option value="telco">Telco Vision (TEL VSN)</option><option value="rombty">Rombty</option></select></div>
         <div class="f"><label for="apn">APN <em id="apnHint"></em></label><input id="apn"></div>
@@ -469,7 +475,7 @@ function toApi(p) {
   out.payAsYouGo = !!p.payAsYouGo;
   out.promoEnabled = !!p.promoEnabled;
   out.tethering = !!p.hotspot;
-  out.internetBreakouts = p.breakouts.map(c => ({ country: c }));
+  out.internetBreakouts = [...new Set([...(p.breakouts || []), ...(p.networkType === 'local' && p.localBreakouts === 'yes' && p.localBreakoutCountry ? [p.localBreakoutCountry] : [])])].map(c => ({ country: c }));
   out.coverages = p.coverages.map(cv => ({ code: cv.code, networks: cv.networks.map(n => ({ name: n.name, types: [...n.types] })) }));
   return out;
 }
@@ -507,7 +513,7 @@ function generateAdditionalInfo(p) {
 /* ---------- sample plans ---------- */
 const mk = (id, name, vendor, type, gb, days, price, codes, planType, extra) => {
   const p = Object.assign({
-    id, name, nameAuto: false, vendor, scope: 'country', apn: VENDORS[vendor].apn, link: `https://example.com/plans/${slug(name)}`, breakouts: [], region: 'Asia Pacific',
+    id, name, nameAuto: false, planFor: '', planSource: '', networkType: 'local', localBreakouts: 'no', localBreakoutCountry: '', stockPlan: '', vendor, scope: 'country', apn: VENDORS[vendor].apn, link: `https://example.com/plans/${slug(name)}`, breakouts: [], region: 'Asia Pacific',
     planType: planType || 'data', telCountry: '', voiceIn: true, voiceOut: true, smsIn: true, smsOut: true,
     type, throttle: false, gb, reducedSpeed: null, capInfo: '', capAuto: true, days, price, vStart: 'first',
     hotspot: true, topup: true, subscription: false, ekyc: false, maxSpeed: null, priceInfo: '', hasAds: false, newUserOnly: false, payAsYouGo: false, promoEnabled: false, subPer: 'month', coverages: codes.map(c => mkCov(vendor, c))
@@ -523,7 +529,7 @@ const SAMPLE = [
     coverages: [{ code: 'US', networks: [{ name: 'Verizon', types: ['4G', '5G'] }, { name: 'AT&T', types: ['4G', '5G'] }] }]
   })
 ];
-const blankPlan = id => { const p = Object.assign(clone(SAMPLE[3]), { id, name: 'New plan', nameAuto: true, scope: 'country', link: 'https://example.com/plans/new-plan', breakouts: [], coverages: [], telCountry: '', planType: 'data', type: 'fixed', throttle: false, gb: 10, reducedSpeed: null, capAuto: true, days: 30, price: 10, region: '' }); p.capInfo = capText(p); return p; };
+const blankPlan = id => { const p = Object.assign(clone(SAMPLE[3]), { id, name: 'New plan', planFor: '', planSource: '', networkType: 'local', localBreakouts: 'no', localBreakoutCountry: '', stockPlan: '', nameAuto: true, scope: 'country', link: 'https://example.com/plans/new-plan', breakouts: [], coverages: [], telCountry: '', planType: 'data', type: 'fixed', throttle: false, gb: 10, reducedSpeed: null, capAuto: true, days: 30, price: 10, region: '' }); p.capInfo = capText(p); return p; };
 
 let PLANS = load();
 /* plans saved earlier may still use the old "Asia-Pacific" name */
@@ -540,15 +546,30 @@ $('telCountry').innerHTML = '<option value="">Select number country…</option>'
 $('region').innerHTML = '<option value="">Select region…</option>' + REGION_NAMES.concat('Global').map(r => `<option>${esc(r)}</option>`).join('');
 $('catRegion').innerHTML = '<option value="">Select region…</option>' + REGION_NAMES.map(r => `<option>${esc(r)}</option>`).join('');
 
+function renderStockPlans() {
+  const sel = $('stockPlan'), current = draft.stockPlan || '';
+  sel.innerHTML = '<option value="">Select stock plan…</option>' + PLANS.filter(p => p.id !== draft.id).map(p => `<option value="${p.id}">${esc(p.name)} (${esc(p.vendor)})</option>`).join('');
+  sel.value = current;
+  if (current && sel.value !== current) sel.value = '';
+}
+function paintLocalBreakoutFields() {
+  const local = $('networkType').value === 'local';
+  $('localBreakouts').disabled = !local;
+  $('localBreakoutCountryWrap').hidden = !local || $('localBreakouts').value !== 'yes';
+  $('localBreakoutCountry').innerHTML = countryOpts('Select breakout country code…', SORTED);
+  $('localBreakoutCountry').value = draft.localBreakoutCountry || '';
+  const requiredRoamingUnlimited = $('networkType').value === 'roaming' && draft.type === 'unlimited';
+  $('bkReq').hidden = !(requiredRoamingUnlimited || (draft.scope === 'region' && draft.type !== 'fixed'));
+}
 function fillForm() {
   const p = draft;
-  $('name').value = p.name; $('vendor').value = p.vendor; $('apn').value = p.apn; $('link').value = p.link; $('link').classList.remove('bad');
+  $('planFor').value = p.planFor || ''; $('planSource').value = p.planSource || ''; $('networkType').value = p.networkType || 'local'; $('localBreakouts').value = p.localBreakouts || 'no'; $('localBreakoutCountry').value = p.localBreakoutCountry || ''; $('name').value = p.name; $('vendor').value = p.vendor; $('apn').value = p.apn; $('link').value = p.link; $('link').classList.remove('bad');
   $('region').value = p.region || ''; $('gb').value = p.gb; $('days').value = p.days; $('price').value = p.price; $('vStart').value = p.vStart;
   $('telCountry').value = p.telCountry || ''; $('telCountry').classList.remove('bad');
   $('vIn').checked = !!p.voiceIn; $('vOut').checked = !!p.voiceOut; $('sIn').checked = !!p.smsIn; $('sOut').checked = !!p.smsOut;
   $('rs').value = p.reducedSpeed == null ? '' : p.reducedSpeed; $('capInfo').value = p.capInfo || '';
   $('ms').value = p.maxSpeed > 0 ? p.maxSpeed : ''; $('priceInfo').value = p.priceInfo || '';
-  paintSegs(); renderBreakouts(); renderCov(); renderAdminAI(); paintList(); paintDirty();
+  renderStockPlans(); paintLocalBreakoutFields(); paintSegs(); renderBreakouts(); renderCov(); renderAdminAI(); paintList(); paintDirty();
 }
 function paintSegs() {
   const on = (sel, fn) => document.querySelectorAll(sel + ' button').forEach(b => b.classList.toggle('on', fn(b)));
@@ -639,6 +660,13 @@ function autoName() {
 function autoCap() { if (draft.capAuto) { draft.capInfo = capText(draft); $('capInfo').value = draft.capInfo; } }
 function changed() { autoName(); autoCap(); renderAdminAI(); paintDirty(); }
 
+[['planFor','planFor'],['planSource','planSource'],['networkType','networkType'],['localBreakouts','localBreakouts'],['stockPlan','stockPlan']].forEach(([id,key]) => $(id).addEventListener('change', () => {
+  draft[key] = $(id).value;
+  if (id === 'networkType' && draft.networkType === 'roaming' && draft.type === 'unlimited') draft.breakouts = [draft.vendor === 'rombty' ? 'PL' : 'IL'];
+  if (id === 'networkType' && draft.networkType !== 'roaming') draft.breakouts = draft.scope === 'country' ? [] : draft.breakouts;
+  paintLocalBreakoutFields(); renderBreakouts(); changed();
+}));
+$('localBreakoutCountry').addEventListener('change', () => { draft.localBreakoutCountry = $('localBreakoutCountry').value; changed(); });
 const bind = (id, key, num) => $(id).addEventListener('input', () => { draft[key] = num ? +$(id).value : $(id).value; if (id === 'link') $('link').classList.remove('bad'); changed(); });
 $('name').addEventListener('input', () => { draft.nameAuto = false; });
 bind('priceInfo', 'priceInfo'); bind('name', 'name'); bind('apn', 'apn'); bind('link', 'link'); bind('gb', 'gb', true); bind('days', 'days', true); bind('price', 'price', true);
@@ -684,7 +712,8 @@ $('vendor').onchange = () => {
   const prev = VENDORS[draft.vendor].apn; draft.vendor = $('vendor').value;
   if (!draft.apn || draft.apn === prev) { draft.apn = VENDORS[draft.vendor].apn; $('apn').value = draft.apn; }
   if (draft.scope === 'region') applyRegion(); else draft.coverages = draft.coverages.map(cv => mkCov(draft.vendor, cv.code));
-  paintSegs(); renderCov(); changed(); if (draft.coverages.length) toast(`Countries and operators reloaded for ${VENDORS[draft.vendor].name}`);
+  if (draft.networkType === 'roaming' && draft.type === 'unlimited') draft.breakouts = [draft.vendor === 'rombty' ? 'PL' : 'IL'];
+  paintLocalBreakoutFields(); paintSegs(); renderBreakouts(); renderCov(); changed(); if (draft.coverages.length) toast(`Countries and operators reloaded for ${VENDORS[draft.vendor].name}`);
 };
 document.querySelectorAll('#ptSeg button').forEach(b => b.onclick = () => { draft.planType = b.dataset.p; paintSegs(); changed(); });
 document.querySelectorAll('#typeSeg button').forEach(b => b.onclick = () => {
@@ -692,7 +721,8 @@ document.querySelectorAll('#typeSeg button').forEach(b => b.onclick = () => {
   draft.capPer = draft.type === 'fixed' ? '' : 'day';
   if (draft.type === 'fixed') { draft.reducedSpeed = null; $('rs').value = ''; draft.capAuto = true; }
   if (!(+draft.gb > 0)) { draft.gb = 1; $('gb').value = 1; }
-  paintSegs(); changed();
+  if (draft.networkType === 'roaming' && draft.type === 'unlimited') draft.breakouts = [draft.vendor === 'rombty' ? 'PL' : 'IL'];
+  paintLocalBreakoutFields(); renderBreakouts(); paintSegs(); changed();
 });
 document.querySelectorAll('#thrSeg button').forEach(b => b.onclick = () => {
   draft.throttle = b.dataset.v === '1';
@@ -709,7 +739,8 @@ function validate(p) {
   if (p.name.length > 100) return 'Plan name must be 100 characters or fewer';
   if (p.maxSpeed != null && !(p.maxSpeed > 0)) return 'Max speed must be a number of kbps, or empty for no limit';
   if (!/^https?:\/\/\S+$/i.test((p.link || '').trim())) { $('link').classList.add('bad'); $('link').focus(); return 'Enter the plan link (a full https:// URL)'; }
-  if (p.scope === 'region' && !p.breakouts.length && p.type !== 'fixed') { $('bkSel').classList.add('bad'); $('bkSel').focus(); return 'Add at least one internet breakout country (required)'; }
+  if (p.networkType === 'local' && p.localBreakouts === 'yes' && !p.localBreakoutCountry) { $('localBreakoutCountry').focus(); return 'Select a local breakout country code'; }
+  if (((p.scope === 'region' && p.type !== 'fixed') || (p.networkType === 'roaming' && p.type === 'unlimited')) && !p.breakouts.length) { $('bkSel').classList.add('bad'); $('bkSel').focus(); return 'Add at least one internet breakout country (required)'; }
   if (!p.coverages.length) { $('cSel').focus(); return 'Pick a country (or a region) for the coverage'; }
   for (const cv of p.coverages) {
     if (!cv.networks.length) return `Add at least one operator for ${cn(cv.code)}`;
@@ -741,7 +772,7 @@ $('copyAll').onclick = async () => {
 
 /* ---------- apply the latest schema to plans saved earlier ---------- */
 function normalizePlan(p) {
-  const d = { vendor: 'telco', scope: 'country', planType: 'data', type: 'fixed', throttle: false, gb: 1, reducedSpeed: null, capInfo: '', capAuto: true, days: 1, price: 0, vStart: 'first', hotspot: true, topup: true, subscription: false, ekyc: false, breakouts: [], coverages: [], region: '', telCountry: '', voiceIn: true, voiceOut: true, smsIn: true, smsOut: true, apn: '', link: '', nameAuto: false, maxSpeed: null, priceInfo: '', hasAds: false, newUserOnly: false, payAsYouGo: false, promoEnabled: false, subPer: 'month' };
+  const d = { planFor: '', planSource: '', networkType: 'local', localBreakouts: 'no', localBreakoutCountry: '', stockPlan: '', vendor: 'telco', scope: 'country', planType: 'data', type: 'fixed', throttle: false, gb: 1, reducedSpeed: null, capInfo: '', capAuto: true, days: 1, price: 0, vStart: 'first', hotspot: true, topup: true, subscription: false, ekyc: false, breakouts: [], coverages: [], region: '', telCountry: '', voiceIn: true, voiceOut: true, smsIn: true, smsOut: true, apn: '', link: '', nameAuto: false, maxSpeed: null, priceInfo: '', hasAds: false, newUserOnly: false, payAsYouGo: false, promoEnabled: false, subPer: 'month' };
   Object.keys(d).forEach(k => { if (p[k] === undefined) p[k] = d[k]; });
   if (p.capPer === undefined) p.capPer = capPerOf(p);
   if (!VENDORS[p.vendor]) p.vendor = 'telco';
