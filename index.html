@@ -277,7 +277,7 @@ const DIAL = {};
   .split(' ').forEach(s => { DIAL[s.slice(0, 2)] = s.slice(2); });
 const TELC = ALLC.filter(c => DIAL[c]).sort(byName);
 
-const TYPES = ['3G', '4G', '5G'];
+const TYPES = ['4G', '5G'];
 /* broad geography, used to narrow the country picker when a region is selected */
 const REGIONS = {
   'Asia Pacific': 'AF AS AU BD BN BT CC CK CN CX FJ FM GU HK ID IN JP KH KI KR LA LK MH MM MN MO MP MV MY NC NF NP NR NU NZ PF PG PH PK PN PW SB SG TH TK TL TO TV TW VN VU WF WS',
@@ -356,7 +356,7 @@ Object.keys(OPERATORS).forEach(v => Object.keys(EXTRA_OPS).forEach(cc => { if (!
 
 function seedCatalog() {
   const c = {};
-  Object.keys(OPERATORS).forEach(v => { c[v] = {}; Object.keys(OPERATORS[v]).forEach(cc => { c[v][cc] = OPERATORS[v][cc].map(n => ({ name: n, types: ['3G', '4G', '5G'] })); }); });
+  Object.keys(OPERATORS).forEach(v => { c[v] = {}; Object.keys(OPERATORS[v]).forEach(cc => { c[v][cc] = OPERATORS[v][cc].map(n => ({ name: n, types: ['4G', '5G'] })); }); });
   return c;
 }
 function loadCatalog() {
@@ -366,7 +366,7 @@ function loadCatalog() {
     c = JSON.parse(localStorage.getItem('pm_catalog_v2') || 'null');
     if (!(c && c.telco && c.rombty)) {
       c = JSON.parse(localStorage.getItem('pm_catalog_v1') || 'null');
-      if (c && c.telco && c.rombty) Object.values(c).forEach(v => Object.values(v).forEach(list => list.forEach(n => { if (n.types.join() === '4G,5G') n.types = ['3G', '4G', '5G']; })));
+      if (c && c.telco && c.rombty) Object.values(c).forEach(v => Object.values(v).forEach(list => list.forEach(n => { n.types = (Array.isArray(n.types) ? n.types : []).filter(t => t !== '3G'); if (!n.types.length) n.types = ['4G', '5G']; })));
       else c = null;
     }
   } catch (e) { c = null; }
@@ -647,7 +647,7 @@ $('covList').addEventListener('click', e => {
     const box = b.closest('.addop'), v = (box.querySelector('input').value.trim() || box.querySelector('select').value).trim();
     if (!v) { toast('Type an operator name or choose one from the list first'); return; }
     if (cv.networks.some(n => n.name.toLowerCase() === v.toLowerCase())) { toast(`${v} is already added for ${cn(cv.code)}`); return; }
-    cv.networks.push({ name: v, types: ['3G', '4G', '5G'] });
+    cv.networks.push({ name: v, types: ['4G', '5G'] });
   }
   renderCov(); changed();
 });
@@ -753,7 +753,7 @@ function validate(p) {
   if (!p.coverages.length) { $('cSel').focus(); return 'Pick a country (or a region) for the coverage'; }
   for (const cv of p.coverages) {
     if (!cv.networks.length) return `Add at least one operator for ${cn(cv.code)}`;
-    if (cv.networks.some(n => !n.types.length)) return `Pick a network type (3G/4G/5G) for every operator in ${cn(cv.code)}`;
+    if (cv.networks.some(n => !n.types.length)) return `Pick a network type (4G/5G) for every operator in ${cn(cv.code)}`;
   }
   if (p.planType === 'data-voice' && !p.telCountry) { $('telCountry').classList.add('bad'); $('telCountry').focus(); return 'Select the number country code for the voice plan'; }
   if (!unlOpen(p) && !(+p.gb > 0)) return 'Enter the data amount in GB (dataCap)';
@@ -788,7 +788,7 @@ function normalizePlan(p) {
   if (!p.apn) p.apn = VENDORS[p.vendor].apn;
   if (p.type !== 'unlimited') p.throttle = false;
   if (p.type === 'fixed') { p.reducedSpeed = null; p.capAuto = true; }
-  p.coverages.forEach(cv => cv.networks.forEach(n => { if (!Array.isArray(n.types) || !n.types.length) n.types = ['3G', '4G', '5G']; }));
+  p.coverages.forEach(cv => cv.networks.forEach(n => { if (!Array.isArray(n.types) || !n.types.length) n.types = ['4G', '5G']; }));
   p.coverages.forEach(cv => { if (!cv.networks.length) cv.networks = mkCov(p.vendor, cv.code).networks; });
   if (p.scope === 'region' && p.region) {
     const old = {}; p.coverages.forEach(cv => { old[cv.code] = cv; });
@@ -943,7 +943,7 @@ $('catList').addEventListener('click', e => {
   else if (act === 'ty') { const n = cat[code][+b.dataset.ni], t = b.dataset.t; n.types = n.types.includes(t) ? n.types.filter(x => x !== t) : TYPES.filter(x => x === t || n.types.includes(x)); }
   else if (act === 'ao') {
     const inp = b.closest('.addop').querySelector('input');
-    inp.value.split(',').map(s => s.trim()).filter(Boolean).forEach(name => { if (!cat[code].some(n => n.name.toLowerCase() === name.toLowerCase())) cat[code].push({ name, types: ['3G', '4G', '5G'] }); });
+    inp.value.split(',').map(s => s.trim()).filter(Boolean).forEach(name => { if (!cat[code].some(n => n.name.toLowerCase() === name.toLowerCase())) cat[code].push({ name, types: ['4G', '5G'] }); });
   }
   persistCatalog(); renderCat(act === 'ao' ? code : undefined);
 });
