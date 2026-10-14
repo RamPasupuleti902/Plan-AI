@@ -615,10 +615,10 @@ $('capReset').onclick = () => { draft.capAuto = true; changed(); };
 const applyRegion = () => { draft.coverages = regionSet(draft.region, draft.vendor).map(c => mkCov(draft.vendor, c)); };
 $('region').onchange = () => { $('region').classList.remove('bad'); draft.region = $('region').value; if (draft.scope === 'region') applyRegion(); paintSegs(); renderCov(); changed(); };
 document.querySelectorAll('#scopeSeg button').forEach(b => b.onclick = () => {
-  if (b.dataset.s === 'region' && !draft.region) { $('region').classList.add('bad'); $('region').focus(); toast('Select a region first, then the countries are mapped'); return; }
   draft.scope = b.dataset.s;
-  if (draft.scope === 'region') applyRegion(); else draft.coverages = draft.coverages.slice(0, 1);
+  if (draft.scope === 'region') { if (draft.region) applyRegion(); else draft.coverages = []; } else draft.coverages = draft.coverages.slice(0, 1);
   paintSegs(); renderCov(); changed();
+  if (draft.scope === 'region' && !draft.region) { $('region').focus(); toast('Now choose a region and its countries are mapped automatically'); }
 });
 $('vStart').onchange = () => { draft.vStart = $('vStart').value; changed(); };
 $('telCountry').onchange = () => { draft.telCountry = $('telCountry').value; $('telCountry').classList.toggle('bad', !draft.telCountry); changed(); };
