@@ -164,9 +164,6 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
         <div class="f full"><label>Mapped countries and networks <em>(coverages)</em> <span class="req">*</span></label>
           <div class="cpick"><select id="cAdd" aria-label="Add another country"></select><button type="button" class="btn ghost" id="cAddBtn">+ Add country</button><button type="button" class="btn ghost" id="cAll">Reset to region countries</button></div>
           <div class="cov-list" id="covList"></div></div>
-        <div class="f full"><label for="bkSel">Internet breakout country <em>(internetBreakouts)</em> <span class="req" id="bkReq">*</span></label>
-          <div class="cpick"><select id="bkSel"></select></div>
-          <div class="chips" id="bkChips"></div></div>
       </div></div>
 
     <div class="sec"><div class="st"><i>3</i>Plan type</div>
@@ -180,6 +177,9 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
 
     <div class="sec"><div class="st"><i>4</i>Data allowance</div>
       <div class="fields">
+        <div class="f full"><label for="bkSel">Internet breakout country <em>(internetBreakouts)</em> <span class="req" id="bkReq">*</span></label>
+          <div class="cpick"><select id="bkSel"></select></div>
+          <div class="chips" id="bkChips"></div></div>
         <div class="f full"><div class="seg" id="typeSeg"><button type="button" data-t="fixed">Fixed GB</button><button type="button" data-t="daypass">Day Pass (daily cap)</button><button type="button" data-t="unlimited">Unlimited</button></div></div>
         <div class="f full" id="thrWrap"><label>Throttle this unlimited plan?</label><div class="seg" id="thrSeg"><button type="button" data-v="0">No, truly unlimited</button><button type="button" data-v="1">Yes, throttle after a daily cap</button></div></div>
         <div class="f" id="gbWrap"><label for="gb" id="gbLabel">Data (GB)</label><input id="gb" type="number" min="0.1" step="0.1"></div>
