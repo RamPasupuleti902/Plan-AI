@@ -137,7 +137,7 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
     <div class="sec"><div class="st"><i>2</i>Coverage</div>
       <div class="fields">
         <div class="f full"><label>Plan is for</label><div class="seg" id="scopeSeg"><button type="button" data-s="country">A country</button><button type="button" data-s="region">A region</button></div></div>
-        <div class="f"><label for="region">Region</label><select id="region"><option value="">Select region…</option><option>Asia-Pacific</option><option>Europe</option><option>Middle East</option><option>Africa</option><option>North America</option><option>South Latin America</option><option>Eurasia</option><option>Global</option></select></div>
+        <div class="f"><label for="region">Region</label><select id="region"></select></div>
         <div class="f"><label for="cSel" id="cLabel">Country</label><select id="cSel"></select></div>
         <div class="f full"><label>Mapped countries and networks <em>(coverages)</em> <span class="req">*</span></label>
           <div class="cpick"><button type="button" class="btn ghost" id="cAll">Reset to region countries</button></div>
@@ -205,7 +205,7 @@ pre.json{margin:0 10px 10px;background:#0f172a;color:#d6e2ff;border-radius:8px;p
     <div class="fields">
       <div class="f"><label for="catVendor">Vendor</label><select id="catVendor"><option value="telco">Telco Vision (TEL VSN)</option><option value="rombty">Rombty</option></select></div>
       <div class="f" id="catSelWrap"><label for="catSel">Add a country to this vendor</label><select id="catSel"></select></div>
-      <div class="f" id="catRegWrap" hidden><label for="catRegion">Region</label><select id="catRegion"><option value="">Select region…</option><option>North America</option><option>Asia-Pacific</option><option>Europe</option><option>Middle East</option><option>Africa</option><option>South Latin America</option><option>Eurasia</option></select></div>
+      <div class="f" id="catRegWrap" hidden><label for="catRegion">Region</label><select id="catRegion"></select></div>
     </div>
     <div class="seg" id="catSeg"><button type="button" data-m="cty">Countries &amp; operators</button><button type="button" data-m="reg">Regions</button></div>
     <div id="catCtyBox" style="display:grid;gap:12px">
@@ -246,10 +246,10 @@ const DIAL = {};
   .split(' ').forEach(s => { DIAL[s.slice(0, 2)] = s.slice(2); });
 const TELC = ALLC.filter(c => DIAL[c]).sort(byName);
 
-const APAC = 'BD CN IN ID JP KZ KG MY NP PH SG KR TW TH UZ'.split(' ');
 const TYPES = ['3G', '4G', '5G'];
+/* broad geography, used to narrow the country picker when a region is selected */
 const REGIONS = {
-  'Asia-Pacific': 'AF AS AU BD BN BT CC CK CN CX FJ FM GU HK ID IN JP KH KI KR LA LK MH MM MN MO MP MV MY NC NF NP NR NU NZ PF PG PH PK PN PW SB SG TH TK TL TO TV TW VN VU WF WS',
+  'Asia Pacific': 'AF AS AU BD BN BT CC CK CN CX FJ FM GU HK ID IN JP KH KI KR LA LK MH MM MN MO MP MV MY NC NF NP NR NU NZ PF PG PH PK PN PW SB SG TH TK TL TO TV TW VN VU WF WS',
   'Europe': 'AD AL AT AX BA BE BG BY CH CZ DE DK EE ES FI FO FR GB GG GI GR HR HU IE IM IS IT JE LI LT LU LV MC MD ME MK MT NL NO PL PT RO RS SE SI SJ SK SM UA VA XK',
   'Middle East': 'AE BH CY EG IL IQ IR JO KW LB OM PS QA SA SY YE',
   'Africa': 'AO BF BI BJ BW CD CF CG CI CM CV DJ DZ EH ER ET GA GH GM GN GQ GW KE KM LR LS LY MA MG ML MR MU MW MZ NA NE NG RE RW SC SD SH SL SN SO SS ST SZ TD TG TN TZ UG YT ZA ZM ZW',
@@ -258,16 +258,27 @@ const REGIONS = {
   'Eurasia': 'AM AZ GE KG KZ RU TJ TM TR UZ'
 };
 const REGION_OF = {}; Object.keys(REGIONS).forEach(r => REGIONS[r].split(' ').forEach(c => { REGION_OF[c] = r; }));
-const regionCountries = r => (!r || r === 'Global') ? SORTED : SORTED.filter(c => REGION_OF[c] === r);
+/* Default countries mapped to each region (the "regions catalog"). Same list for both vendors; editable on the Vendor catalog page.
+   Order here = order of the Region dropdown. */
 const REGION_SETS = {
-  'North America': ['US', 'CA', 'MX'],
-  'Asia-Pacific': APAC,
-  'Europe': ['GB', 'DE', 'FR', 'ES', 'IT', 'NL'],
-  'Middle East': ['AE', 'CY', 'EG', 'IL', 'KW', 'QA', 'SA'],
-  'Africa': ['ZA', 'KE', 'NG', 'MA'],
-  'South Latin America': ['AR', 'BR', 'CL', 'CO', 'PE'],
-  'Eurasia': ['AM', 'AZ', 'GE', 'KZ', 'TR']
+  'Europe': 'AT BE BG HR CY CZ DK EE FI FR DE GR HU IS IE IT LV LI LT LU MT NL NO PT RO SK SI ES SE CH TR GB'.split(' '),
+  'Asia': 'AM AZ BD KH CN GE HK IN ID JP KZ KG LA MO MY MV NP PH SG KR LK TW TH UZ VN'.split(' '),
+  'Middle East': 'CY EG IL KW QA SA AE'.split(' '),
+  'Balkans': 'AL BA BG HR GR MK ME RO RS SI TR'.split(' '),
+  'Africa': 'DZ TD CD CG EG GH KE MG MW MU MA NE NG ZA TZ TN UG ZM'.split(' '),
+  'North America': 'CA MX US'.split(' '),
+  'Caribbean': 'AI AG BS BB VG KY DM DO GD GP JM MS CW SX KN LC VC TC'.split(' '),
+  'Central America': 'CR SV GT HN NI'.split(' '),
+  'South Latin America': 'AR BR CA CL CO CR EC SV GF GT HN MX NI PY PE PR US UY'.split(' '),
+  'Oceania': 'AU FJ GU NZ'.split(' '),
+  'China Macao HongKong': 'CN MO HK'.split(' '),
+  'China Korea Japan': 'CN KR JP'.split(' '),
+  'Nordic Summer': 'NO SE DK FI IS'.split(' '),
+  'Eurasia': 'AM AZ GE KZ TR'.split(' '),
+  'Asia Pacific': 'BD CN IN ID JP KZ KG MY NP PH SG KR TW TH UZ'.split(' ')
 };
+const REGION_NAMES = Object.keys(REGION_SETS);
+const regionCountries = r => (!r || r === 'Global') ? SORTED : SORTED.filter(c => REGION_OF[c] === r || (REGION_SETS[r] || []).includes(c));
 
 const OPERATORS = {
   telco: { US: ['T-Mobile US', 'AT&T'], CA: ['Rogers', 'Bell'], MX: ['Telcel', 'AT&T Mexico'], GB: ['EE', 'Vodafone UK', 'Three UK'], DE: ['Telekom DE', 'Vodafone DE'], FR: ['Orange', 'SFR'], ES: ['Movistar', 'Orange Spain'], IT: ['TIM', 'Vodafone IT'],
@@ -279,18 +290,62 @@ const OPERATORS = {
     BD: ['Grameenphone', 'Banglalink'], KZ: ['Beeline KZ', 'Tele2 KZ'], KG: ['O!', 'MegaCom'], NP: ['Ncell', 'Nepal Telecom'], UZ: ['Ucell', 'Mobiuz'], AU: ['Optus', 'Telstra'], AE: ['du', 'e&'], TR: ['Turkcell', 'Turk Telekom'],
     DK: ['Telenor DK', '3 DK'], FI: ['Telia FI', 'Elisa'], IS: ['Siminn', 'Vodafone IS'], NO: ['Telia NO', 'Telenor NO'], SE: ['Tele2', 'Telia SE'] }
 };
+/* Major operators for every other country in the regions above. Applied to BOTH vendors (existing entries above are kept).
+   Please check these against what each vendor really supports and adjust on the Vendor catalog page. */
+const EXTRA_OPS = {
+  AT: ['A1 Austria', 'Magenta AT', 'Drei AT'], BE: ['Proximus', 'Orange BE', 'Telenet'], BG: ['A1 Bulgaria', 'Vivacom', 'Yettel BG'], HR: ['A1 Croatia', 'Hrvatski Telekom', 'Telemach HR'],
+  CY: ['Cyta', 'Epic CY'], CZ: ['O2 CZ', 'T-Mobile CZ', 'Vodafone CZ'], EE: ['Telia EE', 'Elisa EE', 'Tele2 EE'], GR: ['Cosmote', 'Vodafone GR', 'Nova GR'],
+  HU: ['Telekom HU', 'Yettel HU', 'One HU'], IE: ['Vodafone IE', 'Three IE', 'Eir'], LV: ['LMT', 'Tele2 LV', 'Bite LV'], LI: ['FL1', 'Salt LI'],
+  LT: ['Telia LT', 'Bite LT', 'Tele2 LT'], LU: ['POST Luxembourg', 'Orange LU', 'Tango LU'], MT: ['GO Malta', 'Melita', 'Epic MT'], NL: ['KPN', 'Vodafone NL', 'Odido'],
+  PT: ['MEO', 'Vodafone PT', 'NOS'], RO: ['Orange RO', 'Vodafone RO', 'Digi RO'], SK: ['Orange SK', 'Slovak Telekom', 'O2 SK'], SI: ['Telekom Slovenije', 'A1 Slovenia', 'Telemach SI'],
+  CH: ['Swisscom', 'Sunrise', 'Salt'],
+  AM: ['Team Telecom Armenia', 'Ucom', 'VivaCell-MTS'], AZ: ['Azercell', 'Bakcell', 'Nar Mobile'], KH: ['Cellcard', 'Smart Axiata', 'Metfone'], GE: ['Magticom', 'Silknet', 'Cellfie'],
+  LA: ['Lao Telecom', 'Unitel Laos', 'ETL'], MO: ['CTM', '3 Macau', 'SmarTone Macau'], MV: ['Dhiraagu', 'Ooredoo Maldives'], LK: ['Dialog', 'SLT-Mobitel', 'Hutch LK'],
+  EG: ['Vodafone EG', 'Orange EG', 'e& Egypt'], IL: ['Partner', 'Cellcom IL', 'Pelephone'], KW: ['Zain Kuwait', 'Ooredoo Kuwait', 'stc Kuwait'], QA: ['Ooredoo Qatar', 'Vodafone Qatar'],
+  SA: ['stc', 'Mobily', 'Zain KSA'],
+  AL: ['One Albania', 'ALBtelecom'], BA: ['BH Telecom', 'm:tel', 'HT Eronet'], MK: ['A1 Macedonia', 'Makedonski Telekom'], ME: ['Crnogorski Telekom', 'One Montenegro', 'A1 Montenegro'],
+  RS: ['Telekom Srbija', 'Yettel Serbia', 'A1 Serbia'],
+  DZ: ['Djezzy', 'Mobilis', 'Ooredoo Algeria'], TD: ['Airtel Chad', 'Moov Africa Chad'], CD: ['Vodacom DRC', 'Airtel DRC', 'Orange RDC'], CG: ['Airtel Congo', 'MTN Congo'],
+  GH: ['MTN Ghana', 'Telecel Ghana', 'AT Ghana'], KE: ['Safaricom', 'Airtel Kenya', 'Telkom Kenya'], MG: ['Orange Madagascar', 'Telma', 'Airtel Madagascar'], MW: ['Airtel Malawi', 'TNM'],
+  MU: ['my.t', 'Emtel'], MA: ['Maroc Telecom', 'Orange Morocco', 'inwi'], NE: ['Airtel Niger', 'Moov Niger', 'Orange Niger'], NG: ['MTN Nigeria', 'Airtel Nigeria', 'Glo', '9mobile'],
+  ZA: ['Vodacom', 'MTN SA', 'Cell C', 'Telkom SA'], TZ: ['Vodacom TZ', 'Airtel TZ', 'Tigo TZ', 'Halotel'], TN: ['Ooredoo Tunisia', 'Orange Tunisia', 'Tunisie Telecom'],
+  UG: ['MTN Uganda', 'Airtel Uganda', 'Africell Uganda'], ZM: ['Airtel Zambia', 'MTN Zambia', 'Zamtel'],
+  AI: ['Digicel Anguilla', 'Flow Anguilla'], AG: ['Digicel Antigua', 'Flow Antigua'], BS: ['BTC Bahamas', 'Aliv'], BB: ['Digicel Barbados', 'Flow Barbados'],
+  VG: ['Digicel BVI', 'Flow BVI'], KY: ['Digicel Cayman', 'Flow Cayman'], DM: ['Digicel Dominica', 'Flow Dominica'], DO: ['Claro DO', 'Altice Dominicana', 'Viva DO'],
+  GD: ['Digicel Grenada', 'Flow Grenada'], GP: ['Orange Caraïbe', 'SFR Caraïbe', 'Free Caraïbe'], JM: ['Digicel Jamaica', 'Flow Jamaica'], MS: ['Digicel Montserrat', 'Flow Montserrat'],
+  CW: ['Digicel Curaçao', 'Flow Curaçao'], SX: ['TelCell', 'Digicel Sint Maarten'], KN: ['Digicel St Kitts', 'Flow St Kitts'], LC: ['Digicel St Lucia', 'Flow St Lucia'],
+  VC: ['Digicel SVG', 'Flow SVG'], TC: ['Digicel TCI', 'Flow TCI'],
+  CR: ['Kolbi', 'Claro CR', 'Movistar CR'], SV: ['Tigo SV', 'Claro SV', 'Movistar SV'], GT: ['Tigo GT', 'Claro GT', 'Movistar GT'], HN: ['Tigo HN', 'Claro HN'], NI: ['Claro NI', 'Tigo NI'],
+  AR: ['Claro AR', 'Movistar AR', 'Personal'], BR: ['Vivo', 'Claro BR', 'TIM BR'], CL: ['Entel CL', 'Movistar CL', 'Claro CL', 'WOM'], CO: ['Claro CO', 'Movistar CO', 'Tigo CO'],
+  EC: ['Claro EC', 'Movistar EC', 'CNT'], GF: ['Orange Caraïbe', 'Free Caraïbe'], PY: ['Tigo PY', 'Claro PY', 'Personal PY'], PE: ['Claro PE', 'Movistar PE', 'Entel PE'],
+  PR: ['Claro PR', 'T-Mobile PR', 'Liberty PR'], UY: ['Antel', 'Movistar UY', 'Claro UY'],
+  FJ: ['Vodafone Fiji', 'Digicel Fiji'], GU: ['GTA', 'Docomo Pacific', 'IT&E'], NZ: ['Spark', 'One NZ', '2degrees']
+};
+Object.keys(OPERATORS).forEach(v => Object.keys(EXTRA_OPS).forEach(cc => { if (!OPERATORS[v][cc]) OPERATORS[v][cc] = EXTRA_OPS[cc].slice(); }));
+
+function seedCatalog() {
+  const c = {};
+  Object.keys(OPERATORS).forEach(v => { c[v] = {}; Object.keys(OPERATORS[v]).forEach(cc => { c[v][cc] = OPERATORS[v][cc].map(n => ({ name: n, types: ['3G', '4G', '5G'] })); }); });
+  return c;
+}
 function loadCatalog() {
+  const def = seedCatalog();
+  let c = null;
   try {
-    let c = JSON.parse(localStorage.getItem('pm_catalog_v2') || 'null');
+    c = JSON.parse(localStorage.getItem('pm_catalog_v2') || 'null');
     if (!(c && c.telco && c.rombty)) {
       c = JSON.parse(localStorage.getItem('pm_catalog_v1') || 'null');
       if (c && c.telco && c.rombty) Object.values(c).forEach(v => Object.values(v).forEach(list => list.forEach(n => { if (n.types.join() === '4G,5G') n.types = ['3G', '4G', '5G']; })));
       else c = null;
     }
-    if (c) return c;
-  } catch (e) {}
-  const c = {};
-  Object.keys(OPERATORS).forEach(v => { c[v] = {}; Object.keys(OPERATORS[v]).forEach(cc => { c[v][cc] = OPERATORS[v][cc].map(n => ({ name: n, types: ['3G', '4G', '5G'] })); }); });
+  } catch (e) { c = null; }
+  let seeded = false; try { seeded = localStorage.getItem('pm_catalog_seed_v3') === '1'; } catch (e) {}
+  if (!c) { try { localStorage.setItem('pm_catalog_seed_v3', '1'); } catch (e) {} return def; }
+  /* one time: add every country that is missing from an older saved catalog (existing operators are never overwritten) */
+  if (!seeded) {
+    ['telco', 'rombty'].forEach(v => { c[v] = c[v] || {}; Object.keys(def[v]).forEach(cc => { if (!c[v][cc]) c[v][cc] = def[v][cc]; }); });
+    try { localStorage.setItem('pm_catalog_v2', JSON.stringify(c)); localStorage.setItem('pm_catalog_seed_v3', '1'); } catch (e) {}
+  }
   return c;
 }
 let CATALOG = loadCatalog();
@@ -300,14 +355,14 @@ const opNames = (vendor, cc) => ((CATALOG[vendor] || {})[cc] || []).map(n => n.n
 const mkCov = (vendor, code) => ({ code, networks: (((CATALOG[vendor] || {})[code]) || []).map(n => ({ name: n.name, types: [...n.types] })) });
 function loadRegCat() {
   let c = null;
-  try { c = JSON.parse(localStorage.getItem('pm_regcat_v1') || 'null'); } catch (e) {}
+  try { c = JSON.parse(localStorage.getItem('pm_regcat_v2') || 'null'); } catch (e) {}
   if (!c || typeof c !== 'object') c = {};
   /* fill in any vendor / region that is missing or empty with the default countries */
-  ['telco', 'rombty'].forEach(v => { c[v] = c[v] || {}; Object.keys(REGION_SETS).forEach(r => { if (!Array.isArray(c[v][r]) || !c[v][r].length) c[v][r] = clone(REGION_SETS[r]); }); });
+  ['telco', 'rombty'].forEach(v => { c[v] = c[v] || {}; REGION_NAMES.forEach(r => { if (!Array.isArray(c[v][r]) || !c[v][r].length) c[v][r] = clone(REGION_SETS[r]); }); });
   return c;
 }
 let REGCAT = loadRegCat();
-function persistRegCat() { try { localStorage.setItem('pm_regcat_v1', JSON.stringify(REGCAT)); } catch (e) {} }
+function persistRegCat() { try { localStorage.setItem('pm_regcat_v2', JSON.stringify(REGCAT)); } catch (e) {} }
 const regionSet = (r, vendor) => { if (r === 'Global') return catCountries(vendor); const l = (REGCAT[vendor] || {})[r]; return Array.isArray(l) && l.length ? l : (REGION_SETS[r] || []); };
 
 const VENDORS = {
@@ -414,7 +469,7 @@ function generateAdditionalInfo(p) {
 /* ---------- sample plans ---------- */
 const mk = (id, name, vendor, type, gb, days, price, codes, planType, extra) => {
   const p = Object.assign({
-    id, name, nameAuto: false, vendor, scope: 'country', apn: VENDORS[vendor].apn, link: `https://example.com/plans/${slug(name)}`, breakouts: ['SG'], region: 'Asia-Pacific',
+    id, name, nameAuto: false, vendor, scope: 'country', apn: VENDORS[vendor].apn, link: `https://example.com/plans/${slug(name)}`, breakouts: ['SG'], region: 'Asia Pacific',
     planType: planType || 'data', telCountry: '', voiceIn: true, voiceOut: true, smsIn: true, smsOut: true,
     type, throttle: false, gb, reducedSpeed: null, capInfo: '', capAuto: true, days, price, vStart: 'first',
     hotspot: true, topup: true, subscription: false, ekyc: false, coverages: codes.map(c => mkCov(vendor, c))
@@ -433,13 +488,16 @@ const SAMPLE = [
 const blankPlan = id => { const p = Object.assign(clone(SAMPLE[3]), { id, name: 'New plan', nameAuto: true, scope: 'country', link: 'https://example.com/plans/new-plan', breakouts: [], coverages: [], telCountry: '', planType: 'data', type: 'fixed', throttle: false, gb: 10, reducedSpeed: null, capAuto: true, days: 30, price: 10, region: '' }); p.capInfo = capText(p); return p; };
 
 let PLANS = load();
-function load() { try { const p = JSON.parse(localStorage.getItem('pm_plans_v5') || 'null'); if (Array.isArray(p) && p.length) return p; } catch (e) {} return clone(SAMPLE); }
+/* plans saved earlier may still use the old "Asia-Pacific" name */
+function load() { try { const p = JSON.parse(localStorage.getItem('pm_plans_v5') || 'null'); if (Array.isArray(p) && p.length) { p.forEach(x => { if (x.region === 'Asia-Pacific') x.region = 'Asia Pacific'; }); return p; } } catch (e) {} return clone(SAMPLE); }
 function persist() { try { localStorage.setItem('pm_plans_v5', JSON.stringify(PLANS)); } catch (e) {} }
 let editId = PLANS[0].id, viewId = PLANS[0].id, draft = clone(PLANS[0]), flashId = null;
 
 /* ---------- admin ---------- */
 const countryOpts = (ph, list) => `<option value="">${ph}</option>` + list.map(c => `<option value="${c}">${esc(cn(c))} (${c})</option>`).join('');
 $('telCountry').innerHTML = '<option value="">Select number country…</option>' + TELC.map(c => `<option value="${c}">${esc(cn(c))} (+${DIAL[c]})</option>`).join('');
+$('region').innerHTML = '<option value="">Select region…</option>' + REGION_NAMES.concat('Global').map(r => `<option>${esc(r)}</option>`).join('');
+$('catRegion').innerHTML = '<option value="">Select region…</option>' + REGION_NAMES.map(r => `<option>${esc(r)}</option>`).join('');
 
 function fillForm() {
   const p = draft;
