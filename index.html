@@ -450,8 +450,6 @@ function telText(p) {
 function toApi(p) {
   const out = {
     planName: p.name,
-    productCode: (p.productCode || '').trim() || null,
-    parentalPlan: !!p.parentalPlan,
     validity: +p.days,
     dataCap: unlOpen(p) ? 0 : r2(+p.gb || 0),
     dataUnit: 'GB',
@@ -469,7 +467,18 @@ function toApi(p) {
   out.additionalInfo = additionalText(p);
   out.validityInfo = 'Validity starts ' + (p.vStart === 'install' ? 'from eSIM installation' : 'from first network connection');
   out.telephony = p.planType === 'data-voice'
-    ? { dialingCode: DIAL[p.telCountry] ? '+' + DIAL[p.telCountry] : null, sms: { inbound: !!p.smsIn, outbound: !!p.smsOut }, voice: { inbound: !!p.voiceIn, outbound: !!p.voiceOut, minutesType: p.voiceMinutesType || 'not-included', minutes: p.voiceMinutesType === 'limited' ? (+p.voiceMinutes || null) : (p.voiceMinutesType === 'unlimited' ? 'unlimited' : null) } }
+    ? {
+        dialingCode: DIAL[p.telCountry] ? '+' + DIAL[p.telCountry] : null,
+        voiceText: [p.voiceIn && 'Receive calls (inbound)', p.voiceOut && 'Make calls (outbound)'].filter(Boolean).join(', ') || 'Not included',
+        smsText: [p.smsIn && 'Receive SMS (inbound)', p.smsOut && 'Send SMS (outbound)'].filter(Boolean).join(', ') || 'Not included',
+        sms: { inbound: !!p.smsIn, outbound: !!p.smsOut },
+        voice: {
+          inbound: !!p.voiceIn,
+          outbound: !!p.voiceOut,
+          minutesType: p.voiceMinutesType || 'not-included',
+          minutes: p.voiceMinutesType === 'limited' ? (+p.voiceMinutes || null) : (p.voiceMinutesType === 'unlimited' ? 'unlimited' : null)
+        }
+      }
     : null;
   out.subscription = !!p.subscription;
   if (p.subscription) out.subscriptionPeriod = p.subPer || 'month';
