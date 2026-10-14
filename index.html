@@ -460,11 +460,11 @@ function generateAdditionalInfo(p) {
     data: unlOpen(p) ? 'Unlimited High speed data' : p.type === 'unlimited' ? `Unlimited data (${fmtGb(p.gb)} per day at full speed)` : p.type === 'daypass' ? `${fmtGb(p.gb)} High speed data per day` : `${fmtGb(p.gb)} High speed data`,
     voice: telText(p),
     speed: hasThrottle(p) ? (p.capInfo || '').trim() : '',
-    network: netNames(p).join(', ') || 'Multi network',
+    network: p.scope === 'region' ? 'Multi networks' : (netNames(p).join(', ') || 'Multi network'),
     breakout: p.breakouts.map(cn).join(', '),
     validity: p.days + (+p.days === 1 ? ' day' : ' days'),
     validityStart: p.vStart === 'install' ? 'from eSIM installation' : 'from first network connection',
-    apn: p.apn, countries: codes.map(cn).join(', '), countryCount: codes.length
+    apn: p.apn, countries: p.scope === 'region' ? `${p.region || 'Region'} region${p.vendor === 'rombty' ? '' : ` (${codes.length} countries)`}` : codes.map(cn).join(', '), countryCount: codes.length
   };
   const flags = { breakout: p.breakouts.length > 0, hotspot: p.hotspot, topup: p.topup, speed: !!vars.speed, voice: p.planType === 'data-voice' };
   const sections = []; let cur = null;
@@ -482,7 +482,7 @@ function generateAdditionalInfo(p) {
 /* ---------- sample plans ---------- */
 const mk = (id, name, vendor, type, gb, days, price, codes, planType, extra) => {
   const p = Object.assign({
-    id, name, nameAuto: false, vendor, scope: 'country', apn: VENDORS[vendor].apn, link: `https://example.com/plans/${slug(name)}`, breakouts: ['SG'], region: 'Asia Pacific',
+    id, name, nameAuto: false, vendor, scope: 'country', apn: VENDORS[vendor].apn, link: `https://example.com/plans/${slug(name)}`, breakouts: [], region: 'Asia Pacific',
     planType: planType || 'data', telCountry: '', voiceIn: true, voiceOut: true, smsIn: true, smsOut: true,
     type, throttle: false, gb, reducedSpeed: null, capInfo: '', capAuto: true, days, price, vStart: 'first',
     hotspot: true, topup: true, subscription: false, ekyc: false, coverages: codes.map(c => mkCov(vendor, c))
@@ -490,9 +490,9 @@ const mk = (id, name, vendor, type, gb, days, price, codes, planType, extra) => 
   p.capInfo = capText(p); return p;
 };
 const SAMPLE = [
-  mk(1, 'APAC Unlimited 3 Days', 'telco', 'unlimited', 1, 3, 9.90, ['SG', 'JP', 'TH', 'KR', 'MY'], 'data', { scope: 'region', throttle: true, reducedSpeed: 128 }),
-  mk(2, 'APAC Day Pass 1 GB', 'rombty', 'daypass', 1, 7, 12.50, ['SG', 'JP', 'TH', 'KR', 'MY'], 'data', { scope: 'region', reducedSpeed: 512 }),
-  mk(3, 'APAC 10 GB + Voice 30 Days', 'telco', 'fixed', 10, 30, 14.90, ['SG', 'JP', 'TH'], 'data-voice', { scope: 'region', telCountry: 'SG' }),
+  mk(1, 'APAC Unlimited 3 Days', 'telco', 'unlimited', 1, 3, 9.90, ['SG', 'JP', 'TH', 'KR', 'MY'], 'data', { scope: 'region', throttle: true, reducedSpeed: 128, breakouts: ['SG'] }),
+  mk(2, 'APAC Day Pass 1 GB', 'rombty', 'daypass', 1, 7, 12.50, ['SG', 'JP', 'TH', 'KR', 'MY'], 'data', { scope: 'region', reducedSpeed: 512, breakouts: ['SG'] }),
+  mk(3, 'APAC 10 GB + Voice 30 Days', 'telco', 'fixed', 10, 30, 14.90, ['SG', 'JP', 'TH'], 'data-voice', { scope: 'region', telCountry: 'SG', breakouts: ['SG'] }),
   mk(4, 'USA 10GB for 30 Days', 'rombty', 'fixed', 10, 30, 30, [], 'data', {
     link: 'https://example.com/plans/usa-10gb', region: 'North America',
     coverages: [{ code: 'US', networks: [{ name: 'Verizon', types: ['4G', '5G'] }, { name: 'AT&T', types: ['4G', '5G'] }] }]
@@ -502,7 +502,10 @@ const blankPlan = id => { const p = Object.assign(clone(SAMPLE[3]), { id, name: 
 
 let PLANS = load();
 /* plans saved earlier may still use the old "Asia-Pacific" name */
-function load() { try { const p = JSON.parse(localStorage.getItem('pm_plans_v5') || 'null'); if (Array.isArray(p) && p.length) { p.forEach(x => { if (x.region === 'Asia-Pacific') x.region = 'Asia Pacific'; }); return p; } } catch (e) {} return clone(SAMPLE); }
+function load() { try { const p = JSON.parse(localStorage.getItem('pm_plans_v5') || 'null'); if (Array.isArray(p) && p.length) { p.forEach(x => { if (x.region === 'Asia-Pacific') x.region = 'Asia Pacific'; });
+  /* one time: the sample USA plan used to ship with a Singapore breakout; make it blank */
+  if (localStorage.getItem('pm_bk_fix_v1') !== '1') { p.forEach(x => { if (x.id === 4 && x.name === 'USA 10GB for 30 Days' && x.scope === 'country' && x.breakouts.join() === 'SG') x.breakouts = []; }); localStorage.setItem('pm_bk_fix_v1', '1'); try { localStorage.setItem('pm_plans_v5', JSON.stringify(p)); } catch (e) {} }
+  return p; } } catch (e) {} return clone(SAMPLE); }
 function persist() { try { localStorage.setItem('pm_plans_v5', JSON.stringify(PLANS)); } catch (e) {} }
 let editId = PLANS[0].id, viewId = PLANS[0].id, draft = clone(PLANS[0]), flashId = null;
 
@@ -793,7 +796,7 @@ function renderDetail() {
   const dataFact = unlOpen(p) ? 'Unlimited' : p.type === 'unlimited' ? `Unlimited (${fmtGb(p.gb)}/day full speed)` : fmtGb(p.gb) + (p.type === 'daypass' ? ' per day' : '');
   const facts = [['Plan type', ptLabel(p)], ['Data', dataFact]];
   if (p.planType === 'data-voice') facts.push(['Number', p.telCountry ? `${cn(p.telCountry)} +${DIAL[p.telCountry]}` : '—'], ['Calls', [p.voiceIn && 'in', p.voiceOut && 'out'].filter(Boolean).join(' / ') || 'none'], ['SMS', [p.smsIn && 'in', p.smsOut && 'out'].filter(Boolean).join(' / ') || 'none']);
-  facts.push(['Validity', `${p.days} ${+p.days === 1 ? 'day' : 'days'}`], ['Networks', netNames(p).join(', ') || '—']);
+  facts.push(['Validity', `${p.days} ${+p.days === 1 ? 'day' : 'days'}`], ['Networks', p.scope === 'region' ? 'Multi networks' : (netNames(p).join(', ') || '—')]);
   if (p.breakouts.length) facts.push(['Internet breakout', p.breakouts.map(cn).join(', ')]);
   facts.push(['Countries', p.coverages.length]);
   let speedHtml = '';
@@ -805,7 +808,7 @@ function renderDetail() {
   }
   $('detail').innerHTML = `<div class="dhead"><div><h3>${esc(p.name)}</h3><div class="meta">${esc(p.region || 'Any region')} · ${p.coverages.length} ${p.coverages.length === 1 ? 'country' : 'countries'}</div></div>
     <div><div class="pr">$ ${(+p.price).toFixed(2)} <small>USD</small></div><button type="button" class="buy">Buy now</button></div></div>
-    <div class="facts">${facts.map(f => `<span class="fact">${f[0]}: <b>${esc(f[1])}</b></span>`).join('')}</div>${speedHtml}${p.coverages.length ? `<div class="info"><p>Countries covered</p><div class="cflags">${p.coverages.map(cv => `<span class="cflag">${flag(cv.code)}${esc(cn(cv.code))}</span>`).join('')}</div></div>` : ''}<div class="info">${generateAdditionalInfo(p)}</div>
+    <div class="facts">${facts.map(f => `<span class="fact">${f[0]}: <b>${esc(f[1])}</b></span>`).join('')}</div>${speedHtml}${p.coverages.length ? `<details class="apibox"><summary>Countries covered (${p.coverages.length})</summary><div class="cflags" style="padding:4px 12px 14px">${[...p.coverages].sort((a, b) => byName(a.code, b.code)).map(cv => `<span class="cflag">${flag(cv.code)}${esc(cn(cv.code))}</span>`).join('')}</div></details>` : ''}<div class="info">${generateAdditionalInfo(p)}</div>
     <details class="apibox"><summary>JSON output for this plan</summary><pre class="json">${esc(apiJson([p]))}</pre></details>`;
 }
 function toast(m) { let t = document.querySelector('.toast'); if (!t) { t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); } t.textContent = m; t.hidden = false; clearTimeout(t._h); t._h = setTimeout(() => t.hidden = true, 2600); }
